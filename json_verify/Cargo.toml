@@ -1,0 +1,20 @@
+[package]
+name = "json_verify"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { workspace = true, features = ["derive"] }
+clap = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+tracing-error = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+walkdir = { workspace = true }
+color-eyre = { workspace = true }
+fs-err = { workspace = true }
+itertools = { workspace = true }
+colored = { workspace = true }
+indicatif = { workspace = true }
