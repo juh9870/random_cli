@@ -1,9 +1,7 @@
 [workspace]
 resolver = "2"
 
-members = [
-    "json_verify"
-]
+members = ["json_verify", "xtask"]
 
 [workspace.dependencies]
 clap = "4.4.18"

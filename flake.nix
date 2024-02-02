@@ -37,7 +37,7 @@
         rustPkgs = pkgs.rustBuilder.makePackageSet {
           packageFun = import ./Cargo.nix;
           rustVersion = "1.75.0";
-          extraRustComponents = [ "clippy" "rust-src" ];
+          extraRustComponents = [ "clippy" "rust-src" "rustfmt" "rust-docs" ];
         };
 
         # The workspace defines a development shell with all of the dependencies
