@@ -37,6 +37,7 @@
         rustPkgs = pkgs.rustBuilder.makePackageSet {
           packageFun = import ./Cargo.nix;
           rustVersion = "1.75.0";
+          rustProfile = "default";
           extraRustComponents = [ "clippy" "rust-src" "rustfmt" "rust-docs" ];
         };
 
