@@ -70,6 +70,9 @@
           # nix build .#json_verify
           # nix build .#packages.x86_64-linux.json_verify
           json_verify = (rustPkgs.workspace.json_verify { }).bin;
+          # nix build .#nocommit
+          # nix build .#packages.x86_64-linux.nocommit
+          nocommit = (rustPkgs.workspace.nocommit { }).bin;
           # nix build
           default = packages.json_verify;
         };
