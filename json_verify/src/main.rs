@@ -1,5 +1,5 @@
 use clap::Parser;
-use color_eyre::eyre;
+
 use color_eyre::owo_colors::OwoColorize;
 use colored::Colorize;
 use indicatif::{ProgressBar, ProgressStyle};
@@ -8,6 +8,8 @@ use std::collections::HashMap;
 use std::env;
 use std::path::{Path, PathBuf};
 use tracing::error_span;
+use tracing_error::ErrorLayer;
+use tracing_subscriber::layer::SubscriberExt;
 use walkdir::WalkDir;
 
 /// Validates all JSON files in a directory
@@ -54,7 +56,11 @@ fn validate_file(path: &Path, errors: &mut HashMap<String, String>) -> color_eyr
 }
 
 fn main() -> color_eyre::Result<()> {
-    tracing_subscriber::fmt::init();
+    let subscriber = tracing_subscriber::Registry::default()
+        .with(tracing_subscriber::fmt::Layer::default())
+        .with(ErrorLayer::default());
+
+    tracing::subscriber::set_global_default(subscriber).unwrap();
     color_eyre::install()?;
 
     let Args {
@@ -119,7 +125,7 @@ fn main() -> color_eyre::Result<()> {
 
     pb.finish_and_clear();
 
-    if report_errors.len() > 0 {
+    if !report_errors.is_empty() {
         let len = report_errors.len();
         let report = report_errors
             .into_iter()
