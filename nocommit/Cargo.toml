@@ -1,0 +1,19 @@
+[package]
+name = "nocommit"
+version = "0.1.0"
+edition = "2021"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ahash = { workspace = true }
+btreeprint = { path = "../btreeprint" }
+clap = { workspace = true, features = ["derive"] }
+color-eyre = { workspace = true }
+fs-err = { workspace = true }
+git2 = { workspace = true, features = ["vendored-libgit2", "vendored-openssl"] }
+ignore = { workspace = true }
+itertools = { workspace = true }
+strum = { workspace = true, features = ["derive"] }
+tracing = { workspace = true }
+tracing-error = { workspace = true }
+tracing-subscriber = { workspace = true }
