@@ -10,10 +10,10 @@ btreeprint = { path = "../btreeprint" }
 clap = { workspace = true, features = ["derive"] }
 color-eyre = { workspace = true }
 fs-err = { workspace = true }
-git2 = { workspace = true, features = ["vendored-libgit2", "vendored-openssl"] }
+git2 = { workspace = true }
 ignore = { workspace = true }
 itertools = { workspace = true }
 strum = { workspace = true, features = ["derive"] }
 tracing = { workspace = true }
 tracing-error = { workspace = true }
-tracing-subscriber = { workspace = true }
+tracing-subscriber = { workspace = true, features = ["env-filter"] }
