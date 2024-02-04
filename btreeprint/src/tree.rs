@@ -92,8 +92,10 @@ impl TreeDisplay {
             } else {
                 prefix.push(Cow::Borrowed("    "));
             }
-            rest[0] = &rest[0][..*children_count];
+            let (next, leftover) = rest[0].split_at(*children_count);
+            rest[0] = &next;
             TreeDisplay::build_display_inner(prefix, rest, output);
+            rest[0] = &leftover;
             prefix.pop();
         }
     }
