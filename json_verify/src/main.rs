@@ -10,6 +10,7 @@ use std::path::{Path, PathBuf};
 use tracing::error_span;
 use tracing_error::ErrorLayer;
 use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::EnvFilter;
 use walkdir::WalkDir;
 
 /// Validates all JSON files in a directory
@@ -58,6 +59,7 @@ fn validate_file(path: &Path, errors: &mut HashMap<String, String>) -> color_eyr
 fn main() -> color_eyre::Result<()> {
     let subscriber = tracing_subscriber::Registry::default()
         .with(tracing_subscriber::fmt::Layer::default())
+        .with(EnvFilter::from_default_env())
         .with(ErrorLayer::default());
 
     tracing::subscriber::set_global_default(subscriber).unwrap();

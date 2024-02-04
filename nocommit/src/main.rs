@@ -14,6 +14,7 @@ use strum::EnumIs;
 use tracing::{debug, error_span};
 use tracing_error::ErrorLayer;
 use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::EnvFilter;
 
 /// pre-commit hook for preventing accidentally committing debug/sensitive data or changes.
 #[derive(Parser, Debug)]
@@ -30,6 +31,7 @@ struct Args {
 fn main() -> color_eyre::Result<()> {
     let subscriber = tracing_subscriber::Registry::default()
         .with(tracing_subscriber::fmt::Layer::default())
+        .with(EnvFilter::from_default_env())
         .with(ErrorLayer::default());
     tracing::subscriber::set_global_default(subscriber).unwrap();
     color_eyre::install()?;
@@ -38,7 +40,8 @@ fn main() -> color_eyre::Result<()> {
         content_pattern,
         marker_filename,
     } = Args::parse();
-    let git_repo = Repository::discover("./").context("Discovering git repository")?;
+    let git_repo = Repository::discover(Path::canonicalize("./".as_ref())?)
+        .context("Discovering git repository")?;
 
     let mut repository_root = git_repo.path().canonicalize()?;
 
