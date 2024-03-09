@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 
-members = ["btreeprint", "json_verify", "nocommit", "xtask"]
+members = ["btreeprint", "eh_codegen", "json_verify", "nocommit", "xtask"]
 
 [workspace.dependencies]
 ahash = "0.8.7"
@@ -22,6 +22,13 @@ tracing = "0.1.40"
 tracing-error = "0.2.0"
 tracing-subscriber = "0.3.18"
 walkdir = "2.4.0"
+quick-xml = "0.31.0"
+quote = "1.0.35"
+proc-macro2 = "1.0.78"
+miette = "7.2.0"
+prettyplease = "0.2.16"
+syn = "2.0.52"
+convert_case = { workspace = true }
 
 [profile.release]
 opt-level = 3
