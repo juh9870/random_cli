@@ -7,7 +7,7 @@ use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 
 use crate::codegen::{CodegenState, TokensResult};
-use crate::schema::{SchemaStructMember, SchemaStructMemberType};
+use crate::schema::{SchemaItem, SchemaStructMember, SchemaStructMemberType};
 
 #[derive(Debug)]
 pub struct Field {
@@ -19,9 +19,9 @@ pub struct Field {
 }
 
 impl Field {
-    pub fn new(field: SchemaStructMember) -> Result<Self> {
+    pub fn new(field: SchemaStructMember, struct_name: &Ident) -> Result<Self> {
         let name_snake = field.name.from_case(Case::Pascal).to_case(Case::Snake);
-        let (ty, no_default) = rust_type(&field)?;
+        let (ty, no_default) = rust_type(&field, struct_name)?;
         let ident = format_ident!("r#{}", name_snake);
         let builder_fn_ident = format_ident!("with_{}", name_snake);
         let default_value = (!no_default).then(|| default_value(&field)).transpose()?;
@@ -54,7 +54,7 @@ impl Field {
         quote! {
             pub fn #builder_fn_ident(mut self, #ident: #ty) -> Self {
                 self.#ident = #ident;
-                Self
+                self
             }
         }
     }
@@ -65,9 +65,9 @@ impl Field {
             default_value,
             ..
         } = self;
-        if default_value.is_some() {
+        if let Some(value) = default_value {
             quote! {
-                #ident: #default_value,
+                #ident: #value,
             }
         } else {
             quote! {
@@ -84,21 +84,23 @@ impl Field {
         let mut validation = vec![];
         let name_str = ident.to_string();
 
-        if let Some(min) = &field.minvalue {
-            validation.push(quote! {
-                if self.#ident < (#min as #ty) {
-                    tracing::warn!("Field got truncated", field=#name_str, value=self.#ident, min=#min);
-                    self.#ident = #min;
-                }
-            })
-        }
-        if let Some(max) = &field.maxvalue {
-            validation.push(quote! {
-                if self.#ident > (#max as #ty) {
-                    tracing::warn!("Field got truncated", field=#name_str, value=self.#ident, max=#max);
-                    self.#ident = #max;
-                }
-            })
+        if !matches!(field.ty, SchemaStructMemberType::Expression) {
+            if let Some(min) = &field.minvalue {
+                validation.push(quote! {
+                    if self.#ident < (#min as #ty) {
+                        tracing::warn!(field=#name_str, value=self.#ident, min=#min, "Field got truncated");
+                        self.#ident = #min as #ty;
+                    }
+                })
+            }
+            if let Some(max) = &field.maxvalue {
+                validation.push(quote! {
+                    if self.#ident > (#max as #ty) {
+                        tracing::warn!(field=#name_str, value=self.#ident, max=#max, "Field got truncated");
+                        self.#ident = #max as #ty;
+                    }
+                })
+            }
         }
 
         if let Some(options) = &field.options {
@@ -106,21 +108,22 @@ impl Field {
             for opt in options {
                 match opt {
                     "notnull" => {
-                        if !matches!(field.ty, SchemaStructMemberType::Object) {
-                            bail!("Encountered `notnull` option used with non-object field")
-                        }
-                        validation.push(quote! {
-                            if self.#ident.is_none() {
-                                tracing::error!("Field is marked as notnull, but value is None", field=#name_str);
-                            }
-                        });
+                        // Handled elsewhere
                     }
-                    "obsolete" => validation.push(quote! {
-                        if self.#ident != Default::default() {
-                            tracing::error!("Obsolete field usage detected, generated code may not work", field=#name_str);
-                        }
-                    }),
-                    opt => bail!("Encountered an unknown option: {}", opt)
+                    "obsolete" => {
+                        let default_val = &self
+                            .default_value
+                            .as_ref()
+                            .ok_or_else(|| miette!("Obsolete notnull fields are not supported"))?;
+                        let ty = &self.ty;
+                        validation.push(quote! {
+                            let dw: #ty = #default_val;
+                            if self.#ident != dw {
+                                tracing::error!(ield=#name_str, "Obsolete field usage detected, generated code may not work",);
+                            }
+                        })
+                    }
+                    opt => bail!("Encountered an unknown option: {}", opt),
                 }
             }
         }
@@ -144,7 +147,10 @@ impl CodegenState {
 
         fields.dedup_by(|a, b| a.name == b.name);
 
-        let fields: Vec<Field> = fields.into_iter().map(Field::new).try_collect()?;
+        let fields: Vec<Field> = fields
+            .into_iter()
+            .map(|f| Field::new(f, &name))
+            .try_collect()?;
 
         let struct_fields = fields.iter().map(|f| f.struct_field());
         let builder_fns = fields.iter().map(|f| f.builder_fn());
@@ -221,11 +227,11 @@ fn default_value(field: &SchemaStructMember) -> TokensResult {
                 .context("Encountered an issue during parsing default float value")?;
             quote!(#value)
         }
-        _ => quote!(default),
+        _ => quote!(#default.to_string()),
     })
 }
 
-fn rust_type(field: &SchemaStructMember) -> Result<(TokenStream, bool)> {
+fn rust_type(field: &SchemaStructMember, struct_name: &Ident) -> Result<(TokenStream, bool)> {
     let type_id = || {
         field
             .typeid
@@ -244,7 +250,12 @@ fn rust_type(field: &SchemaStructMember) -> Result<(TokenStream, bool)> {
         match field.ty {
             SchemaStructMemberType::Struct => {
                 let id = type_id()?;
-                quote!(#id)
+
+                if struct_name.to_string().contains(&id.to_string()) {
+                    quote!(Box::<#id>)
+                } else {
+                    quote!(#id)
+                }
             }
             SchemaStructMemberType::StructList => {
                 let id = type_id()?;

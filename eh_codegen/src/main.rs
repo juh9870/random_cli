@@ -39,13 +39,13 @@ impl From<Report> for MainErr {
 }
 
 fn main() -> miette::Result<()> {
+    let subscriber = tracing_subscriber::Registry::default()
+        .with(tracing_subscriber::fmt::Layer::default())
+        .with(EnvFilter::from_default_env());
+
+    tracing::subscriber::set_global_default(subscriber).unwrap();
+
     m_try(|| {
-        let subscriber = tracing_subscriber::Registry::default()
-            .with(tracing_subscriber::fmt::Layer::default())
-            .with(EnvFilter::from_default_env());
-
-        tracing::subscriber::set_global_default(subscriber).unwrap();
-
         let Args { schema, output } = Args::parse();
 
         let mut files = vec![];
@@ -79,7 +79,8 @@ fn main() -> miette::Result<()> {
 
         let mut state = CodegenState::default();
 
-        let mut code_builder = String::new();
+        let mut code_builder =
+            "#![allow(clippy::unnecessary_cast)]\n#![allow(dead_code)]\n\n".to_string();
 
         for (path, item) in files {
             let code = state.codegen(item).with_context(|| {

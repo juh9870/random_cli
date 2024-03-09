@@ -26,6 +26,34 @@ impl CodegenState {
                     pub trait DatabaseItem: serde::Serialize {
                         fn validate(&mut self);
                     }
+
+                    #[derive(Debug)]
+                    pub struct DatabaseItemId<T>(isize, std::marker::PhantomData<T>);
+
+                    impl<T> serde::Serialize for DatabaseItemId<T> {
+                        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+                        where
+                            S: serde::Serializer,
+                        {
+                            self.0.serialize(serializer)
+                        }
+                    }
+
+                    impl<T> PartialEq for DatabaseItemId<T> {
+                        fn eq(&self, other: &Self) -> bool {
+                            self.0 == other.0
+                        }
+                    }
+
+                    impl<T> Eq for DatabaseItemId<T> {}
+
+                    impl<T> Clone for DatabaseItemId<T> {
+                        fn clone(&self) -> Self {
+                            Self(self.0, Default::default())
+                        }
+                    }
+
+                    impl<T> Copy for DatabaseItemId<T> {}
                 }
             }
             SchemaItem::Data(data) => {
@@ -62,8 +90,16 @@ impl CodegenState {
                             },
                         );
 
-                        self.codegen_struct(ident, members, data.switch)
-                            .context("Failed to generate object data")?
+                        let code = self
+                            .codegen_struct(ident.clone(), members, data.switch)
+                            .context("Failed to generate object data")?;
+
+                        let id_name = format_ident!("{}Id", ident);
+                        quote! {
+                            type #id_name = DatabaseItemId::<#ident>;
+
+                            #code
+                        }
                     }
                     SchemaDataType::Enum => self
                         .codegen_enum(

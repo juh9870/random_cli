@@ -23,7 +23,7 @@ impl CodegenState {
                         None => {
                             quote!()
                         }
-                        Some(value) => match isize::from_str(value) {
+                        Some(value) => match i32::from_str(value) {
                             Ok(num) => quote! { = #num },
                             Err(_) => {
                                 if !value.starts_with('\'') || value.len() != 3 {
@@ -67,8 +67,8 @@ impl CodegenState {
                     }
                 }
 
-                impl Display for #name {
-                    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+                impl std::fmt::Display for #name {
+                    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                         let code = *self as u32;
                         if code == 0 {
                             write!(f, "")

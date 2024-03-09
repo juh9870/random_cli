@@ -6,6 +6,7 @@ use miette::{bail, miette};
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use std::collections::HashMap;
+use tracing::{debug, info, warn};
 
 impl CodegenState {
     pub fn codegen_switch_struct(
@@ -14,6 +15,7 @@ impl CodegenState {
         mut fields: Vec<SchemaStructMember>,
         switch: String,
     ) -> TokensResult {
+        warn!(%ident, "Generating code for switch item");
         let switch_field_idx = fields
             .iter()
             .enumerate()
@@ -83,17 +85,41 @@ impl CodegenState {
 
         let tag_name = switch_field.name;
 
+        let default_item = &variants[&enum_items[0]];
+
+        let has_default = !default_item.iter().any(|f| {
+            f.options
+                .as_ref()
+                .is_some_and(|opt| opt.contains("notnull"))
+        });
+
+        let default_impl = has_default.then(|| {
+            let first_variant = &variant_names[0];
+            quote! {
+                impl Default for #ident {
+                    fn default() -> Self {
+                        Self::#first_variant(Default::default())
+                    }
+                }
+            }
+        });
+
         let shared_enum = quote! {
             #[derive(Debug, Clone, serde::Serialize)]
             #[serde(tag = #tag_name)]
             pub enum #ident {
                 #(#enum_variants)*
             }
+
+            #default_impl
         };
 
         let mut blocks: Vec<TokenStream> = vec![shared_enum];
 
-        let shared_fields: Vec<Field> = neutrals.into_iter().map(Field::new).try_collect()?;
+        let shared_fields: Vec<Field> = neutrals
+            .into_iter()
+            .map(|f| Field::new(f, &ident))
+            .try_collect()?;
 
         for (struct_name, variant_name) in names.iter().zip(variant_names.iter()) {
             blocks.push(quote! {
@@ -120,7 +146,9 @@ impl CodegenState {
         };
 
         for Field {
-            ident: field_name, ..
+            ident: field_name,
+            ty,
+            ..
         } in shared_fields
         {
             let field_name_mut = format_ident!("{}_mut", field_name);
@@ -128,11 +156,11 @@ impl CodegenState {
             let access_mut = matcher(quote!(&mut x.#field_name));
             blocks.push(quote! {
                 impl #ident {
-                    pub fn #field_name(&self) {
+                    pub fn #field_name(&self) -> &#ty {
                         #access
                     }
 
-                    pub fn #field_name_mut(&mut self) {
+                    pub fn #field_name_mut(&mut self) -> &mut #ty {
                         #access_mut
                     }
                 }
