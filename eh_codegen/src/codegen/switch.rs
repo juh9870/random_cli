@@ -6,7 +6,7 @@ use miette::{bail, miette};
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use std::collections::HashMap;
-use tracing::{debug, info, warn};
+
 
 impl CodegenState {
     pub fn codegen_switch_struct(
@@ -15,7 +15,6 @@ impl CodegenState {
         mut fields: Vec<SchemaStructMember>,
         switch: String,
     ) -> TokensResult {
-        warn!(%ident, "Generating code for switch item");
         let switch_field_idx = fields
             .iter()
             .enumerate()
