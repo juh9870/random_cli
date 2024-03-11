@@ -124,6 +124,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "bimap"
+version = "0.6.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "230c5f1ca6a325a32553f8640d31ac9b49f2411e901e427570154868b46da4f7"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "bitflags"
 version = "2.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -314,6 +323,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "eh_mod_dev"
+version = "0.1.0"
+dependencies = [
+ "bimap",
+ "clap",
+ "eh_schema",
+ "erased-serde",
+ "fs-err",
+ "itertools",
+ "miette",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tracing",
+ "tracing-panic",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "eh_schema"
 version = "0.1.0"
 dependencies = [
@@ -333,6 +361,15 @@ name = "encode_unicode"
 version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a357d28ed41a50f9c765dbfe56cbc04a64e53e5fc58ba79fbc34c10ef3df831f"
+
+[[package]]
+name = "erased-serde"
+version = "0.4.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2b73807008a3c7f171cc40312f37d95ef0396e048b5848d775f54b1a4dd4a0d3"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "errno"
@@ -1112,6 +1149,16 @@ dependencies = [
  "log",
  "once_cell",
  "tracing-core",
+]
+
+[[package]]
+name = "tracing-panic"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eaf80030ce049691c9922d75be63cadf345110a245cd4581833c66f87c02ad25"
+dependencies = [
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
