@@ -5,10 +5,12 @@ members = ["btreeprint", "eh_codegen", "eh_mod_dev", "eh_schema", "json_verify",
 
 [workspace.dependencies]
 ahash = "0.8.7"
+bimap = "0.6.3"
 clap = "4.4.18"
 color-eyre = "0.6.2"
 colored = "2.1.0"
 convert_case = "0.6.0"
+erased-serde = "0.4"
 fs-err = "2.11.0"
 git2 = "0.18.1"
 glam = "0.25.0"
@@ -28,9 +30,9 @@ termtree = "0.4.1"
 thiserror = "1.0.56"
 tracing = "0.1.40"
 tracing-error = "0.2.0"
+tracing-panic = "0.1.1"
 tracing-subscriber = "0.3.18"
 walkdir = "2.4.0"
-bimap = "0.6.3"
 
 [profile.release]
 opt-level = 3

@@ -5,7 +5,7 @@ use std::any::{Any, TypeId};
 use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet};
 use std::ops::{Deref, Range};
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::process::exit;
 use tracing::{error, error_span};
 
@@ -23,6 +23,12 @@ pub struct Database {
     available_ids: HashMap<TypeId, Vec<Range<i32>>>,
     default_ids: Vec<Range<i32>>,
     items: HashMap<TypeId, (&'static str, HashMap<i32, Box<dyn Serialize>>)>,
+}
+
+impl Default for Database {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Database {
