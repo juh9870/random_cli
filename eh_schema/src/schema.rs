@@ -1,13 +1,29 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(dead_code)]
 
+
 // /home/juh9870/shared_projects/event-horizon-main/Assets/Modules/Database/.Schema/versions.xml
 pub trait DatabaseItem: serde::Serialize {
     fn validate(&mut self);
+    fn type_name() -> &'static str;
 }
-#[derive(Debug)]
-pub struct DatabaseItemId<T>(isize, std::marker::PhantomData<T>);
-impl<T> serde::Serialize for DatabaseItemId<T> {
+pub struct DatabaseItemId<T: DatabaseItem>(pub i32, std::marker::PhantomData<T>);
+impl<T: DatabaseItem> DatabaseItemId<T> {
+    pub fn new(id: i32) -> Self {
+        Self(id, Default::default())
+    }
+}
+impl<T: DatabaseItem> From<i32> for DatabaseItemId<T> {
+    fn from(x: i32) -> Self {
+        Self::new(x)
+    }
+}
+impl<T: DatabaseItem> From<DatabaseItemId<T>> for i32 {
+    fn from(x: DatabaseItemId<T>) -> Self {
+        x.0
+    }
+}
+impl<T: DatabaseItem> serde::Serialize for DatabaseItemId<T> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
@@ -15,18 +31,26 @@ impl<T> serde::Serialize for DatabaseItemId<T> {
         self.0.serialize(serializer)
     }
 }
-impl<T> PartialEq for DatabaseItemId<T> {
+impl<T: DatabaseItem> PartialEq for DatabaseItemId<T> {
     fn eq(&self, other: &Self) -> bool {
         self.0 == other.0
     }
 }
-impl<T> Eq for DatabaseItemId<T> {}
-impl<T> Clone for DatabaseItemId<T> {
+impl<T: DatabaseItem> Eq for DatabaseItemId<T> {}
+impl<T: DatabaseItem> Clone for DatabaseItemId<T> {
     fn clone(&self) -> Self {
         Self(self.0, Default::default())
     }
 }
-impl<T> Copy for DatabaseItemId<T> {}
+impl<T: DatabaseItem> Copy for DatabaseItemId<T> {}
+impl<T: DatabaseItem> std::fmt::Debug for DatabaseItemId<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_tuple(&format!("DatabaseItemId::<{}>", T::type_name()))
+            .field(&self.0)
+            .field(&format_args!("_"))
+            .finish()
+    }
+}
 
 // /home/juh9870/shared_projects/event-horizon-main/Assets/Modules/Database/.Schema/v1/Enums/ActivationType.xml
 #[repr(i32)]
@@ -36,6 +60,12 @@ pub enum ActivationType {
     None,
     Manual,
     Mixed,
+}
+impl DatabaseItem for ActivationType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "ActivationType"
+    }
 }
 impl serde::Serialize for ActivationType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -57,6 +87,12 @@ pub enum AiDifficultyLevel {
     Medium = 1i32,
     ///2
     Hard = 2i32,
+}
+impl DatabaseItem for AiDifficultyLevel {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "AiDifficultyLevel"
+    }
 }
 impl serde::Serialize for AiDifficultyLevel {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -80,6 +116,12 @@ pub enum AiWeaponCategory {
     Damage = 2i32,
     ///3
     CaptureDrone = 3i32,
+}
+impl DatabaseItem for AiWeaponCategory {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "AiWeaponCategory"
+    }
 }
 impl serde::Serialize for AiWeaponCategory {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -254,6 +296,12 @@ pub enum BehaviorNodeType {
     ///310
     ForgetSavedTarget = 310i32,
 }
+impl DatabaseItem for BehaviorNodeType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorNodeType"
+    }
+}
 impl serde::Serialize for BehaviorNodeType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -309,6 +357,12 @@ pub enum BehaviorRequirementType {
     ///102
     HasHighRammingDamage = 102i32,
 }
+impl DatabaseItem for BehaviorRequirementType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorRequirementType"
+    }
+}
 impl serde::Serialize for BehaviorRequirementType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -333,6 +387,12 @@ pub enum NodeExecutionMode {
     Infinitely = 3i32,
     ///4
     OneTime = 4i32,
+}
+impl DatabaseItem for NodeExecutionMode {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "NodeExecutionMode"
+    }
 }
 impl serde::Serialize for NodeExecutionMode {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -381,6 +441,12 @@ pub enum AmmunitionClassObsolete {
     ClusterMissile,
     HomingCarrier,
 }
+impl DatabaseItem for AmmunitionClassObsolete {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "AmmunitionClassObsolete"
+    }
+}
 impl serde::Serialize for AmmunitionClassObsolete {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -408,6 +474,12 @@ pub enum Availability {
     ///5
     LootOnly = 5i32,
 }
+impl DatabaseItem for Availability {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "Availability"
+    }
+}
 impl serde::Serialize for Availability {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -434,6 +506,12 @@ pub enum CellType {
     InnerOuter = 51u32,
     ///'5'
     Engine = 53u32,
+}
+impl DatabaseItem for CellType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "CellType"
+    }
 }
 impl serde::Serialize for CellType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -467,6 +545,12 @@ pub enum ComponentCategory {
     Drones,
     Special,
 }
+impl DatabaseItem for ComponentCategory {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "ComponentCategory"
+    }
+}
 impl serde::Serialize for ComponentCategory {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -485,6 +569,12 @@ pub enum ComponentStatsType {
     PerComponent = 0i32,
     ///1
     PerOneCell = 1i32,
+}
+impl DatabaseItem for ComponentStatsType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "ComponentStatsType"
+    }
 }
 impl serde::Serialize for ComponentStatsType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -522,6 +612,12 @@ pub enum DeviceClass {
     DroneCamouflage,
     MissileCamouflage,
 }
+impl DatabaseItem for DeviceClass {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "DeviceClass"
+    }
+}
 impl serde::Serialize for DeviceClass {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -542,6 +638,12 @@ pub enum DifficultyClass {
     Class1 = 1i32,
     ///2
     Class2 = 2i32,
+}
+impl DatabaseItem for DifficultyClass {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "DifficultyClass"
+    }
 }
 impl serde::Serialize for DifficultyClass {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -636,6 +738,12 @@ pub enum ItemType {
     ///112
     MusicPlaylist = 112i32,
 }
+impl DatabaseItem for ItemType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "ItemType"
+    }
+}
 impl serde::Serialize for ItemType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -663,6 +771,12 @@ pub enum ModificationQuality {
     ///5
     P3 = 5i32,
 }
+impl DatabaseItem for ModificationQuality {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "ModificationQuality"
+    }
+}
 impl serde::Serialize for ModificationQuality {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -686,6 +800,12 @@ pub enum ObjectPrefabType {
     ///3
     CircularOutlineObject = 3i32,
 }
+impl DatabaseItem for ObjectPrefabType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "ObjectPrefabType"
+    }
+}
 impl serde::Serialize for ObjectPrefabType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -708,6 +828,12 @@ pub enum FactionFilterType {
     StarOwnersAndList = 2i32,
     ///3
     AllAvailable = 3i32,
+}
+impl DatabaseItem for FactionFilterType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "FactionFilterType"
+    }
 }
 impl serde::Serialize for FactionFilterType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -757,6 +883,12 @@ pub enum LootItemType {
     ResearchPoints = 41i32,
     ///45
     Satellite = 45i32,
+}
+impl DatabaseItem for LootItemType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "LootItemType"
+    }
 }
 impl serde::Serialize for LootItemType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -833,6 +965,12 @@ pub enum NodeType {
     ///62
     ChangeFaction = 62i32,
 }
+impl DatabaseItem for NodeType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "NodeType"
+    }
+}
 impl serde::Serialize for NodeType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -856,6 +994,12 @@ pub enum PlayerShipSelectionMode {
     ///3
     NoRetreats = 3i32,
 }
+impl DatabaseItem for PlayerShipSelectionMode {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "PlayerShipSelectionMode"
+    }
+}
 impl serde::Serialize for PlayerShipSelectionMode {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -875,6 +1019,12 @@ pub enum QuestOriginType {
     RandomFactionBase,
     HomeStar,
     RandomStar,
+}
+impl DatabaseItem for QuestOriginType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "QuestOriginType"
+    }
 }
 impl serde::Serialize for QuestOriginType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -901,6 +1051,12 @@ pub enum QuestType {
     ///4
     Urgent = 4i32,
 }
+impl DatabaseItem for QuestType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "QuestType"
+    }
+}
 impl serde::Serialize for QuestType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -923,6 +1079,12 @@ pub enum RequiredViewMode {
     StarMap = 2i32,
     ///3
     GalaxyMap = 3i32,
+}
+impl DatabaseItem for RequiredViewMode {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "RequiredViewMode"
+    }
 }
 impl serde::Serialize for RequiredViewMode {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -981,6 +1143,12 @@ pub enum RequirementType {
     ///41
     TimeSinceLastCompletion = 41i32,
 }
+impl DatabaseItem for RequirementType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "RequirementType"
+    }
+}
 impl serde::Serialize for RequirementType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -1001,6 +1169,12 @@ pub enum RewardCondition {
     Always = 1i32,
     ///2
     Never = 2i32,
+}
+impl DatabaseItem for RewardCondition {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "RewardCondition"
+    }
 }
 impl serde::Serialize for RewardCondition {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -1033,6 +1207,12 @@ pub enum StartCondition {
     ///7
     Daily = 7i32,
 }
+impl DatabaseItem for StartCondition {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "StartCondition"
+    }
+}
 impl serde::Serialize for StartCondition {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -1054,6 +1234,12 @@ pub enum TimeOutMode {
     ///2
     CallNextEnemyOrDraw = 2i32,
 }
+impl DatabaseItem for TimeOutMode {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "TimeOutMode"
+    }
+}
 impl serde::Serialize for TimeOutMode {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -1072,6 +1258,12 @@ pub enum ShipRarity {
     Rare,
     Hidden,
     Unique,
+}
+impl DatabaseItem for ShipRarity {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "ShipRarity"
+    }
 }
 impl serde::Serialize for ShipRarity {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -1097,6 +1289,12 @@ pub enum ShipType {
     Special = 3i32,
     ///4
     Flagship = 4i32,
+}
+impl DatabaseItem for ShipType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "ShipType"
+    }
 }
 impl serde::Serialize for ShipType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -1126,6 +1324,12 @@ pub enum SizeClass {
     Titan = 4i32,
     ///5
     Starbase = 5i32,
+}
+impl DatabaseItem for SizeClass {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "SizeClass"
+    }
 }
 impl serde::Serialize for SizeClass {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -1163,6 +1367,12 @@ pub enum SkillType {
     SalvageDrones = 9i32,
     ///10
     Engineer = 10i32,
+}
+impl DatabaseItem for SkillType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "SkillType"
+    }
 }
 impl serde::Serialize for SkillType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -1231,6 +1441,12 @@ pub enum StatModificationType {
     ///62
     ExtraHitPoints = 62i32,
 }
+impl DatabaseItem for StatModificationType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "StatModificationType"
+    }
+}
 impl serde::Serialize for StatModificationType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -1248,6 +1464,12 @@ pub enum TechType {
     Component,
     Ship,
     Satellite,
+}
+impl DatabaseItem for TechType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "TechType"
+    }
 }
 impl serde::Serialize for TechType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -1268,6 +1490,12 @@ pub enum AiBulletBehavior {
     Beam,
     AreaOfEffect,
 }
+impl DatabaseItem for AiBulletBehavior {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "AiBulletBehavior"
+    }
+}
 impl serde::Serialize for AiBulletBehavior {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -1286,6 +1514,12 @@ pub enum BulletControllerType {
     Homing,
     Beam,
     Parametric,
+}
+impl DatabaseItem for BulletControllerType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BulletControllerType"
+    }
 }
 impl serde::Serialize for BulletControllerType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -1308,6 +1542,12 @@ pub enum BulletEffectType {
     SpawnStaticSfx,
     GravityField,
 }
+impl DatabaseItem for BulletEffectType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BulletEffectType"
+    }
+}
 impl serde::Serialize for BulletEffectType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -1325,6 +1565,12 @@ pub enum BulletImpactType {
     HitFirstTarget,
     HitAllTargets,
     DamageOverTime,
+}
+impl DatabaseItem for BulletImpactType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BulletImpactType"
+    }
 }
 impl serde::Serialize for BulletImpactType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -1350,6 +1596,12 @@ pub enum BulletShape {
     Wave,
     BlackHole,
 }
+impl DatabaseItem for BulletShape {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BulletShape"
+    }
+}
 impl serde::Serialize for BulletShape {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -1374,6 +1626,12 @@ pub enum BulletTriggerCondition {
     OutOfAmmo,
     Cooldown,
 }
+impl DatabaseItem for BulletTriggerCondition {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BulletTriggerCondition"
+    }
+}
 impl serde::Serialize for BulletTriggerCondition {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -1394,6 +1652,12 @@ pub enum BulletTypeObsolete {
     Continuous,
     Magnetic,
 }
+impl DatabaseItem for BulletTypeObsolete {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BulletTypeObsolete"
+    }
+}
 impl serde::Serialize for BulletTypeObsolete {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -1413,6 +1677,12 @@ pub enum ColorMode {
     Blend,
     Multiply,
 }
+impl DatabaseItem for ColorMode {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "ColorMode"
+    }
+}
 impl serde::Serialize for ColorMode {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -1431,6 +1701,12 @@ pub enum DamageType {
     Energy,
     Heat,
     Direct,
+}
+impl DatabaseItem for DamageType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "DamageType"
+    }
 }
 impl serde::Serialize for DamageType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -1460,6 +1736,12 @@ pub enum ImpactEffectType {
     DrainShield,
     DriveDronesCrazy,
 }
+impl DatabaseItem for ImpactEffectType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "ImpactEffectType"
+    }
+}
 impl serde::Serialize for ImpactEffectType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -1484,6 +1766,12 @@ pub enum VisualEffectType {
     Lightning,
     LightningStrike,
 }
+impl DatabaseItem for VisualEffectType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "VisualEffectType"
+    }
+}
 impl serde::Serialize for VisualEffectType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -1504,6 +1792,12 @@ pub enum WeaponClass {
     MashineGun,
     MultiShot,
     RequiredCharging,
+}
+impl DatabaseItem for WeaponClass {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "WeaponClass"
+    }
 }
 impl serde::Serialize for WeaponClass {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -1530,6 +1824,12 @@ pub enum WeaponSlotType {
     Laser = 76u32,
     ///'S'
     Special = 83u32,
+}
+impl DatabaseItem for WeaponSlotType {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "WeaponSlotType"
+    }
 }
 impl serde::Serialize for WeaponSlotType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -1653,7 +1953,8 @@ impl From<BehaviorNodeRequirementHasChargeableWeapon> for BehaviorNodeRequiremen
         Self::HasChargeableWeapon(item)
     }
 }
-impl From<BehaviorNodeRequirementHasRemotelyControlledWeapon> for BehaviorNodeRequirement {
+impl From<BehaviorNodeRequirementHasRemotelyControlledWeapon>
+for BehaviorNodeRequirement {
     fn from(item: BehaviorNodeRequirementHasRemotelyControlledWeapon) -> Self {
         Self::HasRemotelyControlledWeapon(item)
     }
@@ -1689,130 +1990,95 @@ impl From<BehaviorNodeRequirementHasHighRammingDamage> for BehaviorNodeRequireme
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorNodeRequirementSizeClass {
-    pub r#size_class: SizeClass,
+pub struct BehaviorNodeRequirementNone {
+    pub r#requirements: Vec<BehaviorNodeRequirement>,
 }
-impl BehaviorNodeRequirementSizeClass {
+impl BehaviorNodeRequirementNone {
     fn new() -> Self {
         Self {
-            r#size_class: Default::default(),
+            r#requirements: Default::default(),
         }
     }
-    pub fn with_size_class(mut self, r#size_class: SizeClass) -> Self {
-        self.r#size_class = r#size_class;
+    pub fn with_requirements(
+        mut self,
+        r#requirements: Vec<BehaviorNodeRequirement>,
+    ) -> Self {
+        self.r#requirements = r#requirements;
         self
     }
 }
-impl DatabaseItem for BehaviorNodeRequirementSizeClass {
+impl DatabaseItem for BehaviorNodeRequirementNone {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementNone"
+    }
 }
-impl Default for BehaviorNodeRequirementSizeClass {
+impl Default for BehaviorNodeRequirementNone {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorNodeRequirementHasDrones {}
-impl BehaviorNodeRequirementHasDrones {
+pub struct BehaviorNodeRequirementEmpty {}
+impl BehaviorNodeRequirementEmpty {
     fn new() -> Self {
         Self {}
     }
 }
-impl DatabaseItem for BehaviorNodeRequirementHasDrones {
+impl DatabaseItem for BehaviorNodeRequirementEmpty {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementEmpty"
+    }
 }
-impl Default for BehaviorNodeRequirementHasDrones {
+impl Default for BehaviorNodeRequirementEmpty {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorNodeRequirementMinAiLevel {
-    pub r#difficulty_level: AiDifficultyLevel,
+pub struct BehaviorNodeRequirementAny {
+    pub r#requirements: Vec<BehaviorNodeRequirement>,
 }
-impl BehaviorNodeRequirementMinAiLevel {
+impl BehaviorNodeRequirementAny {
     fn new() -> Self {
         Self {
-            r#difficulty_level: Default::default(),
+            r#requirements: Default::default(),
         }
     }
-    pub fn with_difficulty_level(mut self, r#difficulty_level: AiDifficultyLevel) -> Self {
-        self.r#difficulty_level = r#difficulty_level;
+    pub fn with_requirements(
+        mut self,
+        r#requirements: Vec<BehaviorNodeRequirement>,
+    ) -> Self {
+        self.r#requirements = r#requirements;
         self
     }
 }
-impl DatabaseItem for BehaviorNodeRequirementMinAiLevel {
+impl DatabaseItem for BehaviorNodeRequirementAny {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementAny"
+    }
 }
-impl Default for BehaviorNodeRequirementMinAiLevel {
+impl Default for BehaviorNodeRequirementAny {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorNodeRequirementHasAnyWeapon {}
-impl BehaviorNodeRequirementHasAnyWeapon {
+pub struct BehaviorNodeRequirementHasHighRecoilWeapon {}
+impl BehaviorNodeRequirementHasHighRecoilWeapon {
     fn new() -> Self {
         Self {}
     }
 }
-impl DatabaseItem for BehaviorNodeRequirementHasAnyWeapon {
+impl DatabaseItem for BehaviorNodeRequirementHasHighRecoilWeapon {
     fn validate(&mut self) {}
-}
-impl Default for BehaviorNodeRequirementHasAnyWeapon {
-    fn default() -> Self {
-        Self::new()
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementHasHighRecoilWeapon"
     }
 }
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorNodeRequirementIsDrone {}
-impl BehaviorNodeRequirementIsDrone {
-    fn new() -> Self {
-        Self {}
-    }
-}
-impl DatabaseItem for BehaviorNodeRequirementIsDrone {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorNodeRequirementIsDrone {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorNodeRequirementAiLevel {
-    pub r#difficulty_level: AiDifficultyLevel,
-}
-impl BehaviorNodeRequirementAiLevel {
-    fn new() -> Self {
-        Self {
-            r#difficulty_level: Default::default(),
-        }
-    }
-    pub fn with_difficulty_level(mut self, r#difficulty_level: AiDifficultyLevel) -> Self {
-        self.r#difficulty_level = r#difficulty_level;
-        self
-    }
-}
-impl DatabaseItem for BehaviorNodeRequirementAiLevel {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorNodeRequirementAiLevel {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorNodeRequirementHasEngine {}
-impl BehaviorNodeRequirementHasEngine {
-    fn new() -> Self {
-        Self {}
-    }
-}
-impl DatabaseItem for BehaviorNodeRequirementHasEngine {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorNodeRequirementHasEngine {
+impl Default for BehaviorNodeRequirementHasHighRecoilWeapon {
     fn default() -> Self {
         Self::new()
     }
@@ -1834,13 +2100,14 @@ impl DatabaseItem for BehaviorNodeRequirementHasHighManeuverability {
     fn validate(&mut self) {
         if self.r#value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                min = 0f32,
+                field = "r#value", value = self.r#value, min = 0f32,
                 "Field got truncated"
             );
             self.r#value = 0f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementHasHighManeuverability"
     }
 }
 impl Default for BehaviorNodeRequirementHasHighManeuverability {
@@ -1849,92 +2116,80 @@ impl Default for BehaviorNodeRequirementHasHighManeuverability {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorNodeRequirementNone {
-    pub r#requirements: Vec<BehaviorNodeRequirement>,
+pub struct BehaviorNodeRequirementCanRepairAllies {}
+impl BehaviorNodeRequirementCanRepairAllies {
+    fn new() -> Self {
+        Self {}
+    }
 }
-impl BehaviorNodeRequirementNone {
+impl DatabaseItem for BehaviorNodeRequirementCanRepairAllies {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementCanRepairAllies"
+    }
+}
+impl Default for BehaviorNodeRequirementCanRepairAllies {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorNodeRequirementMinAiLevel {
+    pub r#difficulty_level: AiDifficultyLevel,
+}
+impl BehaviorNodeRequirementMinAiLevel {
     fn new() -> Self {
         Self {
-            r#requirements: Default::default(),
+            r#difficulty_level: Default::default(),
         }
     }
-    pub fn with_requirements(mut self, r#requirements: Vec<BehaviorNodeRequirement>) -> Self {
-        self.r#requirements = r#requirements;
+    pub fn with_difficulty_level(
+        mut self,
+        r#difficulty_level: AiDifficultyLevel,
+    ) -> Self {
+        self.r#difficulty_level = r#difficulty_level;
         self
     }
 }
-impl DatabaseItem for BehaviorNodeRequirementNone {
+impl DatabaseItem for BehaviorNodeRequirementMinAiLevel {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementMinAiLevel"
+    }
 }
-impl Default for BehaviorNodeRequirementNone {
+impl Default for BehaviorNodeRequirementMinAiLevel {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorNodeRequirementAny {
-    pub r#requirements: Vec<BehaviorNodeRequirement>,
+pub struct BehaviorNodeRequirementHasKineticResistance {
+    pub r#value: f32,
 }
-impl BehaviorNodeRequirementAny {
+impl BehaviorNodeRequirementHasKineticResistance {
     fn new() -> Self {
-        Self {
-            r#requirements: Default::default(),
-        }
+        Self { r#value: 1f32 }
     }
-    pub fn with_requirements(mut self, r#requirements: Vec<BehaviorNodeRequirement>) -> Self {
-        self.r#requirements = r#requirements;
+    pub fn with_value(mut self, r#value: f32) -> Self {
+        self.r#value = r#value;
         self
     }
 }
-impl DatabaseItem for BehaviorNodeRequirementAny {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorNodeRequirementAny {
-    fn default() -> Self {
-        Self::new()
+impl DatabaseItem for BehaviorNodeRequirementHasKineticResistance {
+    fn validate(&mut self) {
+        if self.r#value < (0f32 as f32) {
+            tracing::warn!(
+                field = "r#value", value = self.r#value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#value = 0f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementHasKineticResistance"
     }
 }
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorNodeRequirementHasRemotelyControlledWeapon {}
-impl BehaviorNodeRequirementHasRemotelyControlledWeapon {
-    fn new() -> Self {
-        Self {}
-    }
-}
-impl DatabaseItem for BehaviorNodeRequirementHasRemotelyControlledWeapon {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorNodeRequirementHasRemotelyControlledWeapon {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorNodeRequirementHasHighRecoilWeapon {}
-impl BehaviorNodeRequirementHasHighRecoilWeapon {
-    fn new() -> Self {
-        Self {}
-    }
-}
-impl DatabaseItem for BehaviorNodeRequirementHasHighRecoilWeapon {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorNodeRequirementHasHighRecoilWeapon {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorNodeRequirementEmpty {}
-impl BehaviorNodeRequirementEmpty {
-    fn new() -> Self {
-        Self {}
-    }
-}
-impl DatabaseItem for BehaviorNodeRequirementEmpty {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorNodeRequirementEmpty {
+impl Default for BehaviorNodeRequirementHasKineticResistance {
     fn default() -> Self {
         Self::new()
     }
@@ -1956,8 +2211,58 @@ impl BehaviorNodeRequirementHasDevice {
 }
 impl DatabaseItem for BehaviorNodeRequirementHasDevice {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementHasDevice"
+    }
 }
 impl Default for BehaviorNodeRequirementHasDevice {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorNodeRequirementHasAnyWeapon {}
+impl BehaviorNodeRequirementHasAnyWeapon {
+    fn new() -> Self {
+        Self {}
+    }
+}
+impl DatabaseItem for BehaviorNodeRequirementHasAnyWeapon {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementHasAnyWeapon"
+    }
+}
+impl Default for BehaviorNodeRequirementHasAnyWeapon {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorNodeRequirementAll {
+    pub r#requirements: Vec<BehaviorNodeRequirement>,
+}
+impl BehaviorNodeRequirementAll {
+    fn new() -> Self {
+        Self {
+            r#requirements: Default::default(),
+        }
+    }
+    pub fn with_requirements(
+        mut self,
+        r#requirements: Vec<BehaviorNodeRequirement>,
+    ) -> Self {
+        self.r#requirements = r#requirements;
+        self
+    }
+}
+impl DatabaseItem for BehaviorNodeRequirementAll {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementAll"
+    }
+}
+impl Default for BehaviorNodeRequirementAll {
     fn default() -> Self {
         Self::new()
     }
@@ -1981,13 +2286,14 @@ impl DatabaseItem for BehaviorNodeRequirementHasHighRammingDamage {
     fn validate(&mut self) {
         if self.r#value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                min = 0f32,
+                field = "r#value", value = self.r#value, min = 0f32,
                 "Field got truncated"
             );
             self.r#value = 0f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementHasHighRammingDamage"
     }
 }
 impl Default for BehaviorNodeRequirementHasHighRammingDamage {
@@ -1996,70 +2302,37 @@ impl Default for BehaviorNodeRequirementHasHighRammingDamage {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorNodeRequirementAll {
-    pub r#requirements: Vec<BehaviorNodeRequirement>,
-}
-impl BehaviorNodeRequirementAll {
-    fn new() -> Self {
-        Self {
-            r#requirements: Default::default(),
-        }
-    }
-    pub fn with_requirements(mut self, r#requirements: Vec<BehaviorNodeRequirement>) -> Self {
-        self.r#requirements = r#requirements;
-        self
-    }
-}
-impl DatabaseItem for BehaviorNodeRequirementAll {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorNodeRequirementAll {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorNodeRequirementHasKineticResistance {
-    pub r#value: f32,
-}
-impl BehaviorNodeRequirementHasKineticResistance {
-    fn new() -> Self {
-        Self { r#value: 1f32 }
-    }
-    pub fn with_value(mut self, r#value: f32) -> Self {
-        self.r#value = r#value;
-        self
-    }
-}
-impl DatabaseItem for BehaviorNodeRequirementHasKineticResistance {
-    fn validate(&mut self) {
-        if self.r#value < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#value = 0f32 as f32;
-        }
-    }
-}
-impl Default for BehaviorNodeRequirementHasKineticResistance {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorNodeRequirementCanRepairAllies {}
-impl BehaviorNodeRequirementCanRepairAllies {
+pub struct BehaviorNodeRequirementIsDrone {}
+impl BehaviorNodeRequirementIsDrone {
     fn new() -> Self {
         Self {}
     }
 }
-impl DatabaseItem for BehaviorNodeRequirementCanRepairAllies {
+impl DatabaseItem for BehaviorNodeRequirementIsDrone {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementIsDrone"
+    }
 }
-impl Default for BehaviorNodeRequirementCanRepairAllies {
+impl Default for BehaviorNodeRequirementIsDrone {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorNodeRequirementHasDrones {}
+impl BehaviorNodeRequirementHasDrones {
+    fn new() -> Self {
+        Self {}
+    }
+}
+impl DatabaseItem for BehaviorNodeRequirementHasDrones {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementHasDrones"
+    }
+}
+impl Default for BehaviorNodeRequirementHasDrones {
     fn default() -> Self {
         Self::new()
     }
@@ -2073,6 +2346,9 @@ impl BehaviorNodeRequirementHasChargeableWeapon {
 }
 impl DatabaseItem for BehaviorNodeRequirementHasChargeableWeapon {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementHasChargeableWeapon"
+    }
 }
 impl Default for BehaviorNodeRequirementHasChargeableWeapon {
     fn default() -> Self {
@@ -2098,18 +2374,139 @@ impl DatabaseItem for BehaviorNodeRequirementHasLongRangeWeapon {
     fn validate(&mut self) {
         if self.r#value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                min = 0f32,
+                field = "r#value", value = self.r#value, min = 0f32,
                 "Field got truncated"
             );
             self.r#value = 0f32 as f32;
         }
     }
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementHasLongRangeWeapon"
+    }
 }
 impl Default for BehaviorNodeRequirementHasLongRangeWeapon {
     fn default() -> Self {
         Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorNodeRequirementSizeClass {
+    pub r#size_class: SizeClass,
+}
+impl BehaviorNodeRequirementSizeClass {
+    fn new() -> Self {
+        Self {
+            r#size_class: Default::default(),
+        }
+    }
+    pub fn with_size_class(mut self, r#size_class: SizeClass) -> Self {
+        self.r#size_class = r#size_class;
+        self
+    }
+}
+impl DatabaseItem for BehaviorNodeRequirementSizeClass {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementSizeClass"
+    }
+}
+impl Default for BehaviorNodeRequirementSizeClass {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorNodeRequirementHasRemotelyControlledWeapon {}
+impl BehaviorNodeRequirementHasRemotelyControlledWeapon {
+    fn new() -> Self {
+        Self {}
+    }
+}
+impl DatabaseItem for BehaviorNodeRequirementHasRemotelyControlledWeapon {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementHasRemotelyControlledWeapon"
+    }
+}
+impl Default for BehaviorNodeRequirementHasRemotelyControlledWeapon {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorNodeRequirementHasEngine {}
+impl BehaviorNodeRequirementHasEngine {
+    fn new() -> Self {
+        Self {}
+    }
+}
+impl DatabaseItem for BehaviorNodeRequirementHasEngine {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementHasEngine"
+    }
+}
+impl Default for BehaviorNodeRequirementHasEngine {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorNodeRequirementAiLevel {
+    pub r#difficulty_level: AiDifficultyLevel,
+}
+impl BehaviorNodeRequirementAiLevel {
+    fn new() -> Self {
+        Self {
+            r#difficulty_level: Default::default(),
+        }
+    }
+    pub fn with_difficulty_level(
+        mut self,
+        r#difficulty_level: AiDifficultyLevel,
+    ) -> Self {
+        self.r#difficulty_level = r#difficulty_level;
+        self
+    }
+}
+impl DatabaseItem for BehaviorNodeRequirementAiLevel {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirementAiLevel"
+    }
+}
+impl Default for BehaviorNodeRequirementAiLevel {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+impl DatabaseItem for BehaviorNodeRequirement {
+    fn validate(&mut self) {
+        match self {
+            Self::Empty(x) => x.validate(),
+            Self::Any(x) => x.validate(),
+            Self::All(x) => x.validate(),
+            Self::None(x) => x.validate(),
+            Self::AiLevel(x) => x.validate(),
+            Self::MinAiLevel(x) => x.validate(),
+            Self::SizeClass(x) => x.validate(),
+            Self::HasDevice(x) => x.validate(),
+            Self::HasDrones(x) => x.validate(),
+            Self::HasAnyWeapon(x) => x.validate(),
+            Self::CanRepairAllies(x) => x.validate(),
+            Self::HasHighRecoilWeapon(x) => x.validate(),
+            Self::HasChargeableWeapon(x) => x.validate(),
+            Self::HasRemotelyControlledWeapon(x) => x.validate(),
+            Self::HasLongRangeWeapon(x) => x.validate(),
+            Self::HasEngine(x) => x.validate(),
+            Self::IsDrone(x) => x.validate(),
+            Self::HasKineticResistance(x) => x.validate(),
+            Self::HasHighManeuverability(x) => x.validate(),
+            Self::HasHighRammingDamage(x) => x.validate(),
+        }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorNodeRequirement"
     }
 }
 
@@ -2766,120 +3163,117 @@ impl BehaviorTreeNode {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeFailure {
+pub struct BehaviorTreeNodeRam {
     pub r#requirement: BehaviorNodeRequirement,
+    pub r#use_systems: bool,
 }
-impl BehaviorTreeNodeFailure {
+impl BehaviorTreeNodeRam {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
+            r#use_systems: Default::default(),
         }
     }
     pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
         self.r#requirement = r#requirement;
         self
     }
+    pub fn with_use_systems(mut self, r#use_systems: bool) -> Self {
+        self.r#use_systems = r#use_systems;
+        self
+    }
 }
-impl DatabaseItem for BehaviorTreeNodeFailure {
+impl DatabaseItem for BehaviorTreeNodeRam {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeRam"
+    }
 }
-impl Default for BehaviorTreeNodeFailure {
+impl Default for BehaviorTreeNodeRam {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeMainTargetWithinAttackRange {
+pub struct BehaviorTreeNodeSpawnDrones {
     pub r#requirement: BehaviorNodeRequirement,
-    pub r#min_value: f32,
 }
-impl BehaviorTreeNodeMainTargetWithinAttackRange {
+impl BehaviorTreeNodeSpawnDrones {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
-            r#min_value: 1f32,
         }
     }
     pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
         self.r#requirement = r#requirement;
         self
     }
-    pub fn with_min_value(mut self, r#min_value: f32) -> Self {
-        self.r#min_value = r#min_value;
-        self
+}
+impl DatabaseItem for BehaviorTreeNodeSpawnDrones {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeSpawnDrones"
     }
 }
-impl DatabaseItem for BehaviorTreeNodeMainTargetWithinAttackRange {
-    fn validate(&mut self) {
-        if self.r#min_value < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 0f32 as f32;
-        }
-        if self.r#min_value > (1f32 as f32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 1f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 1f32 as f32;
-        }
-    }
-}
-impl Default for BehaviorTreeNodeMainTargetWithinAttackRange {
+impl Default for BehaviorTreeNodeSpawnDrones {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeMatchVelocityWithTarget {
+pub struct BehaviorTreeNodeVanish {
     pub r#requirement: BehaviorNodeRequirement,
-    pub r#max_value: f32,
 }
-impl BehaviorTreeNodeMatchVelocityWithTarget {
+impl BehaviorTreeNodeVanish {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
-            r#max_value: 0.2f32,
         }
     }
     pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
         self.r#requirement = r#requirement;
         self
     }
-    pub fn with_max_value(mut self, r#max_value: f32) -> Self {
-        self.r#max_value = r#max_value;
+}
+impl DatabaseItem for BehaviorTreeNodeVanish {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeVanish"
+    }
+}
+impl Default for BehaviorTreeNodeVanish {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeHasSavedTarget {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#text: String,
+}
+impl BehaviorTreeNodeHasSavedTarget {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#text: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_text(mut self, r#text: String) -> Self {
+        self.r#text = r#text;
         self
     }
 }
-impl DatabaseItem for BehaviorTreeNodeMatchVelocityWithTarget {
-    fn validate(&mut self) {
-        if self.r#max_value < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#max_value = 0f32 as f32;
-        }
-        if self.r#max_value > (1f32 as f32) {
-            tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                max = 1f32,
-                "Field got truncated"
-            );
-            self.r#max_value = 1f32 as f32;
-        }
+impl DatabaseItem for BehaviorTreeNodeHasSavedTarget {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeHasSavedTarget"
     }
 }
-impl Default for BehaviorTreeNodeMatchVelocityWithTarget {
+impl Default for BehaviorTreeNodeHasSavedTarget {
     fn default() -> Self {
         Self::new()
     }
@@ -2913,6 +3307,9 @@ impl BehaviorTreeNodeShowMessage {
 }
 impl DatabaseItem for BehaviorTreeNodeShowMessage {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeShowMessage"
+    }
 }
 impl Default for BehaviorTreeNodeShowMessage {
     fn default() -> Self {
@@ -2920,130 +3317,16 @@ impl Default for BehaviorTreeNodeShowMessage {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeHasIncomingThreat {
+pub struct BehaviorTreeNodeSetValue {
     pub r#requirement: BehaviorNodeRequirement,
-    pub r#cooldown: f32,
-}
-impl BehaviorTreeNodeHasIncomingThreat {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#cooldown: 5f32,
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_cooldown(mut self, r#cooldown: f32) -> Self {
-        self.r#cooldown = r#cooldown;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeHasIncomingThreat {
-    fn validate(&mut self) {
-        if self.r#cooldown < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#cooldown = 0f32 as f32;
-        }
-    }
-}
-impl Default for BehaviorTreeNodeHasIncomingThreat {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeSlowDown {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#max_value: f32,
-}
-impl BehaviorTreeNodeSlowDown {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#max_value: 0.2f32,
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_max_value(mut self, r#max_value: f32) -> Self {
-        self.r#max_value = r#max_value;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeSlowDown {
-    fn validate(&mut self) {
-        if self.r#max_value < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#max_value = 0f32 as f32;
-        }
-        if self.r#max_value > (1f32 as f32) {
-            tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                max = 1f32,
-                "Field got truncated"
-            );
-            self.r#max_value = 1f32 as f32;
-        }
-    }
-}
-impl Default for BehaviorTreeNodeSlowDown {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeActivateDevice {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#device_class: DeviceClass,
-}
-impl BehaviorTreeNodeActivateDevice {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#device_class: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_device_class(mut self, r#device_class: DeviceClass) -> Self {
-        self.r#device_class = r#device_class;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeActivateDevice {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeActivateDevice {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeGetValue {
-    pub r#requirement: BehaviorNodeRequirement,
+    pub r#result: bool,
     pub r#text: String,
 }
-impl BehaviorTreeNodeGetValue {
+impl BehaviorTreeNodeSetValue {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
+            r#result: Default::default(),
             r#text: Default::default(),
         }
     }
@@ -3051,33 +3334,8 @@ impl BehaviorTreeNodeGetValue {
         self.r#requirement = r#requirement;
         self
     }
-    pub fn with_text(mut self, r#text: String) -> Self {
-        self.r#text = r#text;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeGetValue {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeGetValue {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeLoadTarget {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#text: String,
-}
-impl BehaviorTreeNodeLoadTarget {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#text: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
+    pub fn with_result(mut self, r#result: bool) -> Self {
+        self.r#result = r#result;
         self
     }
     pub fn with_text(mut self, r#text: String) -> Self {
@@ -3085,55 +3343,13 @@ impl BehaviorTreeNodeLoadTarget {
         self
     }
 }
-impl DatabaseItem for BehaviorTreeNodeLoadTarget {
+impl DatabaseItem for BehaviorTreeNodeSetValue {
     fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeLoadTarget {
-    fn default() -> Self {
-        Self::new()
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeSetValue"
     }
 }
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeRandomSelector {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#nodes: Vec<BehaviorTreeNode>,
-    pub r#cooldown: f32,
-}
-impl BehaviorTreeNodeRandomSelector {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#nodes: Default::default(),
-            r#cooldown: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_nodes(mut self, r#nodes: Vec<BehaviorTreeNode>) -> Self {
-        self.r#nodes = r#nodes;
-        self
-    }
-    pub fn with_cooldown(mut self, r#cooldown: f32) -> Self {
-        self.r#cooldown = r#cooldown;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeRandomSelector {
-    fn validate(&mut self) {
-        if self.r#cooldown < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#cooldown = 0f32 as f32;
-        }
-    }
-}
-impl Default for BehaviorTreeNodeRandomSelector {
+impl Default for BehaviorTreeNodeSetValue {
     fn default() -> Self {
         Self::new()
     }
@@ -3155,6 +3371,9 @@ impl BehaviorTreeNodeDefendWithFronalShield {
 }
 impl DatabaseItem for BehaviorTreeNodeDefendWithFronalShield {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeDefendWithFronalShield"
+    }
 }
 impl Default for BehaviorTreeNodeDefendWithFronalShield {
     fn default() -> Self {
@@ -3162,169 +3381,99 @@ impl Default for BehaviorTreeNodeDefendWithFronalShield {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeSequence {
+pub struct BehaviorTreeNodeMessageReceived {
     pub r#requirement: BehaviorNodeRequirement,
-    pub r#nodes: Vec<BehaviorTreeNode>,
+    pub r#text: String,
 }
-impl BehaviorTreeNodeSequence {
+impl BehaviorTreeNodeMessageReceived {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
-            r#nodes: Default::default(),
+            r#text: Default::default(),
         }
     }
     pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
         self.r#requirement = r#requirement;
         self
     }
-    pub fn with_nodes(mut self, r#nodes: Vec<BehaviorTreeNode>) -> Self {
-        self.r#nodes = r#nodes;
+    pub fn with_text(mut self, r#text: String) -> Self {
+        self.r#text = r#text;
         self
     }
 }
-impl DatabaseItem for BehaviorTreeNodeSequence {
+impl DatabaseItem for BehaviorTreeNodeMessageReceived {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeMessageReceived"
+    }
 }
-impl Default for BehaviorTreeNodeSequence {
+impl Default for BehaviorTreeNodeMessageReceived {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeMainTargetIsAlly {
+pub struct BehaviorTreeNodeMothershipDistanceExceeded {
     pub r#requirement: BehaviorNodeRequirement,
+    pub r#max_value: f32,
 }
-impl BehaviorTreeNodeMainTargetIsAlly {
+impl BehaviorTreeNodeMothershipDistanceExceeded {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
+            r#max_value: Default::default(),
         }
     }
     pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
         self.r#requirement = r#requirement;
         self
     }
-}
-impl DatabaseItem for BehaviorTreeNodeMainTargetIsAlly {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeMainTargetIsAlly {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeSubTree {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#item_id: Option<BehaviorTreeId>,
-}
-impl BehaviorTreeNodeSubTree {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#item_id: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_item_id(mut self, r#item_id: Option<BehaviorTreeId>) -> Self {
-        self.r#item_id = r#item_id;
+    pub fn with_max_value(mut self, r#max_value: f32) -> Self {
+        self.r#max_value = r#max_value;
         self
     }
 }
-impl DatabaseItem for BehaviorTreeNodeSubTree {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeSubTree {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeIsLowOnHp {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#min_value: f32,
-}
-impl BehaviorTreeNodeIsLowOnHp {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#min_value: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_min_value(mut self, r#min_value: f32) -> Self {
-        self.r#min_value = r#min_value;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeIsLowOnHp {
+impl DatabaseItem for BehaviorTreeNodeMothershipDistanceExceeded {
     fn validate(&mut self) {
-        if self.r#min_value < (0f32 as f32) {
+        if self.r#max_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0f32,
+                field = "r#max_value", value = self.r#max_value, min = 0f32,
                 "Field got truncated"
             );
-            self.r#min_value = 0f32 as f32;
-        }
-        if self.r#min_value > (1f32 as f32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 1f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 1f32 as f32;
+            self.r#max_value = 0f32 as f32;
         }
     }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeMothershipDistanceExceeded"
+    }
 }
-impl Default for BehaviorTreeNodeIsLowOnHp {
+impl Default for BehaviorTreeNodeMothershipDistanceExceeded {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeLookForAdditionalTargets {
+pub struct BehaviorTreeNodeHasAdditionalTargets {
     pub r#requirement: BehaviorNodeRequirement,
-    pub r#cooldown: f32,
 }
-impl BehaviorTreeNodeLookForAdditionalTargets {
+impl BehaviorTreeNodeHasAdditionalTargets {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
-            r#cooldown: Default::default(),
         }
     }
     pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
         self.r#requirement = r#requirement;
         self
     }
-    pub fn with_cooldown(mut self, r#cooldown: f32) -> Self {
-        self.r#cooldown = r#cooldown;
-        self
+}
+impl DatabaseItem for BehaviorTreeNodeHasAdditionalTargets {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeHasAdditionalTargets"
     }
 }
-impl DatabaseItem for BehaviorTreeNodeLookForAdditionalTargets {
-    fn validate(&mut self) {
-        if self.r#cooldown < (0.1f32 as f32) {
-            tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                min = 0.1f32,
-                "Field got truncated"
-            );
-            self.r#cooldown = 0.1f32 as f32;
-        }
-    }
-}
-impl Default for BehaviorTreeNodeLookForAdditionalTargets {
+impl Default for BehaviorTreeNodeHasAdditionalTargets {
     fn default() -> Self {
         Self::new()
     }
@@ -3360,40 +3509,35 @@ impl DatabaseItem for BehaviorTreeNodeRechargeEnergy {
     fn validate(&mut self) {
         if self.r#min_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0f32,
+                field = "r#min_value", value = self.r#min_value, min = 0f32,
                 "Field got truncated"
             );
             self.r#min_value = 0f32 as f32;
         }
         if self.r#min_value > (1f32 as f32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 1f32,
+                field = "r#min_value", value = self.r#min_value, max = 1f32,
                 "Field got truncated"
             );
             self.r#min_value = 1f32 as f32;
         }
         if self.r#max_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = 0f32,
+                field = "r#max_value", value = self.r#max_value, min = 0f32,
                 "Field got truncated"
             );
             self.r#max_value = 0f32 as f32;
         }
         if self.r#max_value > (1f32 as f32) {
             tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                max = 1f32,
+                field = "r#max_value", value = self.r#max_value, max = 1f32,
                 "Field got truncated"
             );
             self.r#max_value = 1f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeRechargeEnergy"
     }
 }
 impl Default for BehaviorTreeNodeRechargeEnergy {
@@ -3402,351 +3546,59 @@ impl Default for BehaviorTreeNodeRechargeEnergy {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeParallel {
+pub struct BehaviorTreeNodeSustainAim {
     pub r#requirement: BehaviorNodeRequirement,
-    pub r#nodes: Vec<BehaviorTreeNode>,
 }
-impl BehaviorTreeNodeParallel {
+impl BehaviorTreeNodeSustainAim {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
-            r#nodes: Default::default(),
         }
     }
     pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
         self.r#requirement = r#requirement;
         self
     }
-    pub fn with_nodes(mut self, r#nodes: Vec<BehaviorTreeNode>) -> Self {
-        self.r#nodes = r#nodes;
-        self
-    }
 }
-impl DatabaseItem for BehaviorTreeNodeParallel {
+impl DatabaseItem for BehaviorTreeNodeSustainAim {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeSustainAim"
+    }
 }
-impl Default for BehaviorTreeNodeParallel {
+impl Default for BehaviorTreeNodeSustainAim {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeForgetMainTarget {
+pub struct BehaviorTreeNodeSelectWeapon {
     pub r#requirement: BehaviorNodeRequirement,
+    pub r#weapon_type: AiWeaponCategory,
 }
-impl BehaviorTreeNodeForgetMainTarget {
+impl BehaviorTreeNodeSelectWeapon {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
+            r#weapon_type: Default::default(),
         }
     }
     pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
         self.r#requirement = r#requirement;
         self
     }
+    pub fn with_weapon_type(mut self, r#weapon_type: AiWeaponCategory) -> Self {
+        self.r#weapon_type = r#weapon_type;
+        self
+    }
 }
-impl DatabaseItem for BehaviorTreeNodeForgetMainTarget {
+impl DatabaseItem for BehaviorTreeNodeSelectWeapon {
     fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeForgetMainTarget {
-    fn default() -> Self {
-        Self::new()
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeSelectWeapon"
     }
 }
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeAttackAdditionalTargets {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#in_range: bool,
-}
-impl BehaviorTreeNodeAttackAdditionalTargets {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#in_range: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_in_range(mut self, r#in_range: bool) -> Self {
-        self.r#in_range = r#in_range;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeAttackAdditionalTargets {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeAttackAdditionalTargets {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeTargetAllyStarbase {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeTargetAllyStarbase {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeTargetAllyStarbase {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeTargetAllyStarbase {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeMotherShipDestroyed {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeMotherShipDestroyed {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeMotherShipDestroyed {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeMotherShipDestroyed {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeMothershipLowHp {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#min_value: f32,
-}
-impl BehaviorTreeNodeMothershipLowHp {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#min_value: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_min_value(mut self, r#min_value: f32) -> Self {
-        self.r#min_value = r#min_value;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeMothershipLowHp {
-    fn validate(&mut self) {
-        if self.r#min_value < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 0f32 as f32;
-        }
-        if self.r#min_value > (1f32 as f32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 1f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 1f32 as f32;
-        }
-    }
-}
-impl Default for BehaviorTreeNodeMothershipLowHp {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeIfThenElse {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#nodes: Vec<BehaviorTreeNode>,
-}
-impl BehaviorTreeNodeIfThenElse {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#nodes: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_nodes(mut self, r#nodes: Vec<BehaviorTreeNode>) -> Self {
-        self.r#nodes = r#nodes;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeIfThenElse {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeIfThenElse {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeHasAdditionalTargets {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeHasAdditionalTargets {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeHasAdditionalTargets {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeHasAdditionalTargets {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeRam {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#use_systems: bool,
-}
-impl BehaviorTreeNodeRam {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#use_systems: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_use_systems(mut self, r#use_systems: bool) -> Self {
-        self.r#use_systems = r#use_systems;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeRam {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeRam {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeSuccess {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeSuccess {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeSuccess {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeSuccess {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeHasEnoughEnergy {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#min_value: f32,
-}
-impl BehaviorTreeNodeHasEnoughEnergy {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#min_value: 0.1f32,
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_min_value(mut self, r#min_value: f32) -> Self {
-        self.r#min_value = r#min_value;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeHasEnoughEnergy {
-    fn validate(&mut self) {
-        if self.r#min_value < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 0f32 as f32;
-        }
-        if self.r#min_value > (1f32 as f32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 1f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 1f32 as f32;
-        }
-    }
-}
-impl Default for BehaviorTreeNodeHasEnoughEnergy {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeChargeWeapons {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeChargeWeapons {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeChargeWeapons {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeChargeWeapons {
+impl Default for BehaviorTreeNodeSelectWeapon {
     fn default() -> Self {
         Self::new()
     }
@@ -3768,257 +3620,11 @@ impl BehaviorTreeNodeTargetMessageSender {
 }
 impl DatabaseItem for BehaviorTreeNodeTargetMessageSender {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeTargetMessageSender"
+    }
 }
 impl Default for BehaviorTreeNodeTargetMessageSender {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeTargetDistance {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#max_value: f32,
-}
-impl BehaviorTreeNodeTargetDistance {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#max_value: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_max_value(mut self, r#max_value: f32) -> Self {
-        self.r#max_value = r#max_value;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeTargetDistance {
-    fn validate(&mut self) {
-        if self.r#max_value < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#max_value = 0f32 as f32;
-        }
-    }
-}
-impl Default for BehaviorTreeNodeTargetDistance {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeMakeTargetMothership {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeMakeTargetMothership {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeMakeTargetMothership {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeMakeTargetMothership {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeIsControledByPlayer {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeIsControledByPlayer {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeIsControledByPlayer {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeIsControledByPlayer {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeIsFasterThanTarget {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#min_value: f32,
-}
-impl BehaviorTreeNodeIsFasterThanTarget {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#min_value: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_min_value(mut self, r#min_value: f32) -> Self {
-        self.r#min_value = r#min_value;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeIsFasterThanTarget {
-    fn validate(&mut self) {
-        if self.r#min_value < (1f32 as f32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 1f32 as f32;
-        }
-        if self.r#min_value > (10f32 as f32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 10f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 10f32 as f32;
-        }
-    }
-}
-impl Default for BehaviorTreeNodeIsFasterThanTarget {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeSpawnDrones {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeSpawnDrones {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeSpawnDrones {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeSpawnDrones {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeSelector {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#nodes: Vec<BehaviorTreeNode>,
-}
-impl BehaviorTreeNodeSelector {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#nodes: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_nodes(mut self, r#nodes: Vec<BehaviorTreeNode>) -> Self {
-        self.r#nodes = r#nodes;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeSelector {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeSelector {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeInvertor {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#node: Box<BehaviorTreeNode>,
-}
-impl BehaviorTreeNodeInvertor {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#node: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_node(mut self, r#node: Box<BehaviorTreeNode>) -> Self {
-        self.r#node = r#node;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeInvertor {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeInvertor {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeSetValue {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#result: bool,
-    pub r#text: String,
-}
-impl BehaviorTreeNodeSetValue {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#result: Default::default(),
-            r#text: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_result(mut self, r#result: bool) -> Self {
-        self.r#result = r#result;
-        self
-    }
-    pub fn with_text(mut self, r#text: String) -> Self {
-        self.r#text = r#text;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeSetValue {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeSetValue {
     fn default() -> Self {
         Self::new()
     }
@@ -4046,6 +3652,9 @@ impl BehaviorTreeNodeSaveTarget {
 }
 impl DatabaseItem for BehaviorTreeNodeSaveTarget {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeSaveTarget"
+    }
 }
 impl Default for BehaviorTreeNodeSaveTarget {
     fn default() -> Self {
@@ -4053,30 +3662,245 @@ impl Default for BehaviorTreeNodeSaveTarget {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeParallelSequence {
+pub struct BehaviorTreeNodeDebugLog {
     pub r#requirement: BehaviorNodeRequirement,
-    pub r#nodes: Vec<BehaviorTreeNode>,
+    pub r#text: String,
 }
-impl BehaviorTreeNodeParallelSequence {
+impl BehaviorTreeNodeDebugLog {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
-            r#nodes: Default::default(),
+            r#text: Default::default(),
         }
     }
     pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
         self.r#requirement = r#requirement;
         self
     }
-    pub fn with_nodes(mut self, r#nodes: Vec<BehaviorTreeNode>) -> Self {
-        self.r#nodes = r#nodes;
+    pub fn with_text(mut self, r#text: String) -> Self {
+        self.r#text = r#text;
         self
     }
 }
-impl DatabaseItem for BehaviorTreeNodeParallelSequence {
+impl DatabaseItem for BehaviorTreeNodeDebugLog {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeDebugLog"
+    }
 }
-impl Default for BehaviorTreeNodeParallelSequence {
+impl Default for BehaviorTreeNodeDebugLog {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeGetValue {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#text: String,
+}
+impl BehaviorTreeNodeGetValue {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#text: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_text(mut self, r#text: String) -> Self {
+        self.r#text = r#text;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeGetValue {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeGetValue"
+    }
+}
+impl Default for BehaviorTreeNodeGetValue {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeKeepDistance {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#min_value: f32,
+    pub r#max_value: f32,
+}
+impl BehaviorTreeNodeKeepDistance {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#min_value: 2.5f32,
+            r#max_value: 3.5f32,
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_min_value(mut self, r#min_value: f32) -> Self {
+        self.r#min_value = r#min_value;
+        self
+    }
+    pub fn with_max_value(mut self, r#max_value: f32) -> Self {
+        self.r#max_value = r#max_value;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeKeepDistance {
+    fn validate(&mut self) {
+        if self.r#min_value < (0f32 as f32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 0f32 as f32;
+        }
+        if self.r#min_value > (100f32 as f32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, max = 100f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 100f32 as f32;
+        }
+        if self.r#max_value < (0f32 as f32) {
+            tracing::warn!(
+                field = "r#max_value", value = self.r#max_value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#max_value = 0f32 as f32;
+        }
+        if self.r#max_value > (100f32 as f32) {
+            tracing::warn!(
+                field = "r#max_value", value = self.r#max_value, max = 100f32,
+                "Field got truncated"
+            );
+            self.r#max_value = 100f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeKeepDistance"
+    }
+}
+impl Default for BehaviorTreeNodeKeepDistance {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeHasIncomingThreat {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#cooldown: f32,
+}
+impl BehaviorTreeNodeHasIncomingThreat {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#cooldown: 5f32,
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_cooldown(mut self, r#cooldown: f32) -> Self {
+        self.r#cooldown = r#cooldown;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeHasIncomingThreat {
+    fn validate(&mut self) {
+        if self.r#cooldown < (0f32 as f32) {
+            tracing::warn!(
+                field = "r#cooldown", value = self.r#cooldown, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#cooldown = 0f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeHasIncomingThreat"
+    }
+}
+impl Default for BehaviorTreeNodeHasIncomingThreat {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeFailure {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeFailure {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeFailure {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeFailure"
+    }
+}
+impl Default for BehaviorTreeNodeFailure {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeIsLowOnHp {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#min_value: f32,
+}
+impl BehaviorTreeNodeIsLowOnHp {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#min_value: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_min_value(mut self, r#min_value: f32) -> Self {
+        self.r#min_value = r#min_value;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeIsLowOnHp {
+    fn validate(&mut self) {
+        if self.r#min_value < (0f32 as f32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 0f32 as f32;
+        }
+        if self.r#min_value > (1f32 as f32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, max = 1f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 1f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeIsLowOnHp"
+    }
+}
+impl Default for BehaviorTreeNodeIsLowOnHp {
     fn default() -> Self {
         Self::new()
     }
@@ -4124,13 +3948,14 @@ impl DatabaseItem for BehaviorTreeNodeCooldown {
     fn validate(&mut self) {
         if self.r#cooldown < (0f32 as f32) {
             tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                min = 0f32,
+                field = "r#cooldown", value = self.r#cooldown, min = 0f32,
                 "Field got truncated"
             );
             self.r#cooldown = 0f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeCooldown"
     }
 }
 impl Default for BehaviorTreeNodeCooldown {
@@ -4139,62 +3964,15 @@ impl Default for BehaviorTreeNodeCooldown {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeWait {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#cooldown: f32,
-    pub r#in_range: bool,
-}
-impl BehaviorTreeNodeWait {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#cooldown: Default::default(),
-            r#in_range: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_cooldown(mut self, r#cooldown: f32) -> Self {
-        self.r#cooldown = r#cooldown;
-        self
-    }
-    pub fn with_in_range(mut self, r#in_range: bool) -> Self {
-        self.r#in_range = r#in_range;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeWait {
-    fn validate(&mut self) {
-        if self.r#cooldown < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#cooldown = 0f32 as f32;
-        }
-    }
-}
-impl Default for BehaviorTreeNodeWait {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeKeepDistance {
+pub struct BehaviorTreeNodeMainTargetWithinAttackRange {
     pub r#requirement: BehaviorNodeRequirement,
     pub r#min_value: f32,
-    pub r#max_value: f32,
 }
-impl BehaviorTreeNodeKeepDistance {
+impl BehaviorTreeNodeMainTargetWithinAttackRange {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
-            r#min_value: 2.5f32,
-            r#max_value: 3.5f32,
+            r#min_value: 1f32,
         }
     }
     pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
@@ -4205,93 +3983,29 @@ impl BehaviorTreeNodeKeepDistance {
         self.r#min_value = r#min_value;
         self
     }
-    pub fn with_max_value(mut self, r#max_value: f32) -> Self {
-        self.r#max_value = r#max_value;
-        self
-    }
 }
-impl DatabaseItem for BehaviorTreeNodeKeepDistance {
+impl DatabaseItem for BehaviorTreeNodeMainTargetWithinAttackRange {
     fn validate(&mut self) {
         if self.r#min_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0f32,
+                field = "r#min_value", value = self.r#min_value, min = 0f32,
                 "Field got truncated"
             );
             self.r#min_value = 0f32 as f32;
         }
-        if self.r#min_value > (100f32 as f32) {
+        if self.r#min_value > (1f32 as f32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 100f32,
+                field = "r#min_value", value = self.r#min_value, max = 1f32,
                 "Field got truncated"
             );
-            self.r#min_value = 100f32 as f32;
-        }
-        if self.r#max_value < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#max_value = 0f32 as f32;
-        }
-        if self.r#max_value > (100f32 as f32) {
-            tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                max = 100f32,
-                "Field got truncated"
-            );
-            self.r#max_value = 100f32 as f32;
+            self.r#min_value = 1f32 as f32;
         }
     }
-}
-impl Default for BehaviorTreeNodeKeepDistance {
-    fn default() -> Self {
-        Self::new()
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeMainTargetWithinAttackRange"
     }
 }
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeExecute {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#node: Box<BehaviorTreeNode>,
-    pub r#execution_mode: NodeExecutionMode,
-    pub r#result: bool,
-}
-impl BehaviorTreeNodeExecute {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#node: Default::default(),
-            r#execution_mode: Default::default(),
-            r#result: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_node(mut self, r#node: Box<BehaviorTreeNode>) -> Self {
-        self.r#node = r#node;
-        self
-    }
-    pub fn with_execution_mode(mut self, r#execution_mode: NodeExecutionMode) -> Self {
-        self.r#execution_mode = r#execution_mode;
-        self
-    }
-    pub fn with_result(mut self, r#result: bool) -> Self {
-        self.r#result = r#result;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeExecute {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeExecute {
+impl Default for BehaviorTreeNodeMainTargetWithinAttackRange {
     fn default() -> Self {
         Self::new()
     }
@@ -4313,6 +4027,9 @@ impl BehaviorTreeNodeHasMainTarget {
 }
 impl DatabaseItem for BehaviorTreeNodeHasMainTarget {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeHasMainTarget"
+    }
 }
 impl Default for BehaviorTreeNodeHasMainTarget {
     fn default() -> Self {
@@ -4320,234 +4037,57 @@ impl Default for BehaviorTreeNodeHasMainTarget {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeSendMessage {
+pub struct BehaviorTreeNodeSlowDown {
     pub r#requirement: BehaviorNodeRequirement,
-    pub r#text: String,
+    pub r#max_value: f32,
 }
-impl BehaviorTreeNodeSendMessage {
+impl BehaviorTreeNodeSlowDown {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
-            r#text: Default::default(),
+            r#max_value: 0.2f32,
         }
     }
     pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
         self.r#requirement = r#requirement;
         self
     }
-    pub fn with_text(mut self, r#text: String) -> Self {
-        self.r#text = r#text;
+    pub fn with_max_value(mut self, r#max_value: f32) -> Self {
+        self.r#max_value = r#max_value;
         self
     }
 }
-impl DatabaseItem for BehaviorTreeNodeSendMessage {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeSendMessage {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeLookAtTarget {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeLookAtTarget {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeLookAtTarget {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeLookAtTarget {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeSelectWeapon {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#weapon_type: AiWeaponCategory,
-}
-impl BehaviorTreeNodeSelectWeapon {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#weapon_type: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_weapon_type(mut self, r#weapon_type: AiWeaponCategory) -> Self {
-        self.r#weapon_type = r#weapon_type;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeSelectWeapon {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeSelectWeapon {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeTrackControllableAmmo {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeTrackControllableAmmo {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeTrackControllableAmmo {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeTrackControllableAmmo {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeForgetSavedTarget {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#text: String,
-}
-impl BehaviorTreeNodeForgetSavedTarget {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#text: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_text(mut self, r#text: String) -> Self {
-        self.r#text = r#text;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeForgetSavedTarget {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeForgetSavedTarget {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeAttackMainTarget {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#in_range: bool,
-}
-impl BehaviorTreeNodeAttackMainTarget {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#in_range: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_in_range(mut self, r#in_range: bool) -> Self {
-        self.r#in_range = r#in_range;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeAttackMainTarget {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeAttackMainTarget {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeGoBerserk {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeGoBerserk {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeGoBerserk {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeGoBerserk {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeLookForThreats {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#cooldown: f32,
-}
-impl BehaviorTreeNodeLookForThreats {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#cooldown: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_cooldown(mut self, r#cooldown: f32) -> Self {
-        self.r#cooldown = r#cooldown;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeLookForThreats {
+impl DatabaseItem for BehaviorTreeNodeSlowDown {
     fn validate(&mut self) {
-        if self.r#cooldown < (0.1f32 as f32) {
+        if self.r#max_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                min = 0.1f32,
+                field = "r#max_value", value = self.r#max_value, min = 0f32,
                 "Field got truncated"
             );
-            self.r#cooldown = 0.1f32 as f32;
+            self.r#max_value = 0f32 as f32;
+        }
+        if self.r#max_value > (1f32 as f32) {
+            tracing::warn!(
+                field = "r#max_value", value = self.r#max_value, max = 1f32,
+                "Field got truncated"
+            );
+            self.r#max_value = 1f32 as f32;
         }
     }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeSlowDown"
+    }
 }
-impl Default for BehaviorTreeNodeLookForThreats {
+impl Default for BehaviorTreeNodeSlowDown {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeMainTargetIsEnemy {
+pub struct BehaviorTreeNodeIsControledByPlayer {
     pub r#requirement: BehaviorNodeRequirement,
 }
-impl BehaviorTreeNodeMainTargetIsEnemy {
+impl BehaviorTreeNodeIsControledByPlayer {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
@@ -4558,19 +4098,22 @@ impl BehaviorTreeNodeMainTargetIsEnemy {
         self
     }
 }
-impl DatabaseItem for BehaviorTreeNodeMainTargetIsEnemy {
+impl DatabaseItem for BehaviorTreeNodeIsControledByPlayer {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeIsControledByPlayer"
+    }
 }
-impl Default for BehaviorTreeNodeMainTargetIsEnemy {
+impl Default for BehaviorTreeNodeIsControledByPlayer {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeEscapeTargetAttackRadius {
+pub struct BehaviorTreeNodeForgetMainTarget {
     pub r#requirement: BehaviorNodeRequirement,
 }
-impl BehaviorTreeNodeEscapeTargetAttackRadius {
+impl BehaviorTreeNodeForgetMainTarget {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
@@ -4581,10 +4124,13 @@ impl BehaviorTreeNodeEscapeTargetAttackRadius {
         self
     }
 }
-impl DatabaseItem for BehaviorTreeNodeEscapeTargetAttackRadius {
+impl DatabaseItem for BehaviorTreeNodeForgetMainTarget {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeForgetMainTarget"
+    }
 }
-impl Default for BehaviorTreeNodeEscapeTargetAttackRadius {
+impl Default for BehaviorTreeNodeForgetMainTarget {
     fn default() -> Self {
         Self::new()
     }
@@ -4614,25 +4160,56 @@ impl DatabaseItem for BehaviorTreeNodeEnginePropulsionForce {
     fn validate(&mut self) {
         if self.r#min_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0f32,
+                field = "r#min_value", value = self.r#min_value, min = 0f32,
                 "Field got truncated"
             );
             self.r#min_value = 0f32 as f32;
         }
         if self.r#min_value > (1f32 as f32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 1f32,
+                field = "r#min_value", value = self.r#min_value, max = 1f32,
                 "Field got truncated"
             );
             self.r#min_value = 1f32 as f32;
         }
     }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeEnginePropulsionForce"
+    }
 }
 impl Default for BehaviorTreeNodeEnginePropulsionForce {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeDetonateShip {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#in_range: bool,
+}
+impl BehaviorTreeNodeDetonateShip {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#in_range: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_in_range(mut self, r#in_range: bool) -> Self {
+        self.r#in_range = r#in_range;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeDetonateShip {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeDetonateShip"
+    }
+}
+impl Default for BehaviorTreeNodeDetonateShip {
     fn default() -> Self {
         Self::new()
     }
@@ -4668,43 +4245,111 @@ impl DatabaseItem for BehaviorTreeNodeMaintainAttackRange {
     fn validate(&mut self) {
         if self.r#min_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0f32,
+                field = "r#min_value", value = self.r#min_value, min = 0f32,
                 "Field got truncated"
             );
             self.r#min_value = 0f32 as f32;
         }
         if self.r#min_value > (1f32 as f32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 1f32,
+                field = "r#min_value", value = self.r#min_value, max = 1f32,
                 "Field got truncated"
             );
             self.r#min_value = 1f32 as f32;
         }
         if self.r#max_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = 0f32,
+                field = "r#max_value", value = self.r#max_value, min = 0f32,
                 "Field got truncated"
             );
             self.r#max_value = 0f32 as f32;
         }
         if self.r#max_value > (1f32 as f32) {
             tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                max = 1f32,
+                field = "r#max_value", value = self.r#max_value, max = 1f32,
                 "Field got truncated"
             );
             self.r#max_value = 1f32 as f32;
         }
     }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeMaintainAttackRange"
+    }
 }
 impl Default for BehaviorTreeNodeMaintainAttackRange {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeSuccess {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeSuccess {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeSuccess {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeSuccess"
+    }
+}
+impl Default for BehaviorTreeNodeSuccess {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeMainTargetLowHp {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#min_value: f32,
+}
+impl BehaviorTreeNodeMainTargetLowHp {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#min_value: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_min_value(mut self, r#min_value: f32) -> Self {
+        self.r#min_value = r#min_value;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeMainTargetLowHp {
+    fn validate(&mut self) {
+        if self.r#min_value < (0f32 as f32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 0f32 as f32;
+        }
+        if self.r#min_value > (1f32 as f32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, max = 1f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 1f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeMainTargetLowHp"
+    }
+}
+impl Default for BehaviorTreeNodeMainTargetLowHp {
     fn default() -> Self {
         Self::new()
     }
@@ -4740,40 +4385,35 @@ impl DatabaseItem for BehaviorTreeNodeFlyAroundMothership {
     fn validate(&mut self) {
         if self.r#min_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0f32,
+                field = "r#min_value", value = self.r#min_value, min = 0f32,
                 "Field got truncated"
             );
             self.r#min_value = 0f32 as f32;
         }
         if self.r#min_value > (100f32 as f32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 100f32,
+                field = "r#min_value", value = self.r#min_value, max = 100f32,
                 "Field got truncated"
             );
             self.r#min_value = 100f32 as f32;
         }
         if self.r#max_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = 0f32,
+                field = "r#max_value", value = self.r#max_value, min = 0f32,
                 "Field got truncated"
             );
             self.r#max_value = 0f32 as f32;
         }
         if self.r#max_value > (100f32 as f32) {
             tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                max = 100f32,
+                field = "r#max_value", value = self.r#max_value, max = 100f32,
                 "Field got truncated"
             );
             self.r#max_value = 100f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeFlyAroundMothership"
     }
 }
 impl Default for BehaviorTreeNodeFlyAroundMothership {
@@ -4782,85 +4422,161 @@ impl Default for BehaviorTreeNodeFlyAroundMothership {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeAvoidThreats {
+pub struct BehaviorTreeNodeLookForAdditionalTargets {
     pub r#requirement: BehaviorNodeRequirement,
+    pub r#cooldown: f32,
 }
-impl BehaviorTreeNodeAvoidThreats {
+impl BehaviorTreeNodeLookForAdditionalTargets {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
+            r#cooldown: Default::default(),
         }
     }
     pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
         self.r#requirement = r#requirement;
         self
     }
+    pub fn with_cooldown(mut self, r#cooldown: f32) -> Self {
+        self.r#cooldown = r#cooldown;
+        self
+    }
 }
-impl DatabaseItem for BehaviorTreeNodeAvoidThreats {
-    fn validate(&mut self) {}
+impl DatabaseItem for BehaviorTreeNodeLookForAdditionalTargets {
+    fn validate(&mut self) {
+        if self.r#cooldown < (0.1f32 as f32) {
+            tracing::warn!(
+                field = "r#cooldown", value = self.r#cooldown, min = 0.1f32,
+                "Field got truncated"
+            );
+            self.r#cooldown = 0.1f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeLookForAdditionalTargets"
+    }
 }
-impl Default for BehaviorTreeNodeAvoidThreats {
+impl Default for BehaviorTreeNodeLookForAdditionalTargets {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeVanish {
+pub struct BehaviorTreeNodeInvertor {
     pub r#requirement: BehaviorNodeRequirement,
+    pub r#node: Box<BehaviorTreeNode>,
 }
-impl BehaviorTreeNodeVanish {
+impl BehaviorTreeNodeInvertor {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
+            r#node: Default::default(),
         }
     }
     pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
         self.r#requirement = r#requirement;
         self
     }
+    pub fn with_node(mut self, r#node: Box<BehaviorTreeNode>) -> Self {
+        self.r#node = r#node;
+        self
+    }
 }
-impl DatabaseItem for BehaviorTreeNodeVanish {
+impl DatabaseItem for BehaviorTreeNodeInvertor {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeInvertor"
+    }
 }
-impl Default for BehaviorTreeNodeVanish {
+impl Default for BehaviorTreeNodeInvertor {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeHasSavedTarget {
+pub struct BehaviorTreeNodeSequence {
     pub r#requirement: BehaviorNodeRequirement,
-    pub r#text: String,
+    pub r#nodes: Vec<BehaviorTreeNode>,
 }
-impl BehaviorTreeNodeHasSavedTarget {
+impl BehaviorTreeNodeSequence {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
-            r#text: Default::default(),
+            r#nodes: Default::default(),
         }
     }
     pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
         self.r#requirement = r#requirement;
         self
     }
-    pub fn with_text(mut self, r#text: String) -> Self {
-        self.r#text = r#text;
+    pub fn with_nodes(mut self, r#nodes: Vec<BehaviorTreeNode>) -> Self {
+        self.r#nodes = r#nodes;
         self
     }
 }
-impl DatabaseItem for BehaviorTreeNodeHasSavedTarget {
+impl DatabaseItem for BehaviorTreeNodeSequence {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeSequence"
+    }
 }
-impl Default for BehaviorTreeNodeHasSavedTarget {
+impl Default for BehaviorTreeNodeSequence {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeMotherShipRetreated {
+pub struct BehaviorTreeNodeIsFasterThanTarget {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#min_value: f32,
+}
+impl BehaviorTreeNodeIsFasterThanTarget {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#min_value: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_min_value(mut self, r#min_value: f32) -> Self {
+        self.r#min_value = r#min_value;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeIsFasterThanTarget {
+    fn validate(&mut self) {
+        if self.r#min_value < (1f32 as f32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, min = 1f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 1f32 as f32;
+        }
+        if self.r#min_value > (10f32 as f32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, max = 10f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 10f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeIsFasterThanTarget"
+    }
+}
+impl Default for BehaviorTreeNodeIsFasterThanTarget {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeAttackTurretTargets {
     pub r#requirement: BehaviorNodeRequirement,
 }
-impl BehaviorTreeNodeMotherShipRetreated {
+impl BehaviorTreeNodeAttackTurretTargets {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
@@ -4871,10 +4587,216 @@ impl BehaviorTreeNodeMotherShipRetreated {
         self
     }
 }
-impl DatabaseItem for BehaviorTreeNodeMotherShipRetreated {
+impl DatabaseItem for BehaviorTreeNodeAttackTurretTargets {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeAttackTurretTargets"
+    }
 }
-impl Default for BehaviorTreeNodeMotherShipRetreated {
+impl Default for BehaviorTreeNodeAttackTurretTargets {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeTargetDistance {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#max_value: f32,
+}
+impl BehaviorTreeNodeTargetDistance {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#max_value: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_max_value(mut self, r#max_value: f32) -> Self {
+        self.r#max_value = r#max_value;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeTargetDistance {
+    fn validate(&mut self) {
+        if self.r#max_value < (0f32 as f32) {
+            tracing::warn!(
+                field = "r#max_value", value = self.r#max_value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#max_value = 0f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeTargetDistance"
+    }
+}
+impl Default for BehaviorTreeNodeTargetDistance {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeSelector {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#nodes: Vec<BehaviorTreeNode>,
+}
+impl BehaviorTreeNodeSelector {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#nodes: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_nodes(mut self, r#nodes: Vec<BehaviorTreeNode>) -> Self {
+        self.r#nodes = r#nodes;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeSelector {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeSelector"
+    }
+}
+impl Default for BehaviorTreeNodeSelector {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeMotherShipDestroyed {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeMotherShipDestroyed {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeMotherShipDestroyed {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeMotherShipDestroyed"
+    }
+}
+impl Default for BehaviorTreeNodeMotherShipDestroyed {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeMothershipLowHp {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#min_value: f32,
+}
+impl BehaviorTreeNodeMothershipLowHp {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#min_value: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_min_value(mut self, r#min_value: f32) -> Self {
+        self.r#min_value = r#min_value;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeMothershipLowHp {
+    fn validate(&mut self) {
+        if self.r#min_value < (0f32 as f32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 0f32 as f32;
+        }
+        if self.r#min_value > (1f32 as f32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, max = 1f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 1f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeMothershipLowHp"
+    }
+}
+impl Default for BehaviorTreeNodeMothershipLowHp {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeChargeWeapons {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeChargeWeapons {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeChargeWeapons {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeChargeWeapons"
+    }
+}
+impl Default for BehaviorTreeNodeChargeWeapons {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeIfThenElse {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#nodes: Vec<BehaviorTreeNode>,
+}
+impl BehaviorTreeNodeIfThenElse {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#nodes: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_nodes(mut self, r#nodes: Vec<BehaviorTreeNode>) -> Self {
+        self.r#nodes = r#nodes;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeIfThenElse {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeIfThenElse"
+    }
+}
+impl Default for BehaviorTreeNodeIfThenElse {
     fn default() -> Self {
         Self::new()
     }
@@ -4922,22 +4844,21 @@ impl DatabaseItem for BehaviorTreeNodeFindEnemy {
     fn validate(&mut self) {
         if self.r#min_value < (0.5f32 as f32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0.5f32,
+                field = "r#min_value", value = self.r#min_value, min = 0.5f32,
                 "Field got truncated"
             );
             self.r#min_value = 0.5f32 as f32;
         }
         if self.r#max_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = 0f32,
+                field = "r#max_value", value = self.r#max_value, min = 0f32,
                 "Field got truncated"
             );
             self.r#max_value = 0f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeFindEnemy"
     }
 }
 impl Default for BehaviorTreeNodeFindEnemy {
@@ -4946,39 +4867,10 @@ impl Default for BehaviorTreeNodeFindEnemy {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeDetonateShip {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#in_range: bool,
-}
-impl BehaviorTreeNodeDetonateShip {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#in_range: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_in_range(mut self, r#in_range: bool) -> Self {
-        self.r#in_range = r#in_range;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeDetonateShip {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeDetonateShip {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeBypassObstacles {
+pub struct BehaviorTreeNodeTrackControllableAmmo {
     pub r#requirement: BehaviorNodeRequirement,
 }
-impl BehaviorTreeNodeBypassObstacles {
+impl BehaviorTreeNodeTrackControllableAmmo {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
@@ -4989,220 +4881,31 @@ impl BehaviorTreeNodeBypassObstacles {
         self
     }
 }
-impl DatabaseItem for BehaviorTreeNodeBypassObstacles {
+impl DatabaseItem for BehaviorTreeNodeTrackControllableAmmo {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeTrackControllableAmmo"
+    }
 }
-impl Default for BehaviorTreeNodeBypassObstacles {
+impl Default for BehaviorTreeNodeTrackControllableAmmo {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeDebugLog {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#text: String,
-}
-impl BehaviorTreeNodeDebugLog {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#text: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_text(mut self, r#text: String) -> Self {
-        self.r#text = r#text;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeDebugLog {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeDebugLog {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeAttackTurretTargets {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeAttackTurretTargets {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeAttackTurretTargets {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeAttackTurretTargets {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeChase {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeChase {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeChase {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeChase {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeHasMothership {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeHasMothership {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeHasMothership {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeHasMothership {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeUseRecoil {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeUseRecoil {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeUseRecoil {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeUseRecoil {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeMessageReceived {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#text: String,
-}
-impl BehaviorTreeNodeMessageReceived {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#text: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_text(mut self, r#text: String) -> Self {
-        self.r#text = r#text;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeMessageReceived {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeMessageReceived {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeTargetMothership {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeTargetMothership {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeTargetMothership {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeTargetMothership {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeSustainAim {
-    pub r#requirement: BehaviorNodeRequirement,
-}
-impl BehaviorTreeNodeSustainAim {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeSustainAim {
-    fn validate(&mut self) {}
-}
-impl Default for BehaviorTreeNodeSustainAim {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodePreserveTarget {
+pub struct BehaviorTreeNodeExecute {
     pub r#requirement: BehaviorNodeRequirement,
     pub r#node: Box<BehaviorTreeNode>,
+    pub r#execution_mode: NodeExecutionMode,
+    pub r#result: bool,
 }
-impl BehaviorTreeNodePreserveTarget {
+impl BehaviorTreeNodeExecute {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
             r#node: Default::default(),
+            r#execution_mode: Default::default(),
+            r#result: Default::default(),
         }
     }
     pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
@@ -5213,146 +4916,68 @@ impl BehaviorTreeNodePreserveTarget {
         self.r#node = r#node;
         self
     }
+    pub fn with_execution_mode(mut self, r#execution_mode: NodeExecutionMode) -> Self {
+        self.r#execution_mode = r#execution_mode;
+        self
+    }
+    pub fn with_result(mut self, r#result: bool) -> Self {
+        self.r#result = r#result;
+        self
+    }
 }
-impl DatabaseItem for BehaviorTreeNodePreserveTarget {
+impl DatabaseItem for BehaviorTreeNodeExecute {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeExecute"
+    }
 }
-impl Default for BehaviorTreeNodePreserveTarget {
+impl Default for BehaviorTreeNodeExecute {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeMainTargetLowHp {
+pub struct BehaviorTreeNodeRandomSelector {
     pub r#requirement: BehaviorNodeRequirement,
-    pub r#min_value: f32,
+    pub r#nodes: Vec<BehaviorTreeNode>,
+    pub r#cooldown: f32,
 }
-impl BehaviorTreeNodeMainTargetLowHp {
+impl BehaviorTreeNodeRandomSelector {
     fn new() -> Self {
         Self {
             r#requirement: Default::default(),
-            r#min_value: Default::default(),
+            r#nodes: Default::default(),
+            r#cooldown: Default::default(),
         }
     }
     pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
         self.r#requirement = r#requirement;
         self
     }
-    pub fn with_min_value(mut self, r#min_value: f32) -> Self {
-        self.r#min_value = r#min_value;
+    pub fn with_nodes(mut self, r#nodes: Vec<BehaviorTreeNode>) -> Self {
+        self.r#nodes = r#nodes;
+        self
+    }
+    pub fn with_cooldown(mut self, r#cooldown: f32) -> Self {
+        self.r#cooldown = r#cooldown;
         self
     }
 }
-impl DatabaseItem for BehaviorTreeNodeMainTargetLowHp {
+impl DatabaseItem for BehaviorTreeNodeRandomSelector {
     fn validate(&mut self) {
-        if self.r#min_value < (0f32 as f32) {
+        if self.r#cooldown < (0f32 as f32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0f32,
+                field = "r#cooldown", value = self.r#cooldown, min = 0f32,
                 "Field got truncated"
             );
-            self.r#min_value = 0f32 as f32;
-        }
-        if self.r#min_value > (1f32 as f32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 1f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 1f32 as f32;
+            self.r#cooldown = 0f32 as f32;
         }
     }
-}
-impl Default for BehaviorTreeNodeMainTargetLowHp {
-    fn default() -> Self {
-        Self::new()
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeRandomSelector"
     }
 }
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeHasLongerAttackRange {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#min_value: f32,
-}
-impl BehaviorTreeNodeHasLongerAttackRange {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#min_value: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_min_value(mut self, r#min_value: f32) -> Self {
-        self.r#min_value = r#min_value;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeHasLongerAttackRange {
-    fn validate(&mut self) {
-        if self.r#min_value < (1f32 as f32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 1f32 as f32;
-        }
-        if self.r#min_value > (10f32 as f32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 10f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 10f32 as f32;
-        }
-    }
-}
-impl Default for BehaviorTreeNodeHasLongerAttackRange {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BehaviorTreeNodeMothershipDistanceExceeded {
-    pub r#requirement: BehaviorNodeRequirement,
-    pub r#max_value: f32,
-}
-impl BehaviorTreeNodeMothershipDistanceExceeded {
-    fn new() -> Self {
-        Self {
-            r#requirement: Default::default(),
-            r#max_value: Default::default(),
-        }
-    }
-    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
-        self.r#requirement = r#requirement;
-        self
-    }
-    pub fn with_max_value(mut self, r#max_value: f32) -> Self {
-        self.r#max_value = r#max_value;
-        self
-    }
-}
-impl DatabaseItem for BehaviorTreeNodeMothershipDistanceExceeded {
-    fn validate(&mut self) {
-        if self.r#max_value < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#max_value = 0f32 as f32;
-        }
-    }
-}
-impl Default for BehaviorTreeNodeMothershipDistanceExceeded {
+impl Default for BehaviorTreeNodeRandomSelector {
     fn default() -> Self {
         Self::new()
     }
@@ -5374,8 +4999,121 @@ impl BehaviorTreeNodeTargetEnemyStarbase {
 }
 impl DatabaseItem for BehaviorTreeNodeTargetEnemyStarbase {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeTargetEnemyStarbase"
+    }
 }
 impl Default for BehaviorTreeNodeTargetEnemyStarbase {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeForgetSavedTarget {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#text: String,
+}
+impl BehaviorTreeNodeForgetSavedTarget {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#text: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_text(mut self, r#text: String) -> Self {
+        self.r#text = r#text;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeForgetSavedTarget {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeForgetSavedTarget"
+    }
+}
+impl Default for BehaviorTreeNodeForgetSavedTarget {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeGoBerserk {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeGoBerserk {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeGoBerserk {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeGoBerserk"
+    }
+}
+impl Default for BehaviorTreeNodeGoBerserk {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeChase {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeChase {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeChase {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeChase"
+    }
+}
+impl Default for BehaviorTreeNodeChase {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeAvoidThreats {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeAvoidThreats {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeAvoidThreats {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeAvoidThreats"
+    }
+}
+impl Default for BehaviorTreeNodeAvoidThreats {
     fn default() -> Self {
         Self::new()
     }
@@ -5411,45 +5149,929 @@ impl DatabaseItem for BehaviorTreeNodeMoveToAttackRange {
     fn validate(&mut self) {
         if self.r#min_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0f32,
+                field = "r#min_value", value = self.r#min_value, min = 0f32,
                 "Field got truncated"
             );
             self.r#min_value = 0f32 as f32;
         }
         if self.r#min_value > (1f32 as f32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 1f32,
+                field = "r#min_value", value = self.r#min_value, max = 1f32,
                 "Field got truncated"
             );
             self.r#min_value = 1f32 as f32;
         }
         if self.r#max_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = 0f32,
+                field = "r#max_value", value = self.r#max_value, min = 0f32,
                 "Field got truncated"
             );
             self.r#max_value = 0f32 as f32;
         }
         if self.r#max_value > (1f32 as f32) {
             tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                max = 1f32,
+                field = "r#max_value", value = self.r#max_value, max = 1f32,
                 "Field got truncated"
             );
             self.r#max_value = 1f32 as f32;
         }
     }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeMoveToAttackRange"
+    }
 }
 impl Default for BehaviorTreeNodeMoveToAttackRange {
     fn default() -> Self {
         Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeUseRecoil {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeUseRecoil {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeUseRecoil {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeUseRecoil"
+    }
+}
+impl Default for BehaviorTreeNodeUseRecoil {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodePreserveTarget {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#node: Box<BehaviorTreeNode>,
+}
+impl BehaviorTreeNodePreserveTarget {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#node: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_node(mut self, r#node: Box<BehaviorTreeNode>) -> Self {
+        self.r#node = r#node;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodePreserveTarget {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodePreserveTarget"
+    }
+}
+impl Default for BehaviorTreeNodePreserveTarget {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeLookAtTarget {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeLookAtTarget {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeLookAtTarget {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeLookAtTarget"
+    }
+}
+impl Default for BehaviorTreeNodeLookAtTarget {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeTargetAllyStarbase {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeTargetAllyStarbase {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeTargetAllyStarbase {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeTargetAllyStarbase"
+    }
+}
+impl Default for BehaviorTreeNodeTargetAllyStarbase {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeMakeTargetMothership {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeMakeTargetMothership {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeMakeTargetMothership {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeMakeTargetMothership"
+    }
+}
+impl Default for BehaviorTreeNodeMakeTargetMothership {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeMatchVelocityWithTarget {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#max_value: f32,
+}
+impl BehaviorTreeNodeMatchVelocityWithTarget {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#max_value: 0.2f32,
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_max_value(mut self, r#max_value: f32) -> Self {
+        self.r#max_value = r#max_value;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeMatchVelocityWithTarget {
+    fn validate(&mut self) {
+        if self.r#max_value < (0f32 as f32) {
+            tracing::warn!(
+                field = "r#max_value", value = self.r#max_value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#max_value = 0f32 as f32;
+        }
+        if self.r#max_value > (1f32 as f32) {
+            tracing::warn!(
+                field = "r#max_value", value = self.r#max_value, max = 1f32,
+                "Field got truncated"
+            );
+            self.r#max_value = 1f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeMatchVelocityWithTarget"
+    }
+}
+impl Default for BehaviorTreeNodeMatchVelocityWithTarget {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeHasEnoughEnergy {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#min_value: f32,
+}
+impl BehaviorTreeNodeHasEnoughEnergy {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#min_value: 0.1f32,
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_min_value(mut self, r#min_value: f32) -> Self {
+        self.r#min_value = r#min_value;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeHasEnoughEnergy {
+    fn validate(&mut self) {
+        if self.r#min_value < (0f32 as f32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 0f32 as f32;
+        }
+        if self.r#min_value > (1f32 as f32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, max = 1f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 1f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeHasEnoughEnergy"
+    }
+}
+impl Default for BehaviorTreeNodeHasEnoughEnergy {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeAttackAdditionalTargets {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#in_range: bool,
+}
+impl BehaviorTreeNodeAttackAdditionalTargets {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#in_range: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_in_range(mut self, r#in_range: bool) -> Self {
+        self.r#in_range = r#in_range;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeAttackAdditionalTargets {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeAttackAdditionalTargets"
+    }
+}
+impl Default for BehaviorTreeNodeAttackAdditionalTargets {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeMotherShipRetreated {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeMotherShipRetreated {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeMotherShipRetreated {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeMotherShipRetreated"
+    }
+}
+impl Default for BehaviorTreeNodeMotherShipRetreated {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeMainTargetIsEnemy {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeMainTargetIsEnemy {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeMainTargetIsEnemy {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeMainTargetIsEnemy"
+    }
+}
+impl Default for BehaviorTreeNodeMainTargetIsEnemy {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeWait {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#cooldown: f32,
+    pub r#in_range: bool,
+}
+impl BehaviorTreeNodeWait {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#cooldown: Default::default(),
+            r#in_range: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_cooldown(mut self, r#cooldown: f32) -> Self {
+        self.r#cooldown = r#cooldown;
+        self
+    }
+    pub fn with_in_range(mut self, r#in_range: bool) -> Self {
+        self.r#in_range = r#in_range;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeWait {
+    fn validate(&mut self) {
+        if self.r#cooldown < (0f32 as f32) {
+            tracing::warn!(
+                field = "r#cooldown", value = self.r#cooldown, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#cooldown = 0f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeWait"
+    }
+}
+impl Default for BehaviorTreeNodeWait {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeSendMessage {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#text: String,
+}
+impl BehaviorTreeNodeSendMessage {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#text: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_text(mut self, r#text: String) -> Self {
+        self.r#text = r#text;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeSendMessage {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeSendMessage"
+    }
+}
+impl Default for BehaviorTreeNodeSendMessage {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeTargetMothership {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeTargetMothership {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeTargetMothership {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeTargetMothership"
+    }
+}
+impl Default for BehaviorTreeNodeTargetMothership {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeHasLongerAttackRange {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#min_value: f32,
+}
+impl BehaviorTreeNodeHasLongerAttackRange {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#min_value: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_min_value(mut self, r#min_value: f32) -> Self {
+        self.r#min_value = r#min_value;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeHasLongerAttackRange {
+    fn validate(&mut self) {
+        if self.r#min_value < (1f32 as f32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, min = 1f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 1f32 as f32;
+        }
+        if self.r#min_value > (10f32 as f32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, max = 10f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 10f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeHasLongerAttackRange"
+    }
+}
+impl Default for BehaviorTreeNodeHasLongerAttackRange {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeActivateDevice {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#device_class: DeviceClass,
+}
+impl BehaviorTreeNodeActivateDevice {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#device_class: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_device_class(mut self, r#device_class: DeviceClass) -> Self {
+        self.r#device_class = r#device_class;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeActivateDevice {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeActivateDevice"
+    }
+}
+impl Default for BehaviorTreeNodeActivateDevice {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeParallel {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#nodes: Vec<BehaviorTreeNode>,
+}
+impl BehaviorTreeNodeParallel {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#nodes: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_nodes(mut self, r#nodes: Vec<BehaviorTreeNode>) -> Self {
+        self.r#nodes = r#nodes;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeParallel {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeParallel"
+    }
+}
+impl Default for BehaviorTreeNodeParallel {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeParallelSequence {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#nodes: Vec<BehaviorTreeNode>,
+}
+impl BehaviorTreeNodeParallelSequence {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#nodes: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_nodes(mut self, r#nodes: Vec<BehaviorTreeNode>) -> Self {
+        self.r#nodes = r#nodes;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeParallelSequence {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeParallelSequence"
+    }
+}
+impl Default for BehaviorTreeNodeParallelSequence {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeLoadTarget {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#text: String,
+}
+impl BehaviorTreeNodeLoadTarget {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#text: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_text(mut self, r#text: String) -> Self {
+        self.r#text = r#text;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeLoadTarget {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeLoadTarget"
+    }
+}
+impl Default for BehaviorTreeNodeLoadTarget {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeSubTree {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#item_id: Option<BehaviorTreeId>,
+}
+impl BehaviorTreeNodeSubTree {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#item_id: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_item_id(mut self, r#item_id: Option<BehaviorTreeId>) -> Self {
+        self.r#item_id = r#item_id;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeSubTree {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeSubTree"
+    }
+}
+impl Default for BehaviorTreeNodeSubTree {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeLookForThreats {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#cooldown: f32,
+}
+impl BehaviorTreeNodeLookForThreats {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#cooldown: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_cooldown(mut self, r#cooldown: f32) -> Self {
+        self.r#cooldown = r#cooldown;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeLookForThreats {
+    fn validate(&mut self) {
+        if self.r#cooldown < (0.1f32 as f32) {
+            tracing::warn!(
+                field = "r#cooldown", value = self.r#cooldown, min = 0.1f32,
+                "Field got truncated"
+            );
+            self.r#cooldown = 0.1f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeLookForThreats"
+    }
+}
+impl Default for BehaviorTreeNodeLookForThreats {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeAttackMainTarget {
+    pub r#requirement: BehaviorNodeRequirement,
+    pub r#in_range: bool,
+}
+impl BehaviorTreeNodeAttackMainTarget {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+            r#in_range: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+    pub fn with_in_range(mut self, r#in_range: bool) -> Self {
+        self.r#in_range = r#in_range;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeAttackMainTarget {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeAttackMainTarget"
+    }
+}
+impl Default for BehaviorTreeNodeAttackMainTarget {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeBypassObstacles {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeBypassObstacles {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeBypassObstacles {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeBypassObstacles"
+    }
+}
+impl Default for BehaviorTreeNodeBypassObstacles {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeHasMothership {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeHasMothership {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeHasMothership {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeHasMothership"
+    }
+}
+impl Default for BehaviorTreeNodeHasMothership {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeMainTargetIsAlly {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeMainTargetIsAlly {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeMainTargetIsAlly {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeMainTargetIsAlly"
+    }
+}
+impl Default for BehaviorTreeNodeMainTargetIsAlly {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BehaviorTreeNodeEscapeTargetAttackRadius {
+    pub r#requirement: BehaviorNodeRequirement,
+}
+impl BehaviorTreeNodeEscapeTargetAttackRadius {
+    fn new() -> Self {
+        Self {
+            r#requirement: Default::default(),
+        }
+    }
+    pub fn with_requirement(mut self, r#requirement: BehaviorNodeRequirement) -> Self {
+        self.r#requirement = r#requirement;
+        self
+    }
+}
+impl DatabaseItem for BehaviorTreeNodeEscapeTargetAttackRadius {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTreeNodeEscapeTargetAttackRadius"
+    }
+}
+impl Default for BehaviorTreeNodeEscapeTargetAttackRadius {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+impl DatabaseItem for BehaviorTreeNode {
+    fn validate(&mut self) {
+        match self {
+            Self::Success(x) => x.validate(),
+            Self::Failure(x) => x.validate(),
+            Self::SubTree(x) => x.validate(),
+            Self::Selector(x) => x.validate(),
+            Self::Sequence(x) => x.validate(),
+            Self::Parallel(x) => x.validate(),
+            Self::RandomSelector(x) => x.validate(),
+            Self::Invertor(x) => x.validate(),
+            Self::Cooldown(x) => x.validate(),
+            Self::Execute(x) => x.validate(),
+            Self::ParallelSequence(x) => x.validate(),
+            Self::PreserveTarget(x) => x.validate(),
+            Self::IfThenElse(x) => x.validate(),
+            Self::HasEnoughEnergy(x) => x.validate(),
+            Self::IsLowOnHp(x) => x.validate(),
+            Self::IsControledByPlayer(x) => x.validate(),
+            Self::HasIncomingThreat(x) => x.validate(),
+            Self::HasAdditionalTargets(x) => x.validate(),
+            Self::IsFasterThanTarget(x) => x.validate(),
+            Self::HasMainTarget(x) => x.validate(),
+            Self::MainTargetIsAlly(x) => x.validate(),
+            Self::MainTargetIsEnemy(x) => x.validate(),
+            Self::MainTargetLowHp(x) => x.validate(),
+            Self::MainTargetWithinAttackRange(x) => x.validate(),
+            Self::HasMothership(x) => x.validate(),
+            Self::TargetDistance(x) => x.validate(),
+            Self::HasLongerAttackRange(x) => x.validate(),
+            Self::FindEnemy(x) => x.validate(),
+            Self::MoveToAttackRange(x) => x.validate(),
+            Self::AttackMainTarget(x) => x.validate(),
+            Self::SelectWeapon(x) => x.validate(),
+            Self::SpawnDrones(x) => x.validate(),
+            Self::Ram(x) => x.validate(),
+            Self::DetonateShip(x) => x.validate(),
+            Self::Vanish(x) => x.validate(),
+            Self::MaintainAttackRange(x) => x.validate(),
+            Self::Wait(x) => x.validate(),
+            Self::LookAtTarget(x) => x.validate(),
+            Self::LookForAdditionalTargets(x) => x.validate(),
+            Self::LookForThreats(x) => x.validate(),
+            Self::MatchVelocityWithTarget(x) => x.validate(),
+            Self::ActivateDevice(x) => x.validate(),
+            Self::RechargeEnergy(x) => x.validate(),
+            Self::SustainAim(x) => x.validate(),
+            Self::ChargeWeapons(x) => x.validate(),
+            Self::Chase(x) => x.validate(),
+            Self::AvoidThreats(x) => x.validate(),
+            Self::SlowDown(x) => x.validate(),
+            Self::UseRecoil(x) => x.validate(),
+            Self::DefendWithFronalShield(x) => x.validate(),
+            Self::TrackControllableAmmo(x) => x.validate(),
+            Self::KeepDistance(x) => x.validate(),
+            Self::ForgetMainTarget(x) => x.validate(),
+            Self::EscapeTargetAttackRadius(x) => x.validate(),
+            Self::AttackAdditionalTargets(x) => x.validate(),
+            Self::TargetAllyStarbase(x) => x.validate(),
+            Self::TargetEnemyStarbase(x) => x.validate(),
+            Self::BypassObstacles(x) => x.validate(),
+            Self::AttackTurretTargets(x) => x.validate(),
+            Self::EnginePropulsionForce(x) => x.validate(),
+            Self::MotherShipRetreated(x) => x.validate(),
+            Self::MotherShipDestroyed(x) => x.validate(),
+            Self::FlyAroundMothership(x) => x.validate(),
+            Self::GoBerserk(x) => x.validate(),
+            Self::TargetMothership(x) => x.validate(),
+            Self::MothershipLowHp(x) => x.validate(),
+            Self::MothershipDistanceExceeded(x) => x.validate(),
+            Self::MakeTargetMothership(x) => x.validate(),
+            Self::ShowMessage(x) => x.validate(),
+            Self::DebugLog(x) => x.validate(),
+            Self::SetValue(x) => x.validate(),
+            Self::GetValue(x) => x.validate(),
+            Self::SendMessage(x) => x.validate(),
+            Self::MessageReceived(x) => x.validate(),
+            Self::TargetMessageSender(x) => x.validate(),
+            Self::SaveTarget(x) => x.validate(),
+            Self::LoadTarget(x) => x.validate(),
+            Self::HasSavedTarget(x) => x.validate(),
+            Self::ForgetSavedTarget(x) => x.validate(),
+        }
+    }
+    fn type_name() -> &'static str {
+        "BehaviorTreeNode"
     }
 }
 
@@ -5521,36 +6143,28 @@ impl DatabaseItem for Barrel {
     fn validate(&mut self) {
         if self.r#rotation < (-360f32 as f32) {
             tracing::warn!(
-                field = "r#rotation",
-                value = self.r#rotation,
-                min = -360f32,
+                field = "r#rotation", value = self.r#rotation, min = - 360f32,
                 "Field got truncated"
             );
             self.r#rotation = -360f32 as f32;
         }
         if self.r#rotation > (360f32 as f32) {
             tracing::warn!(
-                field = "r#rotation",
-                value = self.r#rotation,
-                max = 360f32,
+                field = "r#rotation", value = self.r#rotation, max = 360f32,
                 "Field got truncated"
             );
             self.r#rotation = 360f32 as f32;
         }
         if self.r#offset < (0f32 as f32) {
             tracing::warn!(
-                field = "r#offset",
-                value = self.r#offset,
-                min = 0f32,
+                field = "r#offset", value = self.r#offset, min = 0f32,
                 "Field got truncated"
             );
             self.r#offset = 0f32 as f32;
         }
         if self.r#offset > (1f32 as f32) {
             tracing::warn!(
-                field = "r#offset",
-                value = self.r#offset,
-                max = 1f32,
+                field = "r#offset", value = self.r#offset, max = 1f32,
                 "Field got truncated"
             );
             self.r#offset = 1f32 as f32;
@@ -5564,58 +6178,48 @@ impl DatabaseItem for Barrel {
         }
         if self.r#auto_aiming_arc < (0f32 as f32) {
             tracing::warn!(
-                field = "r#auto_aiming_arc",
-                value = self.r#auto_aiming_arc,
-                min = 0f32,
+                field = "r#auto_aiming_arc", value = self.r#auto_aiming_arc, min = 0f32,
                 "Field got truncated"
             );
             self.r#auto_aiming_arc = 0f32 as f32;
         }
         if self.r#auto_aiming_arc > (360f32 as f32) {
             tracing::warn!(
-                field = "r#auto_aiming_arc",
-                value = self.r#auto_aiming_arc,
-                max = 360f32,
-                "Field got truncated"
+                field = "r#auto_aiming_arc", value = self.r#auto_aiming_arc, max =
+                360f32, "Field got truncated"
             );
             self.r#auto_aiming_arc = 360f32 as f32;
         }
         if self.r#rotation_speed < (0f32 as f32) {
             tracing::warn!(
-                field = "r#rotation_speed",
-                value = self.r#rotation_speed,
-                min = 0f32,
+                field = "r#rotation_speed", value = self.r#rotation_speed, min = 0f32,
                 "Field got truncated"
             );
             self.r#rotation_speed = 0f32 as f32;
         }
         if self.r#rotation_speed > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#rotation_speed",
-                value = self.r#rotation_speed,
-                max = 1000f32,
+                field = "r#rotation_speed", value = self.r#rotation_speed, max = 1000f32,
                 "Field got truncated"
             );
             self.r#rotation_speed = 1000f32 as f32;
         }
         if self.r#size < (0f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#size", value = self.r#size, min = 0f32, "Field got truncated"
             );
             self.r#size = 0f32 as f32;
         }
         if self.r#size > (100f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                max = 100f32,
+                field = "r#size", value = self.r#size, max = 100f32,
                 "Field got truncated"
             );
             self.r#size = 100f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "Barrel"
     }
 }
 impl Default for Barrel {
@@ -5643,7 +6247,10 @@ impl ComponentRestrictions {
             r#max_component_amount: Default::default(),
         }
     }
-    pub fn with_ship_sizes(mut self, r#ship_sizes: std::collections::HashSet<SizeClass>) -> Self {
+    pub fn with_ship_sizes(
+        mut self,
+        r#ship_sizes: std::collections::HashSet<SizeClass>,
+    ) -> Self {
         self.r#ship_sizes = r#ship_sizes;
         self
     }
@@ -5651,7 +6258,10 @@ impl ComponentRestrictions {
         self.r#not_for_organic_ships = r#not_for_organic_ships;
         self
     }
-    pub fn with_not_for_mechanic_ships(mut self, r#not_for_mechanic_ships: bool) -> Self {
+    pub fn with_not_for_mechanic_ships(
+        mut self,
+        r#not_for_mechanic_ships: bool,
+    ) -> Self {
         self.r#not_for_mechanic_ships = r#not_for_mechanic_ships;
         self
     }
@@ -5668,13 +6278,14 @@ impl DatabaseItem for ComponentRestrictions {
     fn validate(&mut self) {
         if self.r#max_component_amount < (0f32 as i32) {
             tracing::warn!(
-                field = "r#max_component_amount",
-                value = self.r#max_component_amount,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#max_component_amount", value = self.r#max_component_amount,
+                min = 0f32, "Field got truncated"
             );
             self.r#max_component_amount = 0f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "ComponentRestrictions"
     }
 }
 impl Default for ComponentRestrictions {
@@ -5709,22 +6320,19 @@ impl DatabaseItem for Engine {
     fn validate(&mut self) {
         if self.r#size < (0f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#size", value = self.r#size, min = 0f32, "Field got truncated"
             );
             self.r#size = 0f32 as f32;
         }
         if self.r#size > (1f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                max = 1f32,
-                "Field got truncated"
+                field = "r#size", value = self.r#size, max = 1f32, "Field got truncated"
             );
             self.r#size = 1f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "Engine"
     }
 }
 impl Default for Engine {
@@ -5795,94 +6403,73 @@ impl DatabaseItem for InstalledComponent {
     fn validate(&mut self) {
         if self.r#x < (-32768f32 as i32) {
             tracing::warn!(
-                field = "r#x",
-                value = self.r#x,
-                min = -32768f32,
-                "Field got truncated"
+                field = "r#x", value = self.r#x, min = - 32768f32, "Field got truncated"
             );
             self.r#x = -32768f32 as i32;
         }
         if self.r#x > (32767f32 as i32) {
             tracing::warn!(
-                field = "r#x",
-                value = self.r#x,
-                max = 32767f32,
-                "Field got truncated"
+                field = "r#x", value = self.r#x, max = 32767f32, "Field got truncated"
             );
             self.r#x = 32767f32 as i32;
         }
         if self.r#y < (-32768f32 as i32) {
             tracing::warn!(
-                field = "r#y",
-                value = self.r#y,
-                min = -32768f32,
-                "Field got truncated"
+                field = "r#y", value = self.r#y, min = - 32768f32, "Field got truncated"
             );
             self.r#y = -32768f32 as i32;
         }
         if self.r#y > (32767f32 as i32) {
             tracing::warn!(
-                field = "r#y",
-                value = self.r#y,
-                max = 32767f32,
-                "Field got truncated"
+                field = "r#y", value = self.r#y, max = 32767f32, "Field got truncated"
             );
             self.r#y = 32767f32 as i32;
         }
         if self.r#barrel_id < (0f32 as i32) {
             tracing::warn!(
-                field = "r#barrel_id",
-                value = self.r#barrel_id,
-                min = 0f32,
+                field = "r#barrel_id", value = self.r#barrel_id, min = 0f32,
                 "Field got truncated"
             );
             self.r#barrel_id = 0f32 as i32;
         }
         if self.r#barrel_id > (255f32 as i32) {
             tracing::warn!(
-                field = "r#barrel_id",
-                value = self.r#barrel_id,
-                max = 255f32,
+                field = "r#barrel_id", value = self.r#barrel_id, max = 255f32,
                 "Field got truncated"
             );
             self.r#barrel_id = 255f32 as i32;
         }
         if self.r#behaviour < (0f32 as i32) {
             tracing::warn!(
-                field = "r#behaviour",
-                value = self.r#behaviour,
-                min = 0f32,
+                field = "r#behaviour", value = self.r#behaviour, min = 0f32,
                 "Field got truncated"
             );
             self.r#behaviour = 0f32 as i32;
         }
         if self.r#behaviour > (10f32 as i32) {
             tracing::warn!(
-                field = "r#behaviour",
-                value = self.r#behaviour,
-                max = 10f32,
+                field = "r#behaviour", value = self.r#behaviour, max = 10f32,
                 "Field got truncated"
             );
             self.r#behaviour = 10f32 as i32;
         }
         if self.r#key_binding < (-10f32 as i32) {
             tracing::warn!(
-                field = "r#key_binding",
-                value = self.r#key_binding,
-                min = -10f32,
+                field = "r#key_binding", value = self.r#key_binding, min = - 10f32,
                 "Field got truncated"
             );
             self.r#key_binding = -10f32 as i32;
         }
         if self.r#key_binding > (10f32 as i32) {
             tracing::warn!(
-                field = "r#key_binding",
-                value = self.r#key_binding,
-                max = 10f32,
+                field = "r#key_binding", value = self.r#key_binding, max = 10f32,
                 "Field got truncated"
             );
             self.r#key_binding = 10f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "InstalledComponent"
     }
 }
 
@@ -5910,6 +6497,9 @@ impl FactionFilter {
 }
 impl DatabaseItem for FactionFilter {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "FactionFilter"
+    }
 }
 impl Default for FactionFilter {
     fn default() -> Self {
@@ -6030,20 +6620,20 @@ impl From<LootContentSatellite> for LootContent {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct LootContentQuestItem {
-    pub r#item_id: QuestItemId,
+pub struct LootContentSatellite {
+    pub r#item_id: SatelliteId,
     pub r#min_amount: i32,
     pub r#max_amount: i32,
 }
-impl LootContentQuestItem {
-    fn new(r#item_id: QuestItemId) -> Self {
+impl LootContentSatellite {
+    fn new(r#item_id: SatelliteId) -> Self {
         Self {
             r#item_id,
             r#min_amount: Default::default(),
             r#max_amount: Default::default(),
         }
     }
-    pub fn with_item_id(mut self, r#item_id: QuestItemId) -> Self {
+    pub fn with_item_id(mut self, r#item_id: SatelliteId) -> Self {
         self.r#item_id = r#item_id;
         self
     }
@@ -6056,110 +6646,39 @@ impl LootContentQuestItem {
         self
     }
 }
-impl DatabaseItem for LootContentQuestItem {
+impl DatabaseItem for LootContentSatellite {
     fn validate(&mut self) {
         if self.r#min_amount < (0f32 as i32) {
             tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                min = 0f32,
+                field = "r#min_amount", value = self.r#min_amount, min = 0f32,
                 "Field got truncated"
             );
             self.r#min_amount = 0f32 as i32;
         }
         if self.r#min_amount > (1000000000f32 as i32) {
             tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                max = 1000000000f32,
+                field = "r#min_amount", value = self.r#min_amount, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#min_amount = 1000000000f32 as i32;
         }
         if self.r#max_amount < (0f32 as i32) {
             tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                min = 0f32,
+                field = "r#max_amount", value = self.r#max_amount, min = 0f32,
                 "Field got truncated"
             );
             self.r#max_amount = 0f32 as i32;
         }
         if self.r#max_amount > (1000000000f32 as i32) {
             tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                max = 1000000000f32,
+                field = "r#max_amount", value = self.r#max_amount, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#max_amount = 1000000000f32 as i32;
         }
     }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct LootContentMoney {
-    pub r#min_amount: i32,
-    pub r#max_amount: i32,
-}
-impl LootContentMoney {
-    fn new() -> Self {
-        Self {
-            r#min_amount: Default::default(),
-            r#max_amount: Default::default(),
-        }
-    }
-    pub fn with_min_amount(mut self, r#min_amount: i32) -> Self {
-        self.r#min_amount = r#min_amount;
-        self
-    }
-    pub fn with_max_amount(mut self, r#max_amount: i32) -> Self {
-        self.r#max_amount = r#max_amount;
-        self
-    }
-}
-impl DatabaseItem for LootContentMoney {
-    fn validate(&mut self) {
-        if self.r#min_amount < (0f32 as i32) {
-            tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#min_amount = 0f32 as i32;
-        }
-        if self.r#min_amount > (1000000000f32 as i32) {
-            tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                max = 1000000000f32,
-                "Field got truncated"
-            );
-            self.r#min_amount = 1000000000f32 as i32;
-        }
-        if self.r#max_amount < (0f32 as i32) {
-            tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#max_amount = 0f32 as i32;
-        }
-        if self.r#max_amount > (1000000000f32 as i32) {
-            tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                max = 1000000000f32,
-                "Field got truncated"
-            );
-            self.r#max_amount = 1000000000f32 as i32;
-        }
-    }
-}
-impl Default for LootContentMoney {
-    fn default() -> Self {
-        Self::new()
+    fn type_name() -> &'static str {
+        "LootContentSatellite"
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
@@ -6193,40 +6712,35 @@ impl DatabaseItem for LootContentComponent {
     fn validate(&mut self) {
         if self.r#min_amount < (0f32 as i32) {
             tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                min = 0f32,
+                field = "r#min_amount", value = self.r#min_amount, min = 0f32,
                 "Field got truncated"
             );
             self.r#min_amount = 0f32 as i32;
         }
         if self.r#min_amount > (1000000000f32 as i32) {
             tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                max = 1000000000f32,
+                field = "r#min_amount", value = self.r#min_amount, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#min_amount = 1000000000f32 as i32;
         }
         if self.r#max_amount < (0f32 as i32) {
             tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                min = 0f32,
+                field = "r#max_amount", value = self.r#max_amount, min = 0f32,
                 "Field got truncated"
             );
             self.r#max_amount = 0f32 as i32;
         }
         if self.r#max_amount > (1000000000f32 as i32) {
             tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                max = 1000000000f32,
+                field = "r#max_amount", value = self.r#max_amount, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#max_amount = 1000000000f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "LootContentComponent"
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
@@ -6266,58 +6780,49 @@ impl DatabaseItem for LootContentRandomComponents {
     fn validate(&mut self) {
         if self.r#min_amount < (0f32 as i32) {
             tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                min = 0f32,
+                field = "r#min_amount", value = self.r#min_amount, min = 0f32,
                 "Field got truncated"
             );
             self.r#min_amount = 0f32 as i32;
         }
         if self.r#min_amount > (1000000000f32 as i32) {
             tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                max = 1000000000f32,
+                field = "r#min_amount", value = self.r#min_amount, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#min_amount = 1000000000f32 as i32;
         }
         if self.r#max_amount < (0f32 as i32) {
             tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                min = 0f32,
+                field = "r#max_amount", value = self.r#max_amount, min = 0f32,
                 "Field got truncated"
             );
             self.r#max_amount = 0f32 as i32;
         }
         if self.r#max_amount > (1000000000f32 as i32) {
             tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                max = 1000000000f32,
+                field = "r#max_amount", value = self.r#max_amount, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#max_amount = 1000000000f32 as i32;
         }
         if self.r#value_ratio < (0.001f32 as f32) {
             tracing::warn!(
-                field = "r#value_ratio",
-                value = self.r#value_ratio,
-                min = 0.001f32,
+                field = "r#value_ratio", value = self.r#value_ratio, min = 0.001f32,
                 "Field got truncated"
             );
             self.r#value_ratio = 0.001f32 as f32;
         }
         if self.r#value_ratio > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#value_ratio",
-                value = self.r#value_ratio,
-                max = 1000f32,
+                field = "r#value_ratio", value = self.r#value_ratio, max = 1000f32,
                 "Field got truncated"
             );
             self.r#value_ratio = 1000f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "LootContentRandomComponents"
     }
 }
 impl Default for LootContentRandomComponents {
@@ -6326,11 +6831,37 @@ impl Default for LootContentRandomComponents {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct LootContentFuel {
+pub struct LootContentAllItems {
+    pub r#items: Vec<LootItem>,
+}
+impl LootContentAllItems {
+    fn new() -> Self {
+        Self {
+            r#items: Default::default(),
+        }
+    }
+    pub fn with_items(mut self, r#items: Vec<LootItem>) -> Self {
+        self.r#items = r#items;
+        self
+    }
+}
+impl DatabaseItem for LootContentAllItems {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "LootContentAllItems"
+    }
+}
+impl Default for LootContentAllItems {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct LootContentMoney {
     pub r#min_amount: i32,
     pub r#max_amount: i32,
 }
-impl LootContentFuel {
+impl LootContentMoney {
     fn new() -> Self {
         Self {
             r#min_amount: Default::default(),
@@ -6346,81 +6877,147 @@ impl LootContentFuel {
         self
     }
 }
-impl DatabaseItem for LootContentFuel {
+impl DatabaseItem for LootContentMoney {
     fn validate(&mut self) {
         if self.r#min_amount < (0f32 as i32) {
             tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                min = 0f32,
+                field = "r#min_amount", value = self.r#min_amount, min = 0f32,
                 "Field got truncated"
             );
             self.r#min_amount = 0f32 as i32;
         }
         if self.r#min_amount > (1000000000f32 as i32) {
             tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                max = 1000000000f32,
+                field = "r#min_amount", value = self.r#min_amount, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#min_amount = 1000000000f32 as i32;
         }
         if self.r#max_amount < (0f32 as i32) {
             tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                min = 0f32,
+                field = "r#max_amount", value = self.r#max_amount, min = 0f32,
                 "Field got truncated"
             );
             self.r#max_amount = 0f32 as i32;
         }
         if self.r#max_amount > (1000000000f32 as i32) {
             tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                max = 1000000000f32,
+                field = "r#max_amount", value = self.r#max_amount, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#max_amount = 1000000000f32 as i32;
         }
     }
+    fn type_name() -> &'static str {
+        "LootContentMoney"
+    }
 }
-impl Default for LootContentFuel {
+impl Default for LootContentMoney {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct LootContentNone {}
-impl LootContentNone {
+pub struct LootContentSomeMoney {
+    pub r#value_ratio: f32,
+}
+impl LootContentSomeMoney {
     fn new() -> Self {
-        Self {}
+        Self {
+            r#value_ratio: Default::default(),
+        }
     }
-}
-impl DatabaseItem for LootContentNone {
-    fn validate(&mut self) {}
-}
-impl Default for LootContentNone {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct LootContentBlueprint {
-    pub r#item_id: TechnologyId,
-}
-impl LootContentBlueprint {
-    fn new(r#item_id: TechnologyId) -> Self {
-        Self { r#item_id }
-    }
-    pub fn with_item_id(mut self, r#item_id: TechnologyId) -> Self {
-        self.r#item_id = r#item_id;
+    pub fn with_value_ratio(mut self, r#value_ratio: f32) -> Self {
+        self.r#value_ratio = r#value_ratio;
         self
     }
 }
-impl DatabaseItem for LootContentBlueprint {
-    fn validate(&mut self) {}
+impl DatabaseItem for LootContentSomeMoney {
+    fn validate(&mut self) {
+        if self.r#value_ratio < (0.001f32 as f32) {
+            tracing::warn!(
+                field = "r#value_ratio", value = self.r#value_ratio, min = 0.001f32,
+                "Field got truncated"
+            );
+            self.r#value_ratio = 0.001f32 as f32;
+        }
+        if self.r#value_ratio > (1000f32 as f32) {
+            tracing::warn!(
+                field = "r#value_ratio", value = self.r#value_ratio, max = 1000f32,
+                "Field got truncated"
+            );
+            self.r#value_ratio = 1000f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "LootContentSomeMoney"
+    }
+}
+impl Default for LootContentSomeMoney {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct LootContentStars {
+    pub r#min_amount: i32,
+    pub r#max_amount: i32,
+}
+impl LootContentStars {
+    fn new() -> Self {
+        Self {
+            r#min_amount: Default::default(),
+            r#max_amount: Default::default(),
+        }
+    }
+    pub fn with_min_amount(mut self, r#min_amount: i32) -> Self {
+        self.r#min_amount = r#min_amount;
+        self
+    }
+    pub fn with_max_amount(mut self, r#max_amount: i32) -> Self {
+        self.r#max_amount = r#max_amount;
+        self
+    }
+}
+impl DatabaseItem for LootContentStars {
+    fn validate(&mut self) {
+        if self.r#min_amount < (0f32 as i32) {
+            tracing::warn!(
+                field = "r#min_amount", value = self.r#min_amount, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#min_amount = 0f32 as i32;
+        }
+        if self.r#min_amount > (1000000000f32 as i32) {
+            tracing::warn!(
+                field = "r#min_amount", value = self.r#min_amount, max = 1000000000f32,
+                "Field got truncated"
+            );
+            self.r#min_amount = 1000000000f32 as i32;
+        }
+        if self.r#max_amount < (0f32 as i32) {
+            tracing::warn!(
+                field = "r#max_amount", value = self.r#max_amount, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#max_amount = 0f32 as i32;
+        }
+        if self.r#max_amount > (1000000000f32 as i32) {
+            tracing::warn!(
+                field = "r#max_amount", value = self.r#max_amount, max = 1000000000f32,
+                "Field got truncated"
+            );
+            self.r#max_amount = 1000000000f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "LootContentStars"
+    }
+}
+impl Default for LootContentStars {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 #[derive(Debug, Clone, serde::Serialize)]
 pub struct LootContentRandomItems {
@@ -6453,40 +7050,35 @@ impl DatabaseItem for LootContentRandomItems {
     fn validate(&mut self) {
         if self.r#min_amount < (0f32 as i32) {
             tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                min = 0f32,
+                field = "r#min_amount", value = self.r#min_amount, min = 0f32,
                 "Field got truncated"
             );
             self.r#min_amount = 0f32 as i32;
         }
         if self.r#min_amount > (1000000000f32 as i32) {
             tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                max = 1000000000f32,
+                field = "r#min_amount", value = self.r#min_amount, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#min_amount = 1000000000f32 as i32;
         }
         if self.r#max_amount < (0f32 as i32) {
             tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                min = 0f32,
+                field = "r#max_amount", value = self.r#max_amount, min = 0f32,
                 "Field got truncated"
             );
             self.r#max_amount = 0f32 as i32;
         }
         if self.r#max_amount > (1000000000f32 as i32) {
             tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                max = 1000000000f32,
+                field = "r#max_amount", value = self.r#max_amount, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#max_amount = 1000000000f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "LootContentRandomItems"
     }
 }
 impl Default for LootContentRandomItems {
@@ -6495,41 +7087,103 @@ impl Default for LootContentRandomItems {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct LootContentAllItems {
-    pub r#items: Vec<LootItem>,
+pub struct LootContentBlueprint {
+    pub r#item_id: TechnologyId,
 }
-impl LootContentAllItems {
-    fn new() -> Self {
-        Self {
-            r#items: Default::default(),
-        }
+impl LootContentBlueprint {
+    fn new(r#item_id: TechnologyId) -> Self {
+        Self { r#item_id }
     }
-    pub fn with_items(mut self, r#items: Vec<LootItem>) -> Self {
-        self.r#items = r#items;
+    pub fn with_item_id(mut self, r#item_id: TechnologyId) -> Self {
+        self.r#item_id = r#item_id;
         self
     }
 }
-impl DatabaseItem for LootContentAllItems {
+impl DatabaseItem for LootContentBlueprint {
     fn validate(&mut self) {}
-}
-impl Default for LootContentAllItems {
-    fn default() -> Self {
-        Self::new()
+    fn type_name() -> &'static str {
+        "LootContentBlueprint"
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct LootContentStarMap {}
-impl LootContentStarMap {
-    fn new() -> Self {
-        Self {}
+pub struct LootContentQuestItem {
+    pub r#item_id: QuestItemId,
+    pub r#min_amount: i32,
+    pub r#max_amount: i32,
+}
+impl LootContentQuestItem {
+    fn new(r#item_id: QuestItemId) -> Self {
+        Self {
+            r#item_id,
+            r#min_amount: Default::default(),
+            r#max_amount: Default::default(),
+        }
+    }
+    pub fn with_item_id(mut self, r#item_id: QuestItemId) -> Self {
+        self.r#item_id = r#item_id;
+        self
+    }
+    pub fn with_min_amount(mut self, r#min_amount: i32) -> Self {
+        self.r#min_amount = r#min_amount;
+        self
+    }
+    pub fn with_max_amount(mut self, r#max_amount: i32) -> Self {
+        self.r#max_amount = r#max_amount;
+        self
     }
 }
-impl DatabaseItem for LootContentStarMap {
-    fn validate(&mut self) {}
+impl DatabaseItem for LootContentQuestItem {
+    fn validate(&mut self) {
+        if self.r#min_amount < (0f32 as i32) {
+            tracing::warn!(
+                field = "r#min_amount", value = self.r#min_amount, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#min_amount = 0f32 as i32;
+        }
+        if self.r#min_amount > (1000000000f32 as i32) {
+            tracing::warn!(
+                field = "r#min_amount", value = self.r#min_amount, max = 1000000000f32,
+                "Field got truncated"
+            );
+            self.r#min_amount = 1000000000f32 as i32;
+        }
+        if self.r#max_amount < (0f32 as i32) {
+            tracing::warn!(
+                field = "r#max_amount", value = self.r#max_amount, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#max_amount = 0f32 as i32;
+        }
+        if self.r#max_amount > (1000000000f32 as i32) {
+            tracing::warn!(
+                field = "r#max_amount", value = self.r#max_amount, max = 1000000000f32,
+                "Field got truncated"
+            );
+            self.r#max_amount = 1000000000f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "LootContentQuestItem"
+    }
 }
-impl Default for LootContentStarMap {
-    fn default() -> Self {
-        Self::new()
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct LootContentShip {
+    pub r#item_id: ShipBuildId,
+}
+impl LootContentShip {
+    fn new(r#item_id: ShipBuildId) -> Self {
+        Self { r#item_id }
+    }
+    pub fn with_item_id(mut self, r#item_id: ShipBuildId) -> Self {
+        self.r#item_id = r#item_id;
+        self
+    }
+}
+impl DatabaseItem for LootContentShip {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "LootContentShip"
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
@@ -6547,161 +7201,105 @@ impl LootContentEmptyShip {
 }
 impl DatabaseItem for LootContentEmptyShip {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "LootContentEmptyShip"
+    }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct LootContentItemsWithChance {
-    pub r#items: Vec<LootItem>,
+pub struct LootContentFuel {
+    pub r#min_amount: i32,
+    pub r#max_amount: i32,
 }
-impl LootContentItemsWithChance {
+impl LootContentFuel {
     fn new() -> Self {
         Self {
-            r#items: Default::default(),
+            r#min_amount: Default::default(),
+            r#max_amount: Default::default(),
         }
     }
-    pub fn with_items(mut self, r#items: Vec<LootItem>) -> Self {
-        self.r#items = r#items;
+    pub fn with_min_amount(mut self, r#min_amount: i32) -> Self {
+        self.r#min_amount = r#min_amount;
+        self
+    }
+    pub fn with_max_amount(mut self, r#max_amount: i32) -> Self {
+        self.r#max_amount = r#max_amount;
         self
     }
 }
-impl DatabaseItem for LootContentItemsWithChance {
+impl DatabaseItem for LootContentFuel {
+    fn validate(&mut self) {
+        if self.r#min_amount < (0f32 as i32) {
+            tracing::warn!(
+                field = "r#min_amount", value = self.r#min_amount, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#min_amount = 0f32 as i32;
+        }
+        if self.r#min_amount > (1000000000f32 as i32) {
+            tracing::warn!(
+                field = "r#min_amount", value = self.r#min_amount, max = 1000000000f32,
+                "Field got truncated"
+            );
+            self.r#min_amount = 1000000000f32 as i32;
+        }
+        if self.r#max_amount < (0f32 as i32) {
+            tracing::warn!(
+                field = "r#max_amount", value = self.r#max_amount, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#max_amount = 0f32 as i32;
+        }
+        if self.r#max_amount > (1000000000f32 as i32) {
+            tracing::warn!(
+                field = "r#max_amount", value = self.r#max_amount, max = 1000000000f32,
+                "Field got truncated"
+            );
+            self.r#max_amount = 1000000000f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "LootContentFuel"
+    }
+}
+impl Default for LootContentFuel {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct LootContentStarMap {}
+impl LootContentStarMap {
+    fn new() -> Self {
+        Self {}
+    }
+}
+impl DatabaseItem for LootContentStarMap {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "LootContentStarMap"
+    }
 }
-impl Default for LootContentItemsWithChance {
+impl Default for LootContentStarMap {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct LootContentStars {
-    pub r#min_amount: i32,
-    pub r#max_amount: i32,
-}
-impl LootContentStars {
+pub struct LootContentNone {}
+impl LootContentNone {
     fn new() -> Self {
-        Self {
-            r#min_amount: Default::default(),
-            r#max_amount: Default::default(),
-        }
-    }
-    pub fn with_min_amount(mut self, r#min_amount: i32) -> Self {
-        self.r#min_amount = r#min_amount;
-        self
-    }
-    pub fn with_max_amount(mut self, r#max_amount: i32) -> Self {
-        self.r#max_amount = r#max_amount;
-        self
+        Self {}
     }
 }
-impl DatabaseItem for LootContentStars {
-    fn validate(&mut self) {
-        if self.r#min_amount < (0f32 as i32) {
-            tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#min_amount = 0f32 as i32;
-        }
-        if self.r#min_amount > (1000000000f32 as i32) {
-            tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                max = 1000000000f32,
-                "Field got truncated"
-            );
-            self.r#min_amount = 1000000000f32 as i32;
-        }
-        if self.r#max_amount < (0f32 as i32) {
-            tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#max_amount = 0f32 as i32;
-        }
-        if self.r#max_amount > (1000000000f32 as i32) {
-            tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                max = 1000000000f32,
-                "Field got truncated"
-            );
-            self.r#max_amount = 1000000000f32 as i32;
-        }
+impl DatabaseItem for LootContentNone {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "LootContentNone"
     }
 }
-impl Default for LootContentStars {
+impl Default for LootContentNone {
     fn default() -> Self {
         Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct LootContentSatellite {
-    pub r#item_id: SatelliteId,
-    pub r#min_amount: i32,
-    pub r#max_amount: i32,
-}
-impl LootContentSatellite {
-    fn new(r#item_id: SatelliteId) -> Self {
-        Self {
-            r#item_id,
-            r#min_amount: Default::default(),
-            r#max_amount: Default::default(),
-        }
-    }
-    pub fn with_item_id(mut self, r#item_id: SatelliteId) -> Self {
-        self.r#item_id = r#item_id;
-        self
-    }
-    pub fn with_min_amount(mut self, r#min_amount: i32) -> Self {
-        self.r#min_amount = r#min_amount;
-        self
-    }
-    pub fn with_max_amount(mut self, r#max_amount: i32) -> Self {
-        self.r#max_amount = r#max_amount;
-        self
-    }
-}
-impl DatabaseItem for LootContentSatellite {
-    fn validate(&mut self) {
-        if self.r#min_amount < (0f32 as i32) {
-            tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#min_amount = 0f32 as i32;
-        }
-        if self.r#min_amount > (1000000000f32 as i32) {
-            tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                max = 1000000000f32,
-                "Field got truncated"
-            );
-            self.r#min_amount = 1000000000f32 as i32;
-        }
-        if self.r#max_amount < (0f32 as i32) {
-            tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#max_amount = 0f32 as i32;
-        }
-        if self.r#max_amount > (1000000000f32 as i32) {
-            tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                max = 1000000000f32,
-                "Field got truncated"
-            );
-            self.r#max_amount = 1000000000f32 as i32;
-        }
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
@@ -6735,40 +7333,35 @@ impl DatabaseItem for LootContentResearchPoints {
     fn validate(&mut self) {
         if self.r#min_amount < (0f32 as i32) {
             tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                min = 0f32,
+                field = "r#min_amount", value = self.r#min_amount, min = 0f32,
                 "Field got truncated"
             );
             self.r#min_amount = 0f32 as i32;
         }
         if self.r#min_amount > (1000000000f32 as i32) {
             tracing::warn!(
-                field = "r#min_amount",
-                value = self.r#min_amount,
-                max = 1000000000f32,
+                field = "r#min_amount", value = self.r#min_amount, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#min_amount = 1000000000f32 as i32;
         }
         if self.r#max_amount < (0f32 as i32) {
             tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                min = 0f32,
+                field = "r#max_amount", value = self.r#max_amount, min = 0f32,
                 "Field got truncated"
             );
             self.r#max_amount = 0f32 as i32;
         }
         if self.r#max_amount > (1000000000f32 as i32) {
             tracing::warn!(
-                field = "r#max_amount",
-                value = self.r#max_amount,
-                max = 1000000000f32,
+                field = "r#max_amount", value = self.r#max_amount, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#max_amount = 1000000000f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "LootContentResearchPoints"
     }
 }
 impl Default for LootContentResearchPoints {
@@ -6777,62 +7370,56 @@ impl Default for LootContentResearchPoints {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct LootContentSomeMoney {
-    pub r#value_ratio: f32,
+pub struct LootContentItemsWithChance {
+    pub r#items: Vec<LootItem>,
 }
-impl LootContentSomeMoney {
+impl LootContentItemsWithChance {
     fn new() -> Self {
         Self {
-            r#value_ratio: Default::default(),
+            r#items: Default::default(),
         }
     }
-    pub fn with_value_ratio(mut self, r#value_ratio: f32) -> Self {
-        self.r#value_ratio = r#value_ratio;
+    pub fn with_items(mut self, r#items: Vec<LootItem>) -> Self {
+        self.r#items = r#items;
         self
     }
 }
-impl DatabaseItem for LootContentSomeMoney {
-    fn validate(&mut self) {
-        if self.r#value_ratio < (0.001f32 as f32) {
-            tracing::warn!(
-                field = "r#value_ratio",
-                value = self.r#value_ratio,
-                min = 0.001f32,
-                "Field got truncated"
-            );
-            self.r#value_ratio = 0.001f32 as f32;
-        }
-        if self.r#value_ratio > (1000f32 as f32) {
-            tracing::warn!(
-                field = "r#value_ratio",
-                value = self.r#value_ratio,
-                max = 1000f32,
-                "Field got truncated"
-            );
-            self.r#value_ratio = 1000f32 as f32;
-        }
+impl DatabaseItem for LootContentItemsWithChance {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "LootContentItemsWithChance"
     }
 }
-impl Default for LootContentSomeMoney {
+impl Default for LootContentItemsWithChance {
     fn default() -> Self {
         Self::new()
     }
 }
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct LootContentShip {
-    pub r#item_id: ShipBuildId,
-}
-impl LootContentShip {
-    fn new(r#item_id: ShipBuildId) -> Self {
-        Self { r#item_id }
+impl DatabaseItem for LootContent {
+    fn validate(&mut self) {
+        match self {
+            Self::None(x) => x.validate(),
+            Self::SomeMoney(x) => x.validate(),
+            Self::Fuel(x) => x.validate(),
+            Self::Money(x) => x.validate(),
+            Self::Stars(x) => x.validate(),
+            Self::StarMap(x) => x.validate(),
+            Self::RandomComponents(x) => x.validate(),
+            Self::RandomItems(x) => x.validate(),
+            Self::AllItems(x) => x.validate(),
+            Self::ItemsWithChance(x) => x.validate(),
+            Self::QuestItem(x) => x.validate(),
+            Self::Ship(x) => x.validate(),
+            Self::EmptyShip(x) => x.validate(),
+            Self::Component(x) => x.validate(),
+            Self::Blueprint(x) => x.validate(),
+            Self::ResearchPoints(x) => x.validate(),
+            Self::Satellite(x) => x.validate(),
+        }
     }
-    pub fn with_item_id(mut self, r#item_id: ShipBuildId) -> Self {
-        self.r#item_id = r#item_id;
-        self
+    fn type_name() -> &'static str {
+        "LootContent"
     }
-}
-impl DatabaseItem for LootContentShip {
-    fn validate(&mut self) {}
 }
 
 // /home/juh9870/shared_projects/event-horizon-main/Assets/Modules/Database/.Schema/v1/Objects/Quests/LootItem.xml
@@ -6859,6 +7446,9 @@ impl LootItem {
 }
 impl DatabaseItem for LootItem {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "LootItem"
+    }
 }
 impl Default for LootItem {
     fn default() -> Self {
@@ -7127,17 +7717,629 @@ impl Node {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeChangeFaction {
+pub struct NodeRemoveItem {
+    pub r#id: i32,
+    pub r#default_transition: i32,
+    pub r#loot: Option<LootId>,
+}
+impl NodeRemoveItem {
+    fn new() -> Self {
+        Self {
+            r#id: Default::default(),
+            r#default_transition: Default::default(),
+            r#loot: Default::default(),
+        }
+    }
+    pub fn with_id(mut self, r#id: i32) -> Self {
+        self.r#id = r#id;
+        self
+    }
+    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
+        self.r#default_transition = r#default_transition;
+        self
+    }
+    pub fn with_loot(mut self, r#loot: Option<LootId>) -> Self {
+        self.r#loot = r#loot;
+        self
+    }
+}
+impl DatabaseItem for NodeRemoveItem {
+    fn validate(&mut self) {
+        if self.r#id < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
+            );
+            self.r#id = 1f32 as i32;
+        }
+        if self.r#id > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
+            );
+            self.r#id = 999999f32 as i32;
+        }
+        if self.r#default_transition < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
+            );
+            self.r#default_transition = 1f32 as i32;
+        }
+        if self.r#default_transition > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
+            );
+            self.r#default_transition = 999999f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "NodeRemoveItem"
+    }
+}
+impl Default for NodeRemoveItem {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct NodeSetFactionStarbasePower {
+    pub r#id: i32,
+    pub r#default_transition: i32,
+    pub r#value: i32,
+}
+impl NodeSetFactionStarbasePower {
+    fn new() -> Self {
+        Self {
+            r#id: Default::default(),
+            r#default_transition: Default::default(),
+            r#value: Default::default(),
+        }
+    }
+    pub fn with_id(mut self, r#id: i32) -> Self {
+        self.r#id = r#id;
+        self
+    }
+    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
+        self.r#default_transition = r#default_transition;
+        self
+    }
+    pub fn with_value(mut self, r#value: i32) -> Self {
+        self.r#value = r#value;
+        self
+    }
+}
+impl DatabaseItem for NodeSetFactionStarbasePower {
+    fn validate(&mut self) {
+        if self.r#id < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
+            );
+            self.r#id = 1f32 as i32;
+        }
+        if self.r#id > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
+            );
+            self.r#id = 999999f32 as i32;
+        }
+        if self.r#default_transition < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
+            );
+            self.r#default_transition = 1f32 as i32;
+        }
+        if self.r#default_transition > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
+            );
+            self.r#default_transition = 999999f32 as i32;
+        }
+        if self.r#value < (0f32 as i32) {
+            tracing::warn!(
+                field = "r#value", value = self.r#value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#value = 0f32 as i32;
+        }
+        if self.r#value > (100000f32 as i32) {
+            tracing::warn!(
+                field = "r#value", value = self.r#value, max = 100000f32,
+                "Field got truncated"
+            );
+            self.r#value = 100000f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "NodeSetFactionStarbasePower"
+    }
+}
+impl Default for NodeSetFactionStarbasePower {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct NodeChangeFactionStarbasePower {
+    pub r#id: i32,
+    pub r#default_transition: i32,
+    pub r#value: i32,
+}
+impl NodeChangeFactionStarbasePower {
+    fn new() -> Self {
+        Self {
+            r#id: Default::default(),
+            r#default_transition: Default::default(),
+            r#value: Default::default(),
+        }
+    }
+    pub fn with_id(mut self, r#id: i32) -> Self {
+        self.r#id = r#id;
+        self
+    }
+    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
+        self.r#default_transition = r#default_transition;
+        self
+    }
+    pub fn with_value(mut self, r#value: i32) -> Self {
+        self.r#value = r#value;
+        self
+    }
+}
+impl DatabaseItem for NodeChangeFactionStarbasePower {
+    fn validate(&mut self) {
+        if self.r#id < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
+            );
+            self.r#id = 1f32 as i32;
+        }
+        if self.r#id > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
+            );
+            self.r#id = 999999f32 as i32;
+        }
+        if self.r#default_transition < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
+            );
+            self.r#default_transition = 1f32 as i32;
+        }
+        if self.r#default_transition > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
+            );
+            self.r#default_transition = 999999f32 as i32;
+        }
+        if self.r#value < (-100000f32 as i32) {
+            tracing::warn!(
+                field = "r#value", value = self.r#value, min = - 100000f32,
+                "Field got truncated"
+            );
+            self.r#value = -100000f32 as i32;
+        }
+        if self.r#value > (100000f32 as i32) {
+            tracing::warn!(
+                field = "r#value", value = self.r#value, max = 100000f32,
+                "Field got truncated"
+            );
+            self.r#value = 100000f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "NodeChangeFactionStarbasePower"
+    }
+}
+impl Default for NodeChangeFactionStarbasePower {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct NodeSetFactionRelations {
+    pub r#id: i32,
+    pub r#default_transition: i32,
+    pub r#value: i32,
+}
+impl NodeSetFactionRelations {
+    fn new() -> Self {
+        Self {
+            r#id: Default::default(),
+            r#default_transition: Default::default(),
+            r#value: Default::default(),
+        }
+    }
+    pub fn with_id(mut self, r#id: i32) -> Self {
+        self.r#id = r#id;
+        self
+    }
+    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
+        self.r#default_transition = r#default_transition;
+        self
+    }
+    pub fn with_value(mut self, r#value: i32) -> Self {
+        self.r#value = r#value;
+        self
+    }
+}
+impl DatabaseItem for NodeSetFactionRelations {
+    fn validate(&mut self) {
+        if self.r#id < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
+            );
+            self.r#id = 1f32 as i32;
+        }
+        if self.r#id > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
+            );
+            self.r#id = 999999f32 as i32;
+        }
+        if self.r#default_transition < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
+            );
+            self.r#default_transition = 1f32 as i32;
+        }
+        if self.r#default_transition > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
+            );
+            self.r#default_transition = 999999f32 as i32;
+        }
+        if self.r#value < (-100f32 as i32) {
+            tracing::warn!(
+                field = "r#value", value = self.r#value, min = - 100f32,
+                "Field got truncated"
+            );
+            self.r#value = -100f32 as i32;
+        }
+        if self.r#value > (100f32 as i32) {
+            tracing::warn!(
+                field = "r#value", value = self.r#value, max = 100f32,
+                "Field got truncated"
+            );
+            self.r#value = 100f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "NodeSetFactionRelations"
+    }
+}
+impl Default for NodeSetFactionRelations {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct NodeCaptureStarBase {
+    pub r#id: i32,
+    pub r#default_transition: i32,
+}
+impl NodeCaptureStarBase {
+    fn new() -> Self {
+        Self {
+            r#id: Default::default(),
+            r#default_transition: Default::default(),
+        }
+    }
+    pub fn with_id(mut self, r#id: i32) -> Self {
+        self.r#id = r#id;
+        self
+    }
+    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
+        self.r#default_transition = r#default_transition;
+        self
+    }
+}
+impl DatabaseItem for NodeCaptureStarBase {
+    fn validate(&mut self) {
+        if self.r#id < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
+            );
+            self.r#id = 1f32 as i32;
+        }
+        if self.r#id > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
+            );
+            self.r#id = 999999f32 as i32;
+        }
+        if self.r#default_transition < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
+            );
+            self.r#default_transition = 1f32 as i32;
+        }
+        if self.r#default_transition > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
+            );
+            self.r#default_transition = 999999f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "NodeCaptureStarBase"
+    }
+}
+impl Default for NodeCaptureStarBase {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct NodeFailQuest {
+    pub r#id: i32,
+}
+impl NodeFailQuest {
+    fn new() -> Self {
+        Self { r#id: Default::default() }
+    }
+    pub fn with_id(mut self, r#id: i32) -> Self {
+        self.r#id = r#id;
+        self
+    }
+}
+impl DatabaseItem for NodeFailQuest {
+    fn validate(&mut self) {
+        if self.r#id < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
+            );
+            self.r#id = 1f32 as i32;
+        }
+        if self.r#id > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
+            );
+            self.r#id = 999999f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "NodeFailQuest"
+    }
+}
+impl Default for NodeFailQuest {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct NodeRetreat {
+    pub r#id: i32,
+    pub r#default_transition: i32,
+}
+impl NodeRetreat {
+    fn new() -> Self {
+        Self {
+            r#id: Default::default(),
+            r#default_transition: Default::default(),
+        }
+    }
+    pub fn with_id(mut self, r#id: i32) -> Self {
+        self.r#id = r#id;
+        self
+    }
+    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
+        self.r#default_transition = r#default_transition;
+        self
+    }
+}
+impl DatabaseItem for NodeRetreat {
+    fn validate(&mut self) {
+        if self.r#id < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
+            );
+            self.r#id = 1f32 as i32;
+        }
+        if self.r#id > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
+            );
+            self.r#id = 999999f32 as i32;
+        }
+        if self.r#default_transition < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
+            );
+            self.r#default_transition = 1f32 as i32;
+        }
+        if self.r#default_transition > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
+            );
+            self.r#default_transition = 999999f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "NodeRetreat"
+    }
+}
+impl Default for NodeRetreat {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct NodeUndefined {
+    pub r#id: i32,
+}
+impl NodeUndefined {
+    fn new() -> Self {
+        Self { r#id: Default::default() }
+    }
+    pub fn with_id(mut self, r#id: i32) -> Self {
+        self.r#id = r#id;
+        self
+    }
+}
+impl DatabaseItem for NodeUndefined {
+    fn validate(&mut self) {
+        if self.r#id < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
+            );
+            self.r#id = 1f32 as i32;
+        }
+        if self.r#id > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
+            );
+            self.r#id = 999999f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "NodeUndefined"
+    }
+}
+impl Default for NodeUndefined {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct NodeReceiveItem {
+    pub r#id: i32,
+    pub r#default_transition: i32,
+    pub r#loot: Option<LootId>,
+}
+impl NodeReceiveItem {
+    fn new() -> Self {
+        Self {
+            r#id: Default::default(),
+            r#default_transition: Default::default(),
+            r#loot: Default::default(),
+        }
+    }
+    pub fn with_id(mut self, r#id: i32) -> Self {
+        self.r#id = r#id;
+        self
+    }
+    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
+        self.r#default_transition = r#default_transition;
+        self
+    }
+    pub fn with_loot(mut self, r#loot: Option<LootId>) -> Self {
+        self.r#loot = r#loot;
+        self
+    }
+}
+impl DatabaseItem for NodeReceiveItem {
+    fn validate(&mut self) {
+        if self.r#id < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
+            );
+            self.r#id = 1f32 as i32;
+        }
+        if self.r#id > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
+            );
+            self.r#id = 999999f32 as i32;
+        }
+        if self.r#default_transition < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
+            );
+            self.r#default_transition = 1f32 as i32;
+        }
+        if self.r#default_transition > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
+            );
+            self.r#default_transition = 999999f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "NodeReceiveItem"
+    }
+}
+impl Default for NodeReceiveItem {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct NodeCondition {
+    pub r#id: i32,
+    pub r#message: String,
+    pub r#transitions: Vec<NodeTransition>,
+}
+impl NodeCondition {
+    fn new() -> Self {
+        Self {
+            r#id: Default::default(),
+            r#message: Default::default(),
+            r#transitions: Default::default(),
+        }
+    }
+    pub fn with_id(mut self, r#id: i32) -> Self {
+        self.r#id = r#id;
+        self
+    }
+    pub fn with_message(mut self, r#message: String) -> Self {
+        self.r#message = r#message;
+        self
+    }
+    pub fn with_transitions(mut self, r#transitions: Vec<NodeTransition>) -> Self {
+        self.r#transitions = r#transitions;
+        self
+    }
+}
+impl DatabaseItem for NodeCondition {
+    fn validate(&mut self) {
+        if self.r#id < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
+            );
+            self.r#id = 1f32 as i32;
+        }
+        if self.r#id > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
+            );
+            self.r#id = 999999f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "NodeCondition"
+    }
+}
+impl Default for NodeCondition {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct NodeOpenWorkshop {
     pub r#id: i32,
     pub r#default_transition: i32,
     pub r#faction: Option<FactionId>,
+    pub r#value: i32,
 }
-impl NodeChangeFaction {
+impl NodeOpenWorkshop {
     fn new() -> Self {
         Self {
             r#id: Default::default(),
             r#default_transition: Default::default(),
             r#faction: Default::default(),
+            r#value: Default::default(),
         }
     }
     pub fn with_id(mut self, r#id: i32) -> Self {
@@ -7152,102 +8354,71 @@ impl NodeChangeFaction {
         self.r#faction = r#faction;
         self
     }
+    pub fn with_value(mut self, r#value: i32) -> Self {
+        self.r#value = r#value;
+        self
+    }
 }
-impl DatabaseItem for NodeChangeFaction {
+impl DatabaseItem for NodeOpenWorkshop {
     fn validate(&mut self) {
         if self.r#id < (1f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
             );
             self.r#id = 1f32 as i32;
         }
         if self.r#id > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
             );
             self.r#id = 999999f32 as i32;
         }
         if self.r#default_transition < (1f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
             );
             self.r#default_transition = 1f32 as i32;
         }
         if self.r#default_transition > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
             );
             self.r#default_transition = 999999f32 as i32;
         }
+        if self.r#value < (0f32 as i32) {
+            tracing::warn!(
+                field = "r#value", value = self.r#value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#value = 0f32 as i32;
+        }
+        if self.r#value > (10000f32 as i32) {
+            tracing::warn!(
+                field = "r#value", value = self.r#value, max = 10000f32,
+                "Field got truncated"
+            );
+            self.r#value = 10000f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "NodeOpenWorkshop"
     }
 }
-impl Default for NodeChangeFaction {
+impl Default for NodeOpenWorkshop {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeUndefined {
-    pub r#id: i32,
-}
-impl NodeUndefined {
-    fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-        }
-    }
-    pub fn with_id(mut self, r#id: i32) -> Self {
-        self.r#id = r#id;
-        self
-    }
-}
-impl DatabaseItem for NodeUndefined {
-    fn validate(&mut self) {
-        if self.r#id < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#id = 1f32 as i32;
-        }
-        if self.r#id > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#id = 999999f32 as i32;
-        }
-    }
-}
-impl Default for NodeUndefined {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeRandom {
+pub struct NodeSwitch {
     pub r#id: i32,
     pub r#message: String,
     pub r#default_transition: i32,
     pub r#transitions: Vec<NodeTransition>,
 }
-impl NodeRandom {
+impl NodeSwitch {
     fn new() -> Self {
         Self {
             r#id: Default::default(),
@@ -7273,47 +8444,119 @@ impl NodeRandom {
         self
     }
 }
-impl DatabaseItem for NodeRandom {
+impl DatabaseItem for NodeSwitch {
     fn validate(&mut self) {
         if self.r#id < (1f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
             );
             self.r#id = 1f32 as i32;
         }
         if self.r#id > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
             );
             self.r#id = 999999f32 as i32;
         }
         if self.r#default_transition < (0f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, min =
+                0f32, "Field got truncated"
             );
             self.r#default_transition = 0f32 as i32;
         }
         if self.r#default_transition > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
             );
             self.r#default_transition = 999999f32 as i32;
         }
     }
+    fn type_name() -> &'static str {
+        "NodeSwitch"
+    }
 }
-impl Default for NodeRandom {
+impl Default for NodeSwitch {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct NodeAttackStarbase {
+    pub r#id: i32,
+    pub r#default_transition: i32,
+    pub r#failure_transition: i32,
+}
+impl NodeAttackStarbase {
+    fn new() -> Self {
+        Self {
+            r#id: Default::default(),
+            r#default_transition: Default::default(),
+            r#failure_transition: Default::default(),
+        }
+    }
+    pub fn with_id(mut self, r#id: i32) -> Self {
+        self.r#id = r#id;
+        self
+    }
+    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
+        self.r#default_transition = r#default_transition;
+        self
+    }
+    pub fn with_failure_transition(mut self, r#failure_transition: i32) -> Self {
+        self.r#failure_transition = r#failure_transition;
+        self
+    }
+}
+impl DatabaseItem for NodeAttackStarbase {
+    fn validate(&mut self) {
+        if self.r#id < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
+            );
+            self.r#id = 1f32 as i32;
+        }
+        if self.r#id > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
+            );
+            self.r#id = 999999f32 as i32;
+        }
+        if self.r#default_transition < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
+            );
+            self.r#default_transition = 1f32 as i32;
+        }
+        if self.r#default_transition > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
+            );
+            self.r#default_transition = 999999f32 as i32;
+        }
+        if self.r#failure_transition < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#failure_transition", value = self.r#failure_transition, min =
+                1f32, "Field got truncated"
+            );
+            self.r#failure_transition = 1f32 as i32;
+        }
+        if self.r#failure_transition > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#failure_transition", value = self.r#failure_transition, max =
+                999999f32, "Field got truncated"
+            );
+            self.r#failure_transition = 999999f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "NodeAttackStarbase"
+    }
+}
+impl Default for NodeAttackStarbase {
     fn default() -> Self {
         Self::new()
     }
@@ -7355,58 +8598,47 @@ impl DatabaseItem for NodeOpenShipyard {
     fn validate(&mut self) {
         if self.r#id < (1f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
             );
             self.r#id = 1f32 as i32;
         }
         if self.r#id > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
             );
             self.r#id = 999999f32 as i32;
         }
         if self.r#default_transition < (1f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
             );
             self.r#default_transition = 1f32 as i32;
         }
         if self.r#default_transition > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
             );
             self.r#default_transition = 999999f32 as i32;
         }
         if self.r#value < (0f32 as i32) {
             tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                min = 0f32,
+                field = "r#value", value = self.r#value, min = 0f32,
                 "Field got truncated"
             );
             self.r#value = 0f32 as i32;
         }
         if self.r#value > (10000f32 as i32) {
             tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                max = 10000f32,
+                field = "r#value", value = self.r#value, max = 10000f32,
                 "Field got truncated"
             );
             self.r#value = 10000f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "NodeOpenShipyard"
     }
 }
 impl Default for NodeOpenShipyard {
@@ -7415,286 +8647,18 @@ impl Default for NodeOpenShipyard {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeRetreat {
-    pub r#id: i32,
-    pub r#default_transition: i32,
-}
-impl NodeRetreat {
-    fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-            r#default_transition: Default::default(),
-        }
-    }
-    pub fn with_id(mut self, r#id: i32) -> Self {
-        self.r#id = r#id;
-        self
-    }
-    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
-        self.r#default_transition = r#default_transition;
-        self
-    }
-}
-impl DatabaseItem for NodeRetreat {
-    fn validate(&mut self) {
-        if self.r#id < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#id = 1f32 as i32;
-        }
-        if self.r#id > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#id = 999999f32 as i32;
-        }
-        if self.r#default_transition < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 1f32 as i32;
-        }
-        if self.r#default_transition > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 999999f32 as i32;
-        }
-    }
-}
-impl Default for NodeRetreat {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeStartQuest {
-    pub r#id: i32,
-    pub r#default_transition: i32,
-    pub r#quest: Option<QuestId>,
-}
-impl NodeStartQuest {
-    fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-            r#default_transition: Default::default(),
-            r#quest: Default::default(),
-        }
-    }
-    pub fn with_id(mut self, r#id: i32) -> Self {
-        self.r#id = r#id;
-        self
-    }
-    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
-        self.r#default_transition = r#default_transition;
-        self
-    }
-    pub fn with_quest(mut self, r#quest: Option<QuestId>) -> Self {
-        self.r#quest = r#quest;
-        self
-    }
-}
-impl DatabaseItem for NodeStartQuest {
-    fn validate(&mut self) {
-        if self.r#id < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#id = 1f32 as i32;
-        }
-        if self.r#id > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#id = 999999f32 as i32;
-        }
-        if self.r#default_transition < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 1f32 as i32;
-        }
-        if self.r#default_transition > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 999999f32 as i32;
-        }
-    }
-}
-impl Default for NodeStartQuest {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeSetFactionRelations {
-    pub r#id: i32,
-    pub r#default_transition: i32,
-    pub r#value: i32,
-}
-impl NodeSetFactionRelations {
-    fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-            r#default_transition: Default::default(),
-            r#value: Default::default(),
-        }
-    }
-    pub fn with_id(mut self, r#id: i32) -> Self {
-        self.r#id = r#id;
-        self
-    }
-    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
-        self.r#default_transition = r#default_transition;
-        self
-    }
-    pub fn with_value(mut self, r#value: i32) -> Self {
-        self.r#value = r#value;
-        self
-    }
-}
-impl DatabaseItem for NodeSetFactionRelations {
-    fn validate(&mut self) {
-        if self.r#id < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#id = 1f32 as i32;
-        }
-        if self.r#id > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#id = 999999f32 as i32;
-        }
-        if self.r#default_transition < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 1f32 as i32;
-        }
-        if self.r#default_transition > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 999999f32 as i32;
-        }
-        if self.r#value < (-100f32 as i32) {
-            tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                min = -100f32,
-                "Field got truncated"
-            );
-            self.r#value = -100f32 as i32;
-        }
-        if self.r#value > (100f32 as i32) {
-            tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                max = 100f32,
-                "Field got truncated"
-            );
-            self.r#value = 100f32 as i32;
-        }
-    }
-}
-impl Default for NodeSetFactionRelations {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeCancelQuest {
-    pub r#id: i32,
-}
-impl NodeCancelQuest {
-    fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-        }
-    }
-    pub fn with_id(mut self, r#id: i32) -> Self {
-        self.r#id = r#id;
-        self
-    }
-}
-impl DatabaseItem for NodeCancelQuest {
-    fn validate(&mut self) {
-        if self.r#id < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#id = 1f32 as i32;
-        }
-        if self.r#id > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#id = 999999f32 as i32;
-        }
-    }
-}
-impl Default for NodeCancelQuest {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeCondition {
+pub struct NodeRandom {
     pub r#id: i32,
     pub r#message: String,
+    pub r#default_transition: i32,
     pub r#transitions: Vec<NodeTransition>,
 }
-impl NodeCondition {
+impl NodeRandom {
     fn new() -> Self {
         Self {
             r#id: Default::default(),
             r#message: Default::default(),
+            r#default_transition: Default::default(),
             r#transitions: Default::default(),
         }
     }
@@ -7706,130 +8670,49 @@ impl NodeCondition {
         self.r#message = r#message;
         self
     }
+    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
+        self.r#default_transition = r#default_transition;
+        self
+    }
     pub fn with_transitions(mut self, r#transitions: Vec<NodeTransition>) -> Self {
         self.r#transitions = r#transitions;
         self
     }
 }
-impl DatabaseItem for NodeCondition {
+impl DatabaseItem for NodeRandom {
     fn validate(&mut self) {
         if self.r#id < (1f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
             );
             self.r#id = 1f32 as i32;
         }
         if self.r#id > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
             );
             self.r#id = 999999f32 as i32;
         }
-    }
-}
-impl Default for NodeCondition {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeChangeCharacterRelations {
-    pub r#id: i32,
-    pub r#default_transition: i32,
-    pub r#character: Option<CharacterId>,
-    pub r#value: i32,
-}
-impl NodeChangeCharacterRelations {
-    fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-            r#default_transition: Default::default(),
-            r#character: Default::default(),
-            r#value: Default::default(),
-        }
-    }
-    pub fn with_id(mut self, r#id: i32) -> Self {
-        self.r#id = r#id;
-        self
-    }
-    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
-        self.r#default_transition = r#default_transition;
-        self
-    }
-    pub fn with_character(mut self, r#character: Option<CharacterId>) -> Self {
-        self.r#character = r#character;
-        self
-    }
-    pub fn with_value(mut self, r#value: i32) -> Self {
-        self.r#value = r#value;
-        self
-    }
-}
-impl DatabaseItem for NodeChangeCharacterRelations {
-    fn validate(&mut self) {
-        if self.r#id < (1f32 as i32) {
+        if self.r#default_transition < (0f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, min =
+                0f32, "Field got truncated"
             );
-            self.r#id = 1f32 as i32;
-        }
-        if self.r#id > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#id = 999999f32 as i32;
-        }
-        if self.r#default_transition < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 1f32 as i32;
+            self.r#default_transition = 0f32 as i32;
         }
         if self.r#default_transition > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
             );
             self.r#default_transition = 999999f32 as i32;
         }
-        if self.r#value < (-100f32 as i32) {
-            tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                min = -100f32,
-                "Field got truncated"
-            );
-            self.r#value = -100f32 as i32;
-        }
-        if self.r#value > (100f32 as i32) {
-            tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                max = 100f32,
-                "Field got truncated"
-            );
-            self.r#value = 100f32 as i32;
-        }
+    }
+    fn type_name() -> &'static str {
+        "NodeRandom"
     }
 }
-impl Default for NodeChangeCharacterRelations {
+impl Default for NodeRandom {
     fn default() -> Self {
         Self::new()
     }
@@ -7889,22 +8772,19 @@ impl DatabaseItem for NodeShowDialog {
     fn validate(&mut self) {
         if self.r#id < (1f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
             );
             self.r#id = 1f32 as i32;
         }
         if self.r#id > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
             );
             self.r#id = 999999f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "NodeShowDialog"
     }
 }
 impl Default for NodeShowDialog {
@@ -7918,9 +8798,7 @@ pub struct NodeComingSoon {
 }
 impl NodeComingSoon {
     fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-        }
+        Self { r#id: Default::default() }
     }
     pub fn with_id(mut self, r#id: i32) -> Self {
         self.r#id = r#id;
@@ -7931,22 +8809,19 @@ impl DatabaseItem for NodeComingSoon {
     fn validate(&mut self) {
         if self.r#id < (1f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
             );
             self.r#id = 1f32 as i32;
         }
         if self.r#id > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
             );
             self.r#id = 999999f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "NodeComingSoon"
     }
 }
 impl Default for NodeComingSoon {
@@ -7955,17 +8830,15 @@ impl Default for NodeComingSoon {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeAttackStarbase {
+pub struct NodeDestroyOccupants {
     pub r#id: i32,
     pub r#default_transition: i32,
-    pub r#failure_transition: i32,
 }
-impl NodeAttackStarbase {
+impl NodeDestroyOccupants {
     fn new() -> Self {
         Self {
             r#id: Default::default(),
             r#default_transition: Default::default(),
-            r#failure_transition: Default::default(),
         }
     }
     pub fn with_id(mut self, r#id: i32) -> Self {
@@ -7976,178 +8849,131 @@ impl NodeAttackStarbase {
         self.r#default_transition = r#default_transition;
         self
     }
-    pub fn with_failure_transition(mut self, r#failure_transition: i32) -> Self {
-        self.r#failure_transition = r#failure_transition;
-        self
-    }
 }
-impl DatabaseItem for NodeAttackStarbase {
+impl DatabaseItem for NodeDestroyOccupants {
     fn validate(&mut self) {
         if self.r#id < (1f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
             );
             self.r#id = 1f32 as i32;
         }
         if self.r#id > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
             );
             self.r#id = 999999f32 as i32;
         }
         if self.r#default_transition < (1f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
             );
             self.r#default_transition = 1f32 as i32;
         }
         if self.r#default_transition > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
             );
             self.r#default_transition = 999999f32 as i32;
         }
-        if self.r#failure_transition < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#failure_transition",
-                value = self.r#failure_transition,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#failure_transition = 1f32 as i32;
-        }
-        if self.r#failure_transition > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#failure_transition",
-                value = self.r#failure_transition,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#failure_transition = 999999f32 as i32;
-        }
+    }
+    fn type_name() -> &'static str {
+        "NodeDestroyOccupants"
     }
 }
-impl Default for NodeAttackStarbase {
+impl Default for NodeDestroyOccupants {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeChangeFactionRelations {
+pub struct NodeCompleteQuest {
     pub r#id: i32,
-    pub r#default_transition: i32,
-    pub r#value: i32,
 }
-impl NodeChangeFactionRelations {
+impl NodeCompleteQuest {
     fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-            r#default_transition: Default::default(),
-            r#value: Default::default(),
-        }
+        Self { r#id: Default::default() }
     }
     pub fn with_id(mut self, r#id: i32) -> Self {
         self.r#id = r#id;
         self
     }
-    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
-        self.r#default_transition = r#default_transition;
-        self
-    }
-    pub fn with_value(mut self, r#value: i32) -> Self {
-        self.r#value = r#value;
-        self
-    }
 }
-impl DatabaseItem for NodeChangeFactionRelations {
+impl DatabaseItem for NodeCompleteQuest {
     fn validate(&mut self) {
         if self.r#id < (1f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
             );
             self.r#id = 1f32 as i32;
         }
         if self.r#id > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
             );
             self.r#id = 999999f32 as i32;
         }
-        if self.r#default_transition < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 1f32 as i32;
-        }
-        if self.r#default_transition > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 999999f32 as i32;
-        }
-        if self.r#value < (-100f32 as i32) {
-            tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                min = -100f32,
-                "Field got truncated"
-            );
-            self.r#value = -100f32 as i32;
-        }
-        if self.r#value > (100f32 as i32) {
-            tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                max = 100f32,
-                "Field got truncated"
-            );
-            self.r#value = 100f32 as i32;
-        }
+    }
+    fn type_name() -> &'static str {
+        "NodeCompleteQuest"
     }
 }
-impl Default for NodeChangeFactionRelations {
+impl Default for NodeCompleteQuest {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeOpenWorkshop {
+pub struct NodeCancelQuest {
+    pub r#id: i32,
+}
+impl NodeCancelQuest {
+    fn new() -> Self {
+        Self { r#id: Default::default() }
+    }
+    pub fn with_id(mut self, r#id: i32) -> Self {
+        self.r#id = r#id;
+        self
+    }
+}
+impl DatabaseItem for NodeCancelQuest {
+    fn validate(&mut self) {
+        if self.r#id < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
+            );
+            self.r#id = 1f32 as i32;
+        }
+        if self.r#id > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
+            );
+            self.r#id = 999999f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "NodeCancelQuest"
+    }
+}
+impl Default for NodeCancelQuest {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct NodeChangeFaction {
     pub r#id: i32,
     pub r#default_transition: i32,
     pub r#faction: Option<FactionId>,
-    pub r#value: i32,
 }
-impl NodeOpenWorkshop {
+impl NodeChangeFaction {
     fn new() -> Self {
         Self {
             r#id: Default::default(),
             r#default_transition: Default::default(),
             r#faction: Default::default(),
-            r#value: Default::default(),
         }
     }
     pub fn with_id(mut self, r#id: i32) -> Self {
@@ -8162,206 +8988,57 @@ impl NodeOpenWorkshop {
         self.r#faction = r#faction;
         self
     }
-    pub fn with_value(mut self, r#value: i32) -> Self {
-        self.r#value = r#value;
-        self
-    }
 }
-impl DatabaseItem for NodeOpenWorkshop {
+impl DatabaseItem for NodeChangeFaction {
     fn validate(&mut self) {
         if self.r#id < (1f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
             );
             self.r#id = 1f32 as i32;
         }
         if self.r#id > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
             );
             self.r#id = 999999f32 as i32;
         }
         if self.r#default_transition < (1f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
             );
             self.r#default_transition = 1f32 as i32;
         }
         if self.r#default_transition > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 999999f32 as i32;
-        }
-        if self.r#value < (0f32 as i32) {
-            tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#value = 0f32 as i32;
-        }
-        if self.r#value > (10000f32 as i32) {
-            tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                max = 10000f32,
-                "Field got truncated"
-            );
-            self.r#value = 10000f32 as i32;
-        }
-    }
-}
-impl Default for NodeOpenWorkshop {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeSwitch {
-    pub r#id: i32,
-    pub r#message: String,
-    pub r#default_transition: i32,
-    pub r#transitions: Vec<NodeTransition>,
-}
-impl NodeSwitch {
-    fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-            r#message: Default::default(),
-            r#default_transition: Default::default(),
-            r#transitions: Default::default(),
-        }
-    }
-    pub fn with_id(mut self, r#id: i32) -> Self {
-        self.r#id = r#id;
-        self
-    }
-    pub fn with_message(mut self, r#message: String) -> Self {
-        self.r#message = r#message;
-        self
-    }
-    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
-        self.r#default_transition = r#default_transition;
-        self
-    }
-    pub fn with_transitions(mut self, r#transitions: Vec<NodeTransition>) -> Self {
-        self.r#transitions = r#transitions;
-        self
-    }
-}
-impl DatabaseItem for NodeSwitch {
-    fn validate(&mut self) {
-        if self.r#id < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#id = 1f32 as i32;
-        }
-        if self.r#id > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#id = 999999f32 as i32;
-        }
-        if self.r#default_transition < (0f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 0f32 as i32;
-        }
-        if self.r#default_transition > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
             );
             self.r#default_transition = 999999f32 as i32;
         }
     }
+    fn type_name() -> &'static str {
+        "NodeChangeFaction"
+    }
 }
-impl Default for NodeSwitch {
+impl Default for NodeChangeFaction {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeFailQuest {
-    pub r#id: i32,
-}
-impl NodeFailQuest {
-    fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-        }
-    }
-    pub fn with_id(mut self, r#id: i32) -> Self {
-        self.r#id = r#id;
-        self
-    }
-}
-impl DatabaseItem for NodeFailQuest {
-    fn validate(&mut self) {
-        if self.r#id < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#id = 1f32 as i32;
-        }
-        if self.r#id > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#id = 999999f32 as i32;
-        }
-    }
-}
-impl Default for NodeFailQuest {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeRemoveItem {
+pub struct NodeStartQuest {
     pub r#id: i32,
     pub r#default_transition: i32,
-    pub r#loot: Option<LootId>,
+    pub r#quest: Option<QuestId>,
 }
-impl NodeRemoveItem {
+impl NodeStartQuest {
     fn new() -> Self {
         Self {
             r#id: Default::default(),
             r#default_transition: Default::default(),
-            r#loot: Default::default(),
+            r#quest: Default::default(),
         }
     }
     pub fn with_id(mut self, r#id: i32) -> Self {
@@ -8372,52 +9049,45 @@ impl NodeRemoveItem {
         self.r#default_transition = r#default_transition;
         self
     }
-    pub fn with_loot(mut self, r#loot: Option<LootId>) -> Self {
-        self.r#loot = r#loot;
+    pub fn with_quest(mut self, r#quest: Option<QuestId>) -> Self {
+        self.r#quest = r#quest;
         self
     }
 }
-impl DatabaseItem for NodeRemoveItem {
+impl DatabaseItem for NodeStartQuest {
     fn validate(&mut self) {
         if self.r#id < (1f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
             );
             self.r#id = 1f32 as i32;
         }
         if self.r#id > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
             );
             self.r#id = 999999f32 as i32;
         }
         if self.r#default_transition < (1f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
             );
             self.r#default_transition = 1f32 as i32;
         }
         if self.r#default_transition > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
             );
             self.r#default_transition = 999999f32 as i32;
         }
     }
+    fn type_name() -> &'static str {
+        "NodeStartQuest"
+    }
 }
-impl Default for NodeRemoveItem {
+impl Default for NodeStartQuest {
     fn default() -> Self {
         Self::new()
     }
@@ -8447,43 +9117,121 @@ impl DatabaseItem for NodeSuppressOccupants {
     fn validate(&mut self) {
         if self.r#id < (1f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
             );
             self.r#id = 1f32 as i32;
         }
         if self.r#id > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
             );
             self.r#id = 999999f32 as i32;
         }
         if self.r#default_transition < (1f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
             );
             self.r#default_transition = 1f32 as i32;
         }
         if self.r#default_transition > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
             );
             self.r#default_transition = 999999f32 as i32;
         }
     }
+    fn type_name() -> &'static str {
+        "NodeSuppressOccupants"
+    }
 }
 impl Default for NodeSuppressOccupants {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct NodeSetCharacterRelations {
+    pub r#id: i32,
+    pub r#default_transition: i32,
+    pub r#character: Option<CharacterId>,
+    pub r#value: i32,
+}
+impl NodeSetCharacterRelations {
+    fn new() -> Self {
+        Self {
+            r#id: Default::default(),
+            r#default_transition: Default::default(),
+            r#character: Default::default(),
+            r#value: Default::default(),
+        }
+    }
+    pub fn with_id(mut self, r#id: i32) -> Self {
+        self.r#id = r#id;
+        self
+    }
+    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
+        self.r#default_transition = r#default_transition;
+        self
+    }
+    pub fn with_character(mut self, r#character: Option<CharacterId>) -> Self {
+        self.r#character = r#character;
+        self
+    }
+    pub fn with_value(mut self, r#value: i32) -> Self {
+        self.r#value = r#value;
+        self
+    }
+}
+impl DatabaseItem for NodeSetCharacterRelations {
+    fn validate(&mut self) {
+        if self.r#id < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
+            );
+            self.r#id = 1f32 as i32;
+        }
+        if self.r#id > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
+            );
+            self.r#id = 999999f32 as i32;
+        }
+        if self.r#default_transition < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
+            );
+            self.r#default_transition = 1f32 as i32;
+        }
+        if self.r#default_transition > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
+            );
+            self.r#default_transition = 999999f32 as i32;
+        }
+        if self.r#value < (-100f32 as i32) {
+            tracing::warn!(
+                field = "r#value", value = self.r#value, min = - 100f32,
+                "Field got truncated"
+            );
+            self.r#value = -100f32 as i32;
+        }
+        if self.r#value > (100f32 as i32) {
+            tracing::warn!(
+                field = "r#value", value = self.r#value, max = 100f32,
+                "Field got truncated"
+            );
+            self.r#value = 100f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "NodeSetCharacterRelations"
+    }
+}
+impl Default for NodeSetCharacterRelations {
     fn default() -> Self {
         Self::new()
     }
@@ -8519,58 +9267,47 @@ impl DatabaseItem for NodeAttackOccupants {
     fn validate(&mut self) {
         if self.r#id < (1f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
             );
             self.r#id = 1f32 as i32;
         }
         if self.r#id > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
             );
             self.r#id = 999999f32 as i32;
         }
         if self.r#default_transition < (1f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
             );
             self.r#default_transition = 1f32 as i32;
         }
         if self.r#default_transition > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
             );
             self.r#default_transition = 999999f32 as i32;
         }
         if self.r#failure_transition < (1f32 as i32) {
             tracing::warn!(
-                field = "r#failure_transition",
-                value = self.r#failure_transition,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#failure_transition", value = self.r#failure_transition, min =
+                1f32, "Field got truncated"
             );
             self.r#failure_transition = 1f32 as i32;
         }
         if self.r#failure_transition > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#failure_transition",
-                value = self.r#failure_transition,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#failure_transition", value = self.r#failure_transition, max =
+                999999f32, "Field got truncated"
             );
             self.r#failure_transition = 999999f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "NodeAttackOccupants"
     }
 }
 impl Default for NodeAttackOccupants {
@@ -8621,58 +9358,47 @@ impl DatabaseItem for NodeAttackFleet {
     fn validate(&mut self) {
         if self.r#id < (1f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
             );
             self.r#id = 1f32 as i32;
         }
         if self.r#id > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
             );
             self.r#id = 999999f32 as i32;
         }
         if self.r#default_transition < (1f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
             );
             self.r#default_transition = 1f32 as i32;
         }
         if self.r#default_transition > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
             );
             self.r#default_transition = 999999f32 as i32;
         }
         if self.r#failure_transition < (1f32 as i32) {
             tracing::warn!(
-                field = "r#failure_transition",
-                value = self.r#failure_transition,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#failure_transition", value = self.r#failure_transition, min =
+                1f32, "Field got truncated"
             );
             self.r#failure_transition = 1f32 as i32;
         }
         if self.r#failure_transition > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#failure_transition",
-                value = self.r#failure_transition,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#failure_transition", value = self.r#failure_transition, max =
+                999999f32, "Field got truncated"
             );
             self.r#failure_transition = 999999f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "NodeAttackFleet"
     }
 }
 impl Default for NodeAttackFleet {
@@ -8681,12 +9407,156 @@ impl Default for NodeAttackFleet {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeSetFactionStarbasePower {
+pub struct NodeChangeCharacterRelations {
+    pub r#id: i32,
+    pub r#default_transition: i32,
+    pub r#character: Option<CharacterId>,
+    pub r#value: i32,
+}
+impl NodeChangeCharacterRelations {
+    fn new() -> Self {
+        Self {
+            r#id: Default::default(),
+            r#default_transition: Default::default(),
+            r#character: Default::default(),
+            r#value: Default::default(),
+        }
+    }
+    pub fn with_id(mut self, r#id: i32) -> Self {
+        self.r#id = r#id;
+        self
+    }
+    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
+        self.r#default_transition = r#default_transition;
+        self
+    }
+    pub fn with_character(mut self, r#character: Option<CharacterId>) -> Self {
+        self.r#character = r#character;
+        self
+    }
+    pub fn with_value(mut self, r#value: i32) -> Self {
+        self.r#value = r#value;
+        self
+    }
+}
+impl DatabaseItem for NodeChangeCharacterRelations {
+    fn validate(&mut self) {
+        if self.r#id < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
+            );
+            self.r#id = 1f32 as i32;
+        }
+        if self.r#id > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
+            );
+            self.r#id = 999999f32 as i32;
+        }
+        if self.r#default_transition < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
+            );
+            self.r#default_transition = 1f32 as i32;
+        }
+        if self.r#default_transition > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
+            );
+            self.r#default_transition = 999999f32 as i32;
+        }
+        if self.r#value < (-100f32 as i32) {
+            tracing::warn!(
+                field = "r#value", value = self.r#value, min = - 100f32,
+                "Field got truncated"
+            );
+            self.r#value = -100f32 as i32;
+        }
+        if self.r#value > (100f32 as i32) {
+            tracing::warn!(
+                field = "r#value", value = self.r#value, max = 100f32,
+                "Field got truncated"
+            );
+            self.r#value = 100f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "NodeChangeCharacterRelations"
+    }
+}
+impl Default for NodeChangeCharacterRelations {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct NodeLiberateStarBase {
+    pub r#id: i32,
+    pub r#default_transition: i32,
+}
+impl NodeLiberateStarBase {
+    fn new() -> Self {
+        Self {
+            r#id: Default::default(),
+            r#default_transition: Default::default(),
+        }
+    }
+    pub fn with_id(mut self, r#id: i32) -> Self {
+        self.r#id = r#id;
+        self
+    }
+    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
+        self.r#default_transition = r#default_transition;
+        self
+    }
+}
+impl DatabaseItem for NodeLiberateStarBase {
+    fn validate(&mut self) {
+        if self.r#id < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
+            );
+            self.r#id = 1f32 as i32;
+        }
+        if self.r#id > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
+            );
+            self.r#id = 999999f32 as i32;
+        }
+        if self.r#default_transition < (1f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
+            );
+            self.r#default_transition = 1f32 as i32;
+        }
+        if self.r#default_transition > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
+            );
+            self.r#default_transition = 999999f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "NodeLiberateStarBase"
+    }
+}
+impl Default for NodeLiberateStarBase {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct NodeChangeFactionRelations {
     pub r#id: i32,
     pub r#default_transition: i32,
     pub r#value: i32,
 }
-impl NodeSetFactionStarbasePower {
+impl NodeChangeFactionRelations {
     fn new() -> Self {
         Self {
             r#id: Default::default(),
@@ -8707,179 +9577,54 @@ impl NodeSetFactionStarbasePower {
         self
     }
 }
-impl DatabaseItem for NodeSetFactionStarbasePower {
+impl DatabaseItem for NodeChangeFactionRelations {
     fn validate(&mut self) {
         if self.r#id < (1f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
             );
             self.r#id = 1f32 as i32;
         }
         if self.r#id > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
             );
             self.r#id = 999999f32 as i32;
         }
         if self.r#default_transition < (1f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
             );
             self.r#default_transition = 1f32 as i32;
         }
         if self.r#default_transition > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
             );
             self.r#default_transition = 999999f32 as i32;
         }
-        if self.r#value < (0f32 as i32) {
+        if self.r#value < (-100f32 as i32) {
             tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                min = 0f32,
+                field = "r#value", value = self.r#value, min = - 100f32,
                 "Field got truncated"
             );
-            self.r#value = 0f32 as i32;
+            self.r#value = -100f32 as i32;
         }
-        if self.r#value > (100000f32 as i32) {
+        if self.r#value > (100f32 as i32) {
             tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                max = 100000f32,
+                field = "r#value", value = self.r#value, max = 100f32,
                 "Field got truncated"
             );
-            self.r#value = 100000f32 as i32;
+            self.r#value = 100f32 as i32;
         }
     }
-}
-impl Default for NodeSetFactionStarbasePower {
-    fn default() -> Self {
-        Self::new()
+    fn type_name() -> &'static str {
+        "NodeChangeFactionRelations"
     }
 }
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeCompleteQuest {
-    pub r#id: i32,
-}
-impl NodeCompleteQuest {
-    fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-        }
-    }
-    pub fn with_id(mut self, r#id: i32) -> Self {
-        self.r#id = r#id;
-        self
-    }
-}
-impl DatabaseItem for NodeCompleteQuest {
-    fn validate(&mut self) {
-        if self.r#id < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#id = 1f32 as i32;
-        }
-        if self.r#id > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#id = 999999f32 as i32;
-        }
-    }
-}
-impl Default for NodeCompleteQuest {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeReceiveItem {
-    pub r#id: i32,
-    pub r#default_transition: i32,
-    pub r#loot: Option<LootId>,
-}
-impl NodeReceiveItem {
-    fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-            r#default_transition: Default::default(),
-            r#loot: Default::default(),
-        }
-    }
-    pub fn with_id(mut self, r#id: i32) -> Self {
-        self.r#id = r#id;
-        self
-    }
-    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
-        self.r#default_transition = r#default_transition;
-        self
-    }
-    pub fn with_loot(mut self, r#loot: Option<LootId>) -> Self {
-        self.r#loot = r#loot;
-        self
-    }
-}
-impl DatabaseItem for NodeReceiveItem {
-    fn validate(&mut self) {
-        if self.r#id < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#id = 1f32 as i32;
-        }
-        if self.r#id > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#id = 999999f32 as i32;
-        }
-        if self.r#default_transition < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 1f32 as i32;
-        }
-        if self.r#default_transition > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 999999f32 as i32;
-        }
-    }
-}
-impl Default for NodeReceiveItem {
+impl Default for NodeChangeFactionRelations {
     fn default() -> Self {
         Self::new()
     }
@@ -8915,40 +9660,33 @@ impl DatabaseItem for NodeTrade {
     fn validate(&mut self) {
         if self.r#id < (1f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, min = 1f32, "Field got truncated"
             );
             self.r#id = 1f32 as i32;
         }
         if self.r#id > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#id", value = self.r#id, max = 999999f32, "Field got truncated"
             );
             self.r#id = 999999f32 as i32;
         }
         if self.r#default_transition < (1f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, min =
+                1f32, "Field got truncated"
             );
             self.r#default_transition = 1f32 as i32;
         }
         if self.r#default_transition > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
+                field = "r#default_transition", value = self.r#default_transition, max =
+                999999f32, "Field got truncated"
             );
             self.r#default_transition = 999999f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "NodeTrade"
     }
 }
 impl Default for NodeTrade {
@@ -8956,388 +9694,43 @@ impl Default for NodeTrade {
         Self::new()
     }
 }
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeLiberateStarBase {
-    pub r#id: i32,
-    pub r#default_transition: i32,
-}
-impl NodeLiberateStarBase {
-    fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-            r#default_transition: Default::default(),
-        }
-    }
-    pub fn with_id(mut self, r#id: i32) -> Self {
-        self.r#id = r#id;
-        self
-    }
-    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
-        self.r#default_transition = r#default_transition;
-        self
-    }
-}
-impl DatabaseItem for NodeLiberateStarBase {
+impl DatabaseItem for Node {
     fn validate(&mut self) {
-        if self.r#id < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#id = 1f32 as i32;
-        }
-        if self.r#id > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#id = 999999f32 as i32;
-        }
-        if self.r#default_transition < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 1f32 as i32;
-        }
-        if self.r#default_transition > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 999999f32 as i32;
+        match self {
+            Self::Undefined(x) => x.validate(),
+            Self::ComingSoon(x) => x.validate(),
+            Self::ShowDialog(x) => x.validate(),
+            Self::OpenShipyard(x) => x.validate(),
+            Self::OpenWorkshop(x) => x.validate(),
+            Self::Switch(x) => x.validate(),
+            Self::Random(x) => x.validate(),
+            Self::Condition(x) => x.validate(),
+            Self::AttackFleet(x) => x.validate(),
+            Self::AttackOccupants(x) => x.validate(),
+            Self::AttackStarbase(x) => x.validate(),
+            Self::DestroyOccupants(x) => x.validate(),
+            Self::SuppressOccupants(x) => x.validate(),
+            Self::Retreat(x) => x.validate(),
+            Self::ReceiveItem(x) => x.validate(),
+            Self::RemoveItem(x) => x.validate(),
+            Self::Trade(x) => x.validate(),
+            Self::CompleteQuest(x) => x.validate(),
+            Self::FailQuest(x) => x.validate(),
+            Self::CancelQuest(x) => x.validate(),
+            Self::StartQuest(x) => x.validate(),
+            Self::SetCharacterRelations(x) => x.validate(),
+            Self::SetFactionRelations(x) => x.validate(),
+            Self::SetFactionStarbasePower(x) => x.validate(),
+            Self::ChangeCharacterRelations(x) => x.validate(),
+            Self::ChangeFactionRelations(x) => x.validate(),
+            Self::ChangeFactionStarbasePower(x) => x.validate(),
+            Self::CaptureStarBase(x) => x.validate(),
+            Self::LiberateStarBase(x) => x.validate(),
+            Self::ChangeFaction(x) => x.validate(),
         }
     }
-}
-impl Default for NodeLiberateStarBase {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeCaptureStarBase {
-    pub r#id: i32,
-    pub r#default_transition: i32,
-}
-impl NodeCaptureStarBase {
-    fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-            r#default_transition: Default::default(),
-        }
-    }
-    pub fn with_id(mut self, r#id: i32) -> Self {
-        self.r#id = r#id;
-        self
-    }
-    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
-        self.r#default_transition = r#default_transition;
-        self
-    }
-}
-impl DatabaseItem for NodeCaptureStarBase {
-    fn validate(&mut self) {
-        if self.r#id < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#id = 1f32 as i32;
-        }
-        if self.r#id > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#id = 999999f32 as i32;
-        }
-        if self.r#default_transition < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 1f32 as i32;
-        }
-        if self.r#default_transition > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 999999f32 as i32;
-        }
-    }
-}
-impl Default for NodeCaptureStarBase {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeDestroyOccupants {
-    pub r#id: i32,
-    pub r#default_transition: i32,
-}
-impl NodeDestroyOccupants {
-    fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-            r#default_transition: Default::default(),
-        }
-    }
-    pub fn with_id(mut self, r#id: i32) -> Self {
-        self.r#id = r#id;
-        self
-    }
-    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
-        self.r#default_transition = r#default_transition;
-        self
-    }
-}
-impl DatabaseItem for NodeDestroyOccupants {
-    fn validate(&mut self) {
-        if self.r#id < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#id = 1f32 as i32;
-        }
-        if self.r#id > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#id = 999999f32 as i32;
-        }
-        if self.r#default_transition < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 1f32 as i32;
-        }
-        if self.r#default_transition > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 999999f32 as i32;
-        }
-    }
-}
-impl Default for NodeDestroyOccupants {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeSetCharacterRelations {
-    pub r#id: i32,
-    pub r#default_transition: i32,
-    pub r#character: Option<CharacterId>,
-    pub r#value: i32,
-}
-impl NodeSetCharacterRelations {
-    fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-            r#default_transition: Default::default(),
-            r#character: Default::default(),
-            r#value: Default::default(),
-        }
-    }
-    pub fn with_id(mut self, r#id: i32) -> Self {
-        self.r#id = r#id;
-        self
-    }
-    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
-        self.r#default_transition = r#default_transition;
-        self
-    }
-    pub fn with_character(mut self, r#character: Option<CharacterId>) -> Self {
-        self.r#character = r#character;
-        self
-    }
-    pub fn with_value(mut self, r#value: i32) -> Self {
-        self.r#value = r#value;
-        self
-    }
-}
-impl DatabaseItem for NodeSetCharacterRelations {
-    fn validate(&mut self) {
-        if self.r#id < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#id = 1f32 as i32;
-        }
-        if self.r#id > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#id = 999999f32 as i32;
-        }
-        if self.r#default_transition < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 1f32 as i32;
-        }
-        if self.r#default_transition > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 999999f32 as i32;
-        }
-        if self.r#value < (-100f32 as i32) {
-            tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                min = -100f32,
-                "Field got truncated"
-            );
-            self.r#value = -100f32 as i32;
-        }
-        if self.r#value > (100f32 as i32) {
-            tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                max = 100f32,
-                "Field got truncated"
-            );
-            self.r#value = 100f32 as i32;
-        }
-    }
-}
-impl Default for NodeSetCharacterRelations {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct NodeChangeFactionStarbasePower {
-    pub r#id: i32,
-    pub r#default_transition: i32,
-    pub r#value: i32,
-}
-impl NodeChangeFactionStarbasePower {
-    fn new() -> Self {
-        Self {
-            r#id: Default::default(),
-            r#default_transition: Default::default(),
-            r#value: Default::default(),
-        }
-    }
-    pub fn with_id(mut self, r#id: i32) -> Self {
-        self.r#id = r#id;
-        self
-    }
-    pub fn with_default_transition(mut self, r#default_transition: i32) -> Self {
-        self.r#default_transition = r#default_transition;
-        self
-    }
-    pub fn with_value(mut self, r#value: i32) -> Self {
-        self.r#value = r#value;
-        self
-    }
-}
-impl DatabaseItem for NodeChangeFactionStarbasePower {
-    fn validate(&mut self) {
-        if self.r#id < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#id = 1f32 as i32;
-        }
-        if self.r#id > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#id",
-                value = self.r#id,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#id = 999999f32 as i32;
-        }
-        if self.r#default_transition < (1f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                min = 1f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 1f32 as i32;
-        }
-        if self.r#default_transition > (999999f32 as i32) {
-            tracing::warn!(
-                field = "r#default_transition",
-                value = self.r#default_transition,
-                max = 999999f32,
-                "Field got truncated"
-            );
-            self.r#default_transition = 999999f32 as i32;
-        }
-        if self.r#value < (-100000f32 as i32) {
-            tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                min = -100000f32,
-                "Field got truncated"
-            );
-            self.r#value = -100000f32 as i32;
-        }
-        if self.r#value > (100000f32 as i32) {
-            tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                max = 100000f32,
-                "Field got truncated"
-            );
-            self.r#value = 100000f32 as i32;
-        }
-    }
-}
-impl Default for NodeChangeFactionStarbasePower {
-    fn default() -> Self {
-        Self::new()
+    fn type_name() -> &'static str {
+        "Node"
     }
 }
 
@@ -9373,22 +9766,21 @@ impl DatabaseItem for NodeAction {
     fn validate(&mut self) {
         if self.r#target_node < (1f32 as i32) {
             tracing::warn!(
-                field = "r#target_node",
-                value = self.r#target_node,
-                min = 1f32,
+                field = "r#target_node", value = self.r#target_node, min = 1f32,
                 "Field got truncated"
             );
             self.r#target_node = 1f32 as i32;
         }
         if self.r#target_node > (1000f32 as i32) {
             tracing::warn!(
-                field = "r#target_node",
-                value = self.r#target_node,
-                max = 1000f32,
+                field = "r#target_node", value = self.r#target_node, max = 1000f32,
                 "Field got truncated"
             );
             self.r#target_node = 1000f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "NodeAction"
     }
 }
 impl Default for NodeAction {
@@ -9429,40 +9821,35 @@ impl DatabaseItem for NodeTransition {
     fn validate(&mut self) {
         if self.r#target_node < (1f32 as i32) {
             tracing::warn!(
-                field = "r#target_node",
-                value = self.r#target_node,
-                min = 1f32,
+                field = "r#target_node", value = self.r#target_node, min = 1f32,
                 "Field got truncated"
             );
             self.r#target_node = 1f32 as i32;
         }
         if self.r#target_node > (1000f32 as i32) {
             tracing::warn!(
-                field = "r#target_node",
-                value = self.r#target_node,
-                max = 1000f32,
+                field = "r#target_node", value = self.r#target_node, max = 1000f32,
                 "Field got truncated"
             );
             self.r#target_node = 1000f32 as i32;
         }
         if self.r#weight < (0f32 as f32) {
             tracing::warn!(
-                field = "r#weight",
-                value = self.r#weight,
-                min = 0f32,
+                field = "r#weight", value = self.r#weight, min = 0f32,
                 "Field got truncated"
             );
             self.r#weight = 0f32 as f32;
         }
         if self.r#weight > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#weight",
-                value = self.r#weight,
-                max = 1000f32,
+                field = "r#weight", value = self.r#weight, max = 1000f32,
                 "Field got truncated"
             );
             self.r#weight = 1000f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "NodeTransition"
     }
 }
 impl Default for NodeTransition {
@@ -9521,76 +9908,63 @@ impl DatabaseItem for QuestOrigin {
     fn validate(&mut self) {
         if self.r#min_distance < (0f32 as i32) {
             tracing::warn!(
-                field = "r#min_distance",
-                value = self.r#min_distance,
-                min = 0f32,
+                field = "r#min_distance", value = self.r#min_distance, min = 0f32,
                 "Field got truncated"
             );
             self.r#min_distance = 0f32 as i32;
         }
         if self.r#min_distance > (9999f32 as i32) {
             tracing::warn!(
-                field = "r#min_distance",
-                value = self.r#min_distance,
-                max = 9999f32,
+                field = "r#min_distance", value = self.r#min_distance, max = 9999f32,
                 "Field got truncated"
             );
             self.r#min_distance = 9999f32 as i32;
         }
         if self.r#max_distance < (0f32 as i32) {
             tracing::warn!(
-                field = "r#max_distance",
-                value = self.r#max_distance,
-                min = 0f32,
+                field = "r#max_distance", value = self.r#max_distance, min = 0f32,
                 "Field got truncated"
             );
             self.r#max_distance = 0f32 as i32;
         }
         if self.r#max_distance > (9999f32 as i32) {
             tracing::warn!(
-                field = "r#max_distance",
-                value = self.r#max_distance,
-                max = 9999f32,
+                field = "r#max_distance", value = self.r#max_distance, max = 9999f32,
                 "Field got truncated"
             );
             self.r#max_distance = 9999f32 as i32;
         }
         if self.r#min_relations < (-100f32 as i32) {
             tracing::warn!(
-                field = "r#min_relations",
-                value = self.r#min_relations,
-                min = -100f32,
+                field = "r#min_relations", value = self.r#min_relations, min = - 100f32,
                 "Field got truncated"
             );
             self.r#min_relations = -100f32 as i32;
         }
         if self.r#min_relations > (100f32 as i32) {
             tracing::warn!(
-                field = "r#min_relations",
-                value = self.r#min_relations,
-                max = 100f32,
+                field = "r#min_relations", value = self.r#min_relations, max = 100f32,
                 "Field got truncated"
             );
             self.r#min_relations = 100f32 as i32;
         }
         if self.r#max_relations < (-100f32 as i32) {
             tracing::warn!(
-                field = "r#max_relations",
-                value = self.r#max_relations,
-                min = -100f32,
+                field = "r#max_relations", value = self.r#max_relations, min = - 100f32,
                 "Field got truncated"
             );
             self.r#max_relations = -100f32 as i32;
         }
         if self.r#max_relations > (100f32 as i32) {
             tracing::warn!(
-                field = "r#max_relations",
-                value = self.r#max_relations,
-                max = 100f32,
+                field = "r#max_relations", value = self.r#max_relations, max = 100f32,
                 "Field got truncated"
             );
             self.r#max_relations = 100f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "QuestOrigin"
     }
 }
 impl Default for QuestOrigin {
@@ -9736,96 +10110,19 @@ impl From<RequirementTimeSinceLastCompletion> for Requirement {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementPlayerPosition {
-    pub r#min_value: i32,
-    pub r#max_value: i32,
-    pub r#bool_value: bool,
-}
-impl RequirementPlayerPosition {
+pub struct RequirementEmpty {}
+impl RequirementEmpty {
     fn new() -> Self {
-        Self {
-            r#min_value: Default::default(),
-            r#max_value: Default::default(),
-            r#bool_value: Default::default(),
-        }
-    }
-    pub fn with_min_value(mut self, r#min_value: i32) -> Self {
-        self.r#min_value = r#min_value;
-        self
-    }
-    pub fn with_max_value(mut self, r#max_value: i32) -> Self {
-        self.r#max_value = r#max_value;
-        self
-    }
-    pub fn with_bool_value(mut self, r#bool_value: bool) -> Self {
-        self.r#bool_value = r#bool_value;
-        self
+        Self {}
     }
 }
-impl DatabaseItem for RequirementPlayerPosition {
-    fn validate(&mut self) {
-        if self.r#min_value < (0f32 as i32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 0f32 as i32;
-        }
-        if self.r#min_value > (10000f32 as i32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 10000f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 10000f32 as i32;
-        }
-        if self.r#max_value < (0f32 as i32) {
-            tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#max_value = 0f32 as i32;
-        }
-        if self.r#max_value > (10000f32 as i32) {
-            tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                max = 10000f32,
-                "Field got truncated"
-            );
-            self.r#max_value = 10000f32 as i32;
-        }
-    }
-}
-impl Default for RequirementPlayerPosition {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementAny {
-    pub r#requirements: Vec<Requirement>,
-}
-impl RequirementAny {
-    fn new() -> Self {
-        Self {
-            r#requirements: Default::default(),
-        }
-    }
-    pub fn with_requirements(mut self, r#requirements: Vec<Requirement>) -> Self {
-        self.r#requirements = r#requirements;
-        self
-    }
-}
-impl DatabaseItem for RequirementAny {
+impl DatabaseItem for RequirementEmpty {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "RequirementEmpty"
+    }
 }
-impl Default for RequirementAny {
+impl Default for RequirementEmpty {
     fn default() -> Self {
         Self::new()
     }
@@ -9855,22 +10152,21 @@ impl DatabaseItem for RequirementHaveQuestItem {
     fn validate(&mut self) {
         if self.r#min_value < (1f32 as i32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 1f32,
+                field = "r#min_value", value = self.r#min_value, min = 1f32,
                 "Field got truncated"
             );
             self.r#min_value = 1f32 as i32;
         }
         if self.r#min_value > (1000000f32 as i32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 1000000f32,
+                field = "r#min_value", value = self.r#min_value, max = 1000000f32,
                 "Field got truncated"
             );
             self.r#min_value = 1000000f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "RequirementHaveQuestItem"
     }
 }
 impl Default for RequirementHaveQuestItem {
@@ -9879,269 +10175,27 @@ impl Default for RequirementHaveQuestItem {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementRandomStarSystem {
-    pub r#min_value: i32,
-    pub r#max_value: i32,
-    pub r#bool_value: bool,
+pub struct RequirementHaveItemById {
+    pub r#item_id: Option<LootId>,
 }
-impl RequirementRandomStarSystem {
-    fn new() -> Self {
-        Self {
-            r#min_value: Default::default(),
-            r#max_value: Default::default(),
-            r#bool_value: Default::default(),
-        }
-    }
-    pub fn with_min_value(mut self, r#min_value: i32) -> Self {
-        self.r#min_value = r#min_value;
-        self
-    }
-    pub fn with_max_value(mut self, r#max_value: i32) -> Self {
-        self.r#max_value = r#max_value;
-        self
-    }
-    pub fn with_bool_value(mut self, r#bool_value: bool) -> Self {
-        self.r#bool_value = r#bool_value;
-        self
-    }
-}
-impl DatabaseItem for RequirementRandomStarSystem {
-    fn validate(&mut self) {
-        if self.r#min_value < (0f32 as i32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 0f32 as i32;
-        }
-        if self.r#min_value > (10000f32 as i32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 10000f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 10000f32 as i32;
-        }
-        if self.r#max_value < (0f32 as i32) {
-            tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#max_value = 0f32 as i32;
-        }
-        if self.r#max_value > (10000f32 as i32) {
-            tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                max = 10000f32,
-                "Field got truncated"
-            );
-            self.r#max_value = 10000f32 as i32;
-        }
-    }
-}
-impl Default for RequirementRandomStarSystem {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementFaction {
-    pub r#faction: Option<FactionId>,
-}
-impl RequirementFaction {
-    fn new() -> Self {
-        Self {
-            r#faction: Default::default(),
-        }
-    }
-    pub fn with_faction(mut self, r#faction: Option<FactionId>) -> Self {
-        self.r#faction = r#faction;
-        self
-    }
-}
-impl DatabaseItem for RequirementFaction {
-    fn validate(&mut self) {}
-}
-impl Default for RequirementFaction {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementQuestActive {
-    pub r#item_id: Option<QuestId>,
-}
-impl RequirementQuestActive {
+impl RequirementHaveItemById {
     fn new() -> Self {
         Self {
             r#item_id: Default::default(),
         }
     }
-    pub fn with_item_id(mut self, r#item_id: Option<QuestId>) -> Self {
+    pub fn with_item_id(mut self, r#item_id: Option<LootId>) -> Self {
         self.r#item_id = r#item_id;
         self
     }
 }
-impl DatabaseItem for RequirementQuestActive {
+impl DatabaseItem for RequirementHaveItemById {
     fn validate(&mut self) {}
-}
-impl Default for RequirementQuestActive {
-    fn default() -> Self {
-        Self::new()
+    fn type_name() -> &'static str {
+        "RequirementHaveItemById"
     }
 }
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementAll {
-    pub r#requirements: Vec<Requirement>,
-}
-impl RequirementAll {
-    fn new() -> Self {
-        Self {
-            r#requirements: Default::default(),
-        }
-    }
-    pub fn with_requirements(mut self, r#requirements: Vec<Requirement>) -> Self {
-        self.r#requirements = r#requirements;
-        self
-    }
-}
-impl DatabaseItem for RequirementAll {
-    fn validate(&mut self) {}
-}
-impl Default for RequirementAll {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementHaveItem {
-    pub r#loot: LootContent,
-}
-impl RequirementHaveItem {
-    fn new() -> Self {
-        Self {
-            r#loot: Default::default(),
-        }
-    }
-    pub fn with_loot(mut self, r#loot: LootContent) -> Self {
-        self.r#loot = r#loot;
-        self
-    }
-}
-impl DatabaseItem for RequirementHaveItem {
-    fn validate(&mut self) {}
-}
-impl Default for RequirementHaveItem {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementComeToOrigin {
-    pub r#bool_value: bool,
-}
-impl RequirementComeToOrigin {
-    fn new() -> Self {
-        Self {
-            r#bool_value: Default::default(),
-        }
-    }
-    pub fn with_bool_value(mut self, r#bool_value: bool) -> Self {
-        self.r#bool_value = r#bool_value;
-        self
-    }
-}
-impl DatabaseItem for RequirementComeToOrigin {
-    fn validate(&mut self) {}
-}
-impl Default for RequirementComeToOrigin {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementStarbaseCaptured {}
-impl RequirementStarbaseCaptured {
-    fn new() -> Self {
-        Self {}
-    }
-}
-impl DatabaseItem for RequirementStarbaseCaptured {
-    fn validate(&mut self) {}
-}
-impl Default for RequirementStarbaseCaptured {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementFactionStarbasePower {
-    pub r#min_value: i32,
-    pub r#max_value: i32,
-}
-impl RequirementFactionStarbasePower {
-    fn new() -> Self {
-        Self {
-            r#min_value: Default::default(),
-            r#max_value: Default::default(),
-        }
-    }
-    pub fn with_min_value(mut self, r#min_value: i32) -> Self {
-        self.r#min_value = r#min_value;
-        self
-    }
-    pub fn with_max_value(mut self, r#max_value: i32) -> Self {
-        self.r#max_value = r#max_value;
-        self
-    }
-}
-impl DatabaseItem for RequirementFactionStarbasePower {
-    fn validate(&mut self) {
-        if self.r#min_value < (0f32 as i32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 0f32 as i32;
-        }
-        if self.r#min_value > (100000f32 as i32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 100000f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 100000f32 as i32;
-        }
-        if self.r#max_value < (0f32 as i32) {
-            tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#max_value = 0f32 as i32;
-        }
-        if self.r#max_value > (100000f32 as i32) {
-            tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                max = 100000f32,
-                "Field got truncated"
-            );
-            self.r#max_value = 100000f32 as i32;
-        }
-    }
-}
-impl Default for RequirementFactionStarbasePower {
+impl Default for RequirementHaveItemById {
     fn default() -> Self {
         Self::new()
     }
@@ -10163,89 +10217,11 @@ impl RequirementQuestCompleted {
 }
 impl DatabaseItem for RequirementQuestCompleted {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "RequirementQuestCompleted"
+    }
 }
 impl Default for RequirementQuestCompleted {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementFactionRelations {
-    pub r#min_value: i32,
-    pub r#max_value: i32,
-}
-impl RequirementFactionRelations {
-    fn new() -> Self {
-        Self {
-            r#min_value: Default::default(),
-            r#max_value: Default::default(),
-        }
-    }
-    pub fn with_min_value(mut self, r#min_value: i32) -> Self {
-        self.r#min_value = r#min_value;
-        self
-    }
-    pub fn with_max_value(mut self, r#max_value: i32) -> Self {
-        self.r#max_value = r#max_value;
-        self
-    }
-}
-impl DatabaseItem for RequirementFactionRelations {
-    fn validate(&mut self) {
-        if self.r#min_value < (-100f32 as i32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = -100f32,
-                "Field got truncated"
-            );
-            self.r#min_value = -100f32 as i32;
-        }
-        if self.r#min_value > (100f32 as i32) {
-            tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 100f32,
-                "Field got truncated"
-            );
-            self.r#min_value = 100f32 as i32;
-        }
-        if self.r#max_value < (-100f32 as i32) {
-            tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = -100f32,
-                "Field got truncated"
-            );
-            self.r#max_value = -100f32 as i32;
-        }
-        if self.r#max_value > (100f32 as i32) {
-            tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                max = 100f32,
-                "Field got truncated"
-            );
-            self.r#max_value = 100f32 as i32;
-        }
-    }
-}
-impl Default for RequirementFactionRelations {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementEmpty {}
-impl RequirementEmpty {
-    fn new() -> Self {
-        Self {}
-    }
-}
-impl DatabaseItem for RequirementEmpty {
-    fn validate(&mut self) {}
-}
-impl Default for RequirementEmpty {
     fn default() -> Self {
         Self::new()
     }
@@ -10275,40 +10251,35 @@ impl DatabaseItem for RequirementTimeSinceLastCompletion {
     fn validate(&mut self) {
         if self.r#min_value < (0f32 as i32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0f32,
+                field = "r#min_value", value = self.r#min_value, min = 0f32,
                 "Field got truncated"
             );
             self.r#min_value = 0f32 as i32;
         }
         if self.r#min_value > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 999999f32,
+                field = "r#min_value", value = self.r#min_value, max = 999999f32,
                 "Field got truncated"
             );
             self.r#min_value = 999999f32 as i32;
         }
         if self.r#max_value < (0f32 as i32) {
             tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = 0f32,
+                field = "r#max_value", value = self.r#max_value, min = 0f32,
                 "Field got truncated"
             );
             self.r#max_value = 0f32 as i32;
         }
         if self.r#max_value > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                max = 999999f32,
+                field = "r#max_value", value = self.r#max_value, max = 999999f32,
                 "Field got truncated"
             );
             self.r#max_value = 999999f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "RequirementTimeSinceLastCompletion"
     }
 }
 impl Default for RequirementTimeSinceLastCompletion {
@@ -10317,34 +10288,29 @@ impl Default for RequirementTimeSinceLastCompletion {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementHaveItemById {
-    pub r#item_id: Option<LootId>,
-}
-impl RequirementHaveItemById {
+pub struct RequirementIsHostileFaction {}
+impl RequirementIsHostileFaction {
     fn new() -> Self {
-        Self {
-            r#item_id: Default::default(),
-        }
-    }
-    pub fn with_item_id(mut self, r#item_id: Option<LootId>) -> Self {
-        self.r#item_id = r#item_id;
-        self
+        Self {}
     }
 }
-impl DatabaseItem for RequirementHaveItemById {
+impl DatabaseItem for RequirementIsHostileFaction {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "RequirementIsHostileFaction"
+    }
 }
-impl Default for RequirementHaveItemById {
+impl Default for RequirementIsHostileFaction {
     fn default() -> Self {
         Self::new()
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementTimeSinceQuestStart {
+pub struct RequirementFactionStarbasePower {
     pub r#min_value: i32,
     pub r#max_value: i32,
 }
-impl RequirementTimeSinceQuestStart {
+impl RequirementFactionStarbasePower {
     fn new() -> Self {
         Self {
             r#min_value: Default::default(),
@@ -10360,100 +10326,42 @@ impl RequirementTimeSinceQuestStart {
         self
     }
 }
-impl DatabaseItem for RequirementTimeSinceQuestStart {
+impl DatabaseItem for RequirementFactionStarbasePower {
     fn validate(&mut self) {
         if self.r#min_value < (0f32 as i32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = 0f32,
+                field = "r#min_value", value = self.r#min_value, min = 0f32,
                 "Field got truncated"
             );
             self.r#min_value = 0f32 as i32;
         }
-        if self.r#min_value > (999999f32 as i32) {
+        if self.r#min_value > (100000f32 as i32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 999999f32,
+                field = "r#min_value", value = self.r#min_value, max = 100000f32,
                 "Field got truncated"
             );
-            self.r#min_value = 999999f32 as i32;
+            self.r#min_value = 100000f32 as i32;
         }
         if self.r#max_value < (0f32 as i32) {
             tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = 0f32,
+                field = "r#max_value", value = self.r#max_value, min = 0f32,
                 "Field got truncated"
             );
             self.r#max_value = 0f32 as i32;
         }
-        if self.r#max_value > (999999f32 as i32) {
+        if self.r#max_value > (100000f32 as i32) {
             tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                max = 999999f32,
+                field = "r#max_value", value = self.r#max_value, max = 100000f32,
                 "Field got truncated"
             );
-            self.r#max_value = 999999f32 as i32;
+            self.r#max_value = 100000f32 as i32;
         }
     }
-}
-impl Default for RequirementTimeSinceQuestStart {
-    fn default() -> Self {
-        Self::new()
+    fn type_name() -> &'static str {
+        "RequirementFactionStarbasePower"
     }
 }
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementIsHostileFaction {}
-impl RequirementIsHostileFaction {
-    fn new() -> Self {
-        Self {}
-    }
-}
-impl DatabaseItem for RequirementIsHostileFaction {
-    fn validate(&mut self) {}
-}
-impl Default for RequirementIsHostileFaction {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementAggressiveOccupants {}
-impl RequirementAggressiveOccupants {
-    fn new() -> Self {
-        Self {}
-    }
-}
-impl DatabaseItem for RequirementAggressiveOccupants {
-    fn validate(&mut self) {}
-}
-impl Default for RequirementAggressiveOccupants {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct RequirementNone {
-    pub r#requirements: Vec<Requirement>,
-}
-impl RequirementNone {
-    fn new() -> Self {
-        Self {
-            r#requirements: Default::default(),
-        }
-    }
-    pub fn with_requirements(mut self, r#requirements: Vec<Requirement>) -> Self {
-        self.r#requirements = r#requirements;
-        self
-    }
-}
-impl DatabaseItem for RequirementNone {
-    fn validate(&mut self) {}
-}
-impl Default for RequirementNone {
+impl Default for RequirementFactionStarbasePower {
     fn default() -> Self {
         Self::new()
     }
@@ -10489,45 +10397,542 @@ impl DatabaseItem for RequirementCharacterRelations {
     fn validate(&mut self) {
         if self.r#min_value < (-100f32 as i32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                min = -100f32,
+                field = "r#min_value", value = self.r#min_value, min = - 100f32,
                 "Field got truncated"
             );
             self.r#min_value = -100f32 as i32;
         }
         if self.r#min_value > (100f32 as i32) {
             tracing::warn!(
-                field = "r#min_value",
-                value = self.r#min_value,
-                max = 100f32,
+                field = "r#min_value", value = self.r#min_value, max = 100f32,
                 "Field got truncated"
             );
             self.r#min_value = 100f32 as i32;
         }
         if self.r#max_value < (-100f32 as i32) {
             tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                min = -100f32,
+                field = "r#max_value", value = self.r#max_value, min = - 100f32,
                 "Field got truncated"
             );
             self.r#max_value = -100f32 as i32;
         }
         if self.r#max_value > (100f32 as i32) {
             tracing::warn!(
-                field = "r#max_value",
-                value = self.r#max_value,
-                max = 100f32,
+                field = "r#max_value", value = self.r#max_value, max = 100f32,
                 "Field got truncated"
             );
             self.r#max_value = 100f32 as i32;
         }
     }
+    fn type_name() -> &'static str {
+        "RequirementCharacterRelations"
+    }
 }
 impl Default for RequirementCharacterRelations {
     fn default() -> Self {
         Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct RequirementHaveItem {
+    pub r#loot: LootContent,
+}
+impl RequirementHaveItem {
+    fn new() -> Self {
+        Self { r#loot: Default::default() }
+    }
+    pub fn with_loot(mut self, r#loot: LootContent) -> Self {
+        self.r#loot = r#loot;
+        self
+    }
+}
+impl DatabaseItem for RequirementHaveItem {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "RequirementHaveItem"
+    }
+}
+impl Default for RequirementHaveItem {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct RequirementQuestActive {
+    pub r#item_id: Option<QuestId>,
+}
+impl RequirementQuestActive {
+    fn new() -> Self {
+        Self {
+            r#item_id: Default::default(),
+        }
+    }
+    pub fn with_item_id(mut self, r#item_id: Option<QuestId>) -> Self {
+        self.r#item_id = r#item_id;
+        self
+    }
+}
+impl DatabaseItem for RequirementQuestActive {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "RequirementQuestActive"
+    }
+}
+impl Default for RequirementQuestActive {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct RequirementAll {
+    pub r#requirements: Vec<Requirement>,
+}
+impl RequirementAll {
+    fn new() -> Self {
+        Self {
+            r#requirements: Default::default(),
+        }
+    }
+    pub fn with_requirements(mut self, r#requirements: Vec<Requirement>) -> Self {
+        self.r#requirements = r#requirements;
+        self
+    }
+}
+impl DatabaseItem for RequirementAll {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "RequirementAll"
+    }
+}
+impl Default for RequirementAll {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct RequirementFactionRelations {
+    pub r#min_value: i32,
+    pub r#max_value: i32,
+}
+impl RequirementFactionRelations {
+    fn new() -> Self {
+        Self {
+            r#min_value: Default::default(),
+            r#max_value: Default::default(),
+        }
+    }
+    pub fn with_min_value(mut self, r#min_value: i32) -> Self {
+        self.r#min_value = r#min_value;
+        self
+    }
+    pub fn with_max_value(mut self, r#max_value: i32) -> Self {
+        self.r#max_value = r#max_value;
+        self
+    }
+}
+impl DatabaseItem for RequirementFactionRelations {
+    fn validate(&mut self) {
+        if self.r#min_value < (-100f32 as i32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, min = - 100f32,
+                "Field got truncated"
+            );
+            self.r#min_value = -100f32 as i32;
+        }
+        if self.r#min_value > (100f32 as i32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, max = 100f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 100f32 as i32;
+        }
+        if self.r#max_value < (-100f32 as i32) {
+            tracing::warn!(
+                field = "r#max_value", value = self.r#max_value, min = - 100f32,
+                "Field got truncated"
+            );
+            self.r#max_value = -100f32 as i32;
+        }
+        if self.r#max_value > (100f32 as i32) {
+            tracing::warn!(
+                field = "r#max_value", value = self.r#max_value, max = 100f32,
+                "Field got truncated"
+            );
+            self.r#max_value = 100f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "RequirementFactionRelations"
+    }
+}
+impl Default for RequirementFactionRelations {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct RequirementFaction {
+    pub r#faction: Option<FactionId>,
+}
+impl RequirementFaction {
+    fn new() -> Self {
+        Self {
+            r#faction: Default::default(),
+        }
+    }
+    pub fn with_faction(mut self, r#faction: Option<FactionId>) -> Self {
+        self.r#faction = r#faction;
+        self
+    }
+}
+impl DatabaseItem for RequirementFaction {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "RequirementFaction"
+    }
+}
+impl Default for RequirementFaction {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct RequirementTimeSinceQuestStart {
+    pub r#min_value: i32,
+    pub r#max_value: i32,
+}
+impl RequirementTimeSinceQuestStart {
+    fn new() -> Self {
+        Self {
+            r#min_value: Default::default(),
+            r#max_value: Default::default(),
+        }
+    }
+    pub fn with_min_value(mut self, r#min_value: i32) -> Self {
+        self.r#min_value = r#min_value;
+        self
+    }
+    pub fn with_max_value(mut self, r#max_value: i32) -> Self {
+        self.r#max_value = r#max_value;
+        self
+    }
+}
+impl DatabaseItem for RequirementTimeSinceQuestStart {
+    fn validate(&mut self) {
+        if self.r#min_value < (0f32 as i32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 0f32 as i32;
+        }
+        if self.r#min_value > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, max = 999999f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 999999f32 as i32;
+        }
+        if self.r#max_value < (0f32 as i32) {
+            tracing::warn!(
+                field = "r#max_value", value = self.r#max_value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#max_value = 0f32 as i32;
+        }
+        if self.r#max_value > (999999f32 as i32) {
+            tracing::warn!(
+                field = "r#max_value", value = self.r#max_value, max = 999999f32,
+                "Field got truncated"
+            );
+            self.r#max_value = 999999f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "RequirementTimeSinceQuestStart"
+    }
+}
+impl Default for RequirementTimeSinceQuestStart {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct RequirementStarbaseCaptured {}
+impl RequirementStarbaseCaptured {
+    fn new() -> Self {
+        Self {}
+    }
+}
+impl DatabaseItem for RequirementStarbaseCaptured {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "RequirementStarbaseCaptured"
+    }
+}
+impl Default for RequirementStarbaseCaptured {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct RequirementAny {
+    pub r#requirements: Vec<Requirement>,
+}
+impl RequirementAny {
+    fn new() -> Self {
+        Self {
+            r#requirements: Default::default(),
+        }
+    }
+    pub fn with_requirements(mut self, r#requirements: Vec<Requirement>) -> Self {
+        self.r#requirements = r#requirements;
+        self
+    }
+}
+impl DatabaseItem for RequirementAny {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "RequirementAny"
+    }
+}
+impl Default for RequirementAny {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct RequirementNone {
+    pub r#requirements: Vec<Requirement>,
+}
+impl RequirementNone {
+    fn new() -> Self {
+        Self {
+            r#requirements: Default::default(),
+        }
+    }
+    pub fn with_requirements(mut self, r#requirements: Vec<Requirement>) -> Self {
+        self.r#requirements = r#requirements;
+        self
+    }
+}
+impl DatabaseItem for RequirementNone {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "RequirementNone"
+    }
+}
+impl Default for RequirementNone {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct RequirementPlayerPosition {
+    pub r#min_value: i32,
+    pub r#max_value: i32,
+    pub r#bool_value: bool,
+}
+impl RequirementPlayerPosition {
+    fn new() -> Self {
+        Self {
+            r#min_value: Default::default(),
+            r#max_value: Default::default(),
+            r#bool_value: Default::default(),
+        }
+    }
+    pub fn with_min_value(mut self, r#min_value: i32) -> Self {
+        self.r#min_value = r#min_value;
+        self
+    }
+    pub fn with_max_value(mut self, r#max_value: i32) -> Self {
+        self.r#max_value = r#max_value;
+        self
+    }
+    pub fn with_bool_value(mut self, r#bool_value: bool) -> Self {
+        self.r#bool_value = r#bool_value;
+        self
+    }
+}
+impl DatabaseItem for RequirementPlayerPosition {
+    fn validate(&mut self) {
+        if self.r#min_value < (0f32 as i32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 0f32 as i32;
+        }
+        if self.r#min_value > (10000f32 as i32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, max = 10000f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 10000f32 as i32;
+        }
+        if self.r#max_value < (0f32 as i32) {
+            tracing::warn!(
+                field = "r#max_value", value = self.r#max_value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#max_value = 0f32 as i32;
+        }
+        if self.r#max_value > (10000f32 as i32) {
+            tracing::warn!(
+                field = "r#max_value", value = self.r#max_value, max = 10000f32,
+                "Field got truncated"
+            );
+            self.r#max_value = 10000f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "RequirementPlayerPosition"
+    }
+}
+impl Default for RequirementPlayerPosition {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct RequirementComeToOrigin {
+    pub r#bool_value: bool,
+}
+impl RequirementComeToOrigin {
+    fn new() -> Self {
+        Self {
+            r#bool_value: Default::default(),
+        }
+    }
+    pub fn with_bool_value(mut self, r#bool_value: bool) -> Self {
+        self.r#bool_value = r#bool_value;
+        self
+    }
+}
+impl DatabaseItem for RequirementComeToOrigin {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "RequirementComeToOrigin"
+    }
+}
+impl Default for RequirementComeToOrigin {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct RequirementRandomStarSystem {
+    pub r#min_value: i32,
+    pub r#max_value: i32,
+    pub r#bool_value: bool,
+}
+impl RequirementRandomStarSystem {
+    fn new() -> Self {
+        Self {
+            r#min_value: Default::default(),
+            r#max_value: Default::default(),
+            r#bool_value: Default::default(),
+        }
+    }
+    pub fn with_min_value(mut self, r#min_value: i32) -> Self {
+        self.r#min_value = r#min_value;
+        self
+    }
+    pub fn with_max_value(mut self, r#max_value: i32) -> Self {
+        self.r#max_value = r#max_value;
+        self
+    }
+    pub fn with_bool_value(mut self, r#bool_value: bool) -> Self {
+        self.r#bool_value = r#bool_value;
+        self
+    }
+}
+impl DatabaseItem for RequirementRandomStarSystem {
+    fn validate(&mut self) {
+        if self.r#min_value < (0f32 as i32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 0f32 as i32;
+        }
+        if self.r#min_value > (10000f32 as i32) {
+            tracing::warn!(
+                field = "r#min_value", value = self.r#min_value, max = 10000f32,
+                "Field got truncated"
+            );
+            self.r#min_value = 10000f32 as i32;
+        }
+        if self.r#max_value < (0f32 as i32) {
+            tracing::warn!(
+                field = "r#max_value", value = self.r#max_value, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#max_value = 0f32 as i32;
+        }
+        if self.r#max_value > (10000f32 as i32) {
+            tracing::warn!(
+                field = "r#max_value", value = self.r#max_value, max = 10000f32,
+                "Field got truncated"
+            );
+            self.r#max_value = 10000f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "RequirementRandomStarSystem"
+    }
+}
+impl Default for RequirementRandomStarSystem {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct RequirementAggressiveOccupants {}
+impl RequirementAggressiveOccupants {
+    fn new() -> Self {
+        Self {}
+    }
+}
+impl DatabaseItem for RequirementAggressiveOccupants {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "RequirementAggressiveOccupants"
+    }
+}
+impl Default for RequirementAggressiveOccupants {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+impl DatabaseItem for Requirement {
+    fn validate(&mut self) {
+        match self {
+            Self::Empty(x) => x.validate(),
+            Self::Any(x) => x.validate(),
+            Self::All(x) => x.validate(),
+            Self::None(x) => x.validate(),
+            Self::PlayerPosition(x) => x.validate(),
+            Self::RandomStarSystem(x) => x.validate(),
+            Self::AggressiveOccupants(x) => x.validate(),
+            Self::QuestCompleted(x) => x.validate(),
+            Self::QuestActive(x) => x.validate(),
+            Self::CharacterRelations(x) => x.validate(),
+            Self::FactionRelations(x) => x.validate(),
+            Self::StarbaseCaptured(x) => x.validate(),
+            Self::FactionStarbasePower(x) => x.validate(),
+            Self::IsHostileFaction(x) => x.validate(),
+            Self::Faction(x) => x.validate(),
+            Self::HaveQuestItem(x) => x.validate(),
+            Self::HaveItem(x) => x.validate(),
+            Self::HaveItemById(x) => x.validate(),
+            Self::ComeToOrigin(x) => x.validate(),
+            Self::TimeSinceQuestStart(x) => x.validate(),
+            Self::TimeSinceLastCompletion(x) => x.validate(),
+        }
+    }
+    fn type_name() -> &'static str {
+        "Requirement"
     }
 }
 
@@ -10557,22 +10962,20 @@ impl DatabaseItem for DebugCode {
     fn validate(&mut self) {
         if self.r#code < (0f32 as i32) {
             tracing::warn!(
-                field = "r#code",
-                value = self.r#code,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#code", value = self.r#code, min = 0f32, "Field got truncated"
             );
             self.r#code = 0f32 as i32;
         }
         if self.r#code > (999999f32 as i32) {
             tracing::warn!(
-                field = "r#code",
-                value = self.r#code,
-                max = 999999f32,
+                field = "r#code", value = self.r#code, max = 999999f32,
                 "Field got truncated"
             );
             self.r#code = 999999f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "DebugCode"
     }
 }
 impl Default for DebugCode {
@@ -10607,13 +11010,14 @@ impl DatabaseItem for ShipToValue {
     fn validate(&mut self) {
         if self.r#value < (0f32 as i32) {
             tracing::warn!(
-                field = "r#value",
-                value = self.r#value,
-                min = 0f32,
+                field = "r#value", value = self.r#value, min = 0f32,
                 "Field got truncated"
             );
             self.r#value = 0f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "ShipToValue"
     }
 }
 impl Default for ShipToValue {
@@ -10640,6 +11044,9 @@ impl SoundTrack {
 }
 impl DatabaseItem for SoundTrack {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "SoundTrack"
+    }
 }
 impl Default for SoundTrack {
     fn default() -> Self {
@@ -10733,184 +11140,147 @@ impl DatabaseItem for ShipFeatures {
     fn validate(&mut self) {
         if self.r#energy_resistance < (-100f32 as f32) {
             tracing::warn!(
-                field = "r#energy_resistance",
-                value = self.r#energy_resistance,
-                min = -100f32,
-                "Field got truncated"
+                field = "r#energy_resistance", value = self.r#energy_resistance, min = -
+                100f32, "Field got truncated"
             );
             self.r#energy_resistance = -100f32 as f32;
         }
         if self.r#energy_resistance > (100f32 as f32) {
             tracing::warn!(
-                field = "r#energy_resistance",
-                value = self.r#energy_resistance,
-                max = 100f32,
-                "Field got truncated"
+                field = "r#energy_resistance", value = self.r#energy_resistance, max =
+                100f32, "Field got truncated"
             );
             self.r#energy_resistance = 100f32 as f32;
         }
         if self.r#kinetic_resistance < (-100f32 as f32) {
             tracing::warn!(
-                field = "r#kinetic_resistance",
-                value = self.r#kinetic_resistance,
-                min = -100f32,
-                "Field got truncated"
+                field = "r#kinetic_resistance", value = self.r#kinetic_resistance, min =
+                - 100f32, "Field got truncated"
             );
             self.r#kinetic_resistance = -100f32 as f32;
         }
         if self.r#kinetic_resistance > (100f32 as f32) {
             tracing::warn!(
-                field = "r#kinetic_resistance",
-                value = self.r#kinetic_resistance,
-                max = 100f32,
-                "Field got truncated"
+                field = "r#kinetic_resistance", value = self.r#kinetic_resistance, max =
+                100f32, "Field got truncated"
             );
             self.r#kinetic_resistance = 100f32 as f32;
         }
         if self.r#heat_resistance < (-100f32 as f32) {
             tracing::warn!(
-                field = "r#heat_resistance",
-                value = self.r#heat_resistance,
-                min = -100f32,
-                "Field got truncated"
+                field = "r#heat_resistance", value = self.r#heat_resistance, min = -
+                100f32, "Field got truncated"
             );
             self.r#heat_resistance = -100f32 as f32;
         }
         if self.r#heat_resistance > (100f32 as f32) {
             tracing::warn!(
-                field = "r#heat_resistance",
-                value = self.r#heat_resistance,
-                max = 100f32,
-                "Field got truncated"
+                field = "r#heat_resistance", value = self.r#heat_resistance, max =
+                100f32, "Field got truncated"
             );
             self.r#heat_resistance = 100f32 as f32;
         }
         if self.r#ship_weight_bonus < (-1f32 as f32) {
             tracing::warn!(
-                field = "r#ship_weight_bonus",
-                value = self.r#ship_weight_bonus,
-                min = -1f32,
-                "Field got truncated"
+                field = "r#ship_weight_bonus", value = self.r#ship_weight_bonus, min = -
+                1f32, "Field got truncated"
             );
             self.r#ship_weight_bonus = -1f32 as f32;
         }
         if self.r#ship_weight_bonus > (10f32 as f32) {
             tracing::warn!(
-                field = "r#ship_weight_bonus",
-                value = self.r#ship_weight_bonus,
-                max = 10f32,
-                "Field got truncated"
+                field = "r#ship_weight_bonus", value = self.r#ship_weight_bonus, max =
+                10f32, "Field got truncated"
             );
             self.r#ship_weight_bonus = 10f32 as f32;
         }
         if self.r#equipment_weight_bonus < (-1f32 as f32) {
             tracing::warn!(
-                field = "r#equipment_weight_bonus",
-                value = self.r#equipment_weight_bonus,
-                min = -1f32,
-                "Field got truncated"
+                field = "r#equipment_weight_bonus", value = self
+                .r#equipment_weight_bonus, min = - 1f32, "Field got truncated"
             );
             self.r#equipment_weight_bonus = -1f32 as f32;
         }
         if self.r#equipment_weight_bonus > (10f32 as f32) {
             tracing::warn!(
-                field = "r#equipment_weight_bonus",
-                value = self.r#equipment_weight_bonus,
-                max = 10f32,
-                "Field got truncated"
+                field = "r#equipment_weight_bonus", value = self
+                .r#equipment_weight_bonus, max = 10f32, "Field got truncated"
             );
             self.r#equipment_weight_bonus = 10f32 as f32;
         }
         if self.r#velocity_bonus < (-1f32 as f32) {
             tracing::warn!(
-                field = "r#velocity_bonus",
-                value = self.r#velocity_bonus,
-                min = -1f32,
+                field = "r#velocity_bonus", value = self.r#velocity_bonus, min = - 1f32,
                 "Field got truncated"
             );
             self.r#velocity_bonus = -1f32 as f32;
         }
         if self.r#velocity_bonus > (10f32 as f32) {
             tracing::warn!(
-                field = "r#velocity_bonus",
-                value = self.r#velocity_bonus,
-                max = 10f32,
+                field = "r#velocity_bonus", value = self.r#velocity_bonus, max = 10f32,
                 "Field got truncated"
             );
             self.r#velocity_bonus = 10f32 as f32;
         }
         if self.r#turn_rate_bonus < (-1f32 as f32) {
             tracing::warn!(
-                field = "r#turn_rate_bonus",
-                value = self.r#turn_rate_bonus,
-                min = -1f32,
-                "Field got truncated"
+                field = "r#turn_rate_bonus", value = self.r#turn_rate_bonus, min = -
+                1f32, "Field got truncated"
             );
             self.r#turn_rate_bonus = -1f32 as f32;
         }
         if self.r#turn_rate_bonus > (10f32 as f32) {
             tracing::warn!(
-                field = "r#turn_rate_bonus",
-                value = self.r#turn_rate_bonus,
-                max = 10f32,
+                field = "r#turn_rate_bonus", value = self.r#turn_rate_bonus, max = 10f32,
                 "Field got truncated"
             );
             self.r#turn_rate_bonus = 10f32 as f32;
         }
         if self.r#armor_bonus < (-1f32 as f32) {
             tracing::warn!(
-                field = "r#armor_bonus",
-                value = self.r#armor_bonus,
-                min = -1f32,
+                field = "r#armor_bonus", value = self.r#armor_bonus, min = - 1f32,
                 "Field got truncated"
             );
             self.r#armor_bonus = -1f32 as f32;
         }
         if self.r#armor_bonus > (10f32 as f32) {
             tracing::warn!(
-                field = "r#armor_bonus",
-                value = self.r#armor_bonus,
-                max = 10f32,
+                field = "r#armor_bonus", value = self.r#armor_bonus, max = 10f32,
                 "Field got truncated"
             );
             self.r#armor_bonus = 10f32 as f32;
         }
         if self.r#shield_bonus < (-1f32 as f32) {
             tracing::warn!(
-                field = "r#shield_bonus",
-                value = self.r#shield_bonus,
-                min = -1f32,
+                field = "r#shield_bonus", value = self.r#shield_bonus, min = - 1f32,
                 "Field got truncated"
             );
             self.r#shield_bonus = -1f32 as f32;
         }
         if self.r#shield_bonus > (10f32 as f32) {
             tracing::warn!(
-                field = "r#shield_bonus",
-                value = self.r#shield_bonus,
-                max = 10f32,
+                field = "r#shield_bonus", value = self.r#shield_bonus, max = 10f32,
                 "Field got truncated"
             );
             self.r#shield_bonus = 10f32 as f32;
         }
         if self.r#energy_bonus < (-1f32 as f32) {
             tracing::warn!(
-                field = "r#energy_bonus",
-                value = self.r#energy_bonus,
-                min = -1f32,
+                field = "r#energy_bonus", value = self.r#energy_bonus, min = - 1f32,
                 "Field got truncated"
             );
             self.r#energy_bonus = -1f32 as f32;
         }
         if self.r#energy_bonus > (10f32 as f32) {
             tracing::warn!(
-                field = "r#energy_bonus",
-                value = self.r#energy_bonus,
-                max = 10f32,
+                field = "r#energy_bonus", value = self.r#energy_bonus, max = 10f32,
                 "Field got truncated"
             );
             self.r#energy_bonus = 10f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "ShipFeatures"
     }
 }
 impl Default for ShipFeatures {
@@ -10973,6 +11343,9 @@ impl StatModification {
 }
 impl DatabaseItem for StatModification {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "StatModification"
+    }
 }
 impl Default for StatModification {
     fn default() -> Self {
@@ -11061,7 +11434,10 @@ impl BulletBody {
         self.r#color = r#color;
         self
     }
-    pub fn with_bullet_prefab(mut self, r#bullet_prefab: Option<BulletPrefabId>) -> Self {
+    pub fn with_bullet_prefab(
+        mut self,
+        r#bullet_prefab: Option<BulletPrefabId>,
+    ) -> Self {
         self.r#bullet_prefab = r#bullet_prefab;
         self
     }
@@ -11077,7 +11453,10 @@ impl BulletBody {
         self.r#friendly_fire = r#friendly_fire;
         self
     }
-    pub fn with_ai_bullet_behavior(mut self, r#ai_bullet_behavior: AiBulletBehavior) -> Self {
+    pub fn with_ai_bullet_behavior(
+        mut self,
+        r#ai_bullet_behavior: AiBulletBehavior,
+    ) -> Self {
         self.r#ai_bullet_behavior = r#ai_bullet_behavior;
         self
     }
@@ -11090,162 +11469,125 @@ impl DatabaseItem for BulletBody {
     fn validate(&mut self) {
         if self.r#size < (0f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#size", value = self.r#size, min = 0f32, "Field got truncated"
             );
             self.r#size = 0f32 as f32;
         }
         if self.r#size > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                max = 1000f32,
+                field = "r#size", value = self.r#size, max = 1000f32,
                 "Field got truncated"
             );
             self.r#size = 1000f32 as f32;
         }
         if self.r#length < (0f32 as f32) {
             tracing::warn!(
-                field = "r#length",
-                value = self.r#length,
-                min = 0f32,
+                field = "r#length", value = self.r#length, min = 0f32,
                 "Field got truncated"
             );
             self.r#length = 0f32 as f32;
         }
         if self.r#length > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#length",
-                value = self.r#length,
-                max = 1000f32,
+                field = "r#length", value = self.r#length, max = 1000f32,
                 "Field got truncated"
             );
             self.r#length = 1000f32 as f32;
         }
         if self.r#velocity < (0f32 as f32) {
             tracing::warn!(
-                field = "r#velocity",
-                value = self.r#velocity,
-                min = 0f32,
+                field = "r#velocity", value = self.r#velocity, min = 0f32,
                 "Field got truncated"
             );
             self.r#velocity = 0f32 as f32;
         }
         if self.r#velocity > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#velocity",
-                value = self.r#velocity,
-                max = 1000f32,
+                field = "r#velocity", value = self.r#velocity, max = 1000f32,
                 "Field got truncated"
             );
             self.r#velocity = 1000f32 as f32;
         }
         if self.r#parent_velocity_effect < (-1000f32 as f32) {
             tracing::warn!(
-                field = "r#parent_velocity_effect",
-                value = self.r#parent_velocity_effect,
-                min = -1000f32,
-                "Field got truncated"
+                field = "r#parent_velocity_effect", value = self
+                .r#parent_velocity_effect, min = - 1000f32, "Field got truncated"
             );
             self.r#parent_velocity_effect = -1000f32 as f32;
         }
         if self.r#parent_velocity_effect > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#parent_velocity_effect",
-                value = self.r#parent_velocity_effect,
-                max = 1000f32,
-                "Field got truncated"
+                field = "r#parent_velocity_effect", value = self
+                .r#parent_velocity_effect, max = 1000f32, "Field got truncated"
             );
             self.r#parent_velocity_effect = 1000f32 as f32;
         }
         if self.r#range < (0f32 as f32) {
             tracing::warn!(
-                field = "r#range",
-                value = self.r#range,
-                min = 0f32,
+                field = "r#range", value = self.r#range, min = 0f32,
                 "Field got truncated"
             );
             self.r#range = 0f32 as f32;
         }
         if self.r#range > (1000000000f32 as f32) {
             tracing::warn!(
-                field = "r#range",
-                value = self.r#range,
-                max = 1000000000f32,
+                field = "r#range", value = self.r#range, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#range = 1000000000f32 as f32;
         }
         if self.r#lifetime < (0f32 as f32) {
             tracing::warn!(
-                field = "r#lifetime",
-                value = self.r#lifetime,
-                min = 0f32,
+                field = "r#lifetime", value = self.r#lifetime, min = 0f32,
                 "Field got truncated"
             );
             self.r#lifetime = 0f32 as f32;
         }
         if self.r#lifetime > (1000000000f32 as f32) {
             tracing::warn!(
-                field = "r#lifetime",
-                value = self.r#lifetime,
-                max = 1000000000f32,
+                field = "r#lifetime", value = self.r#lifetime, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#lifetime = 1000000000f32 as f32;
         }
         if self.r#weight < (0f32 as f32) {
             tracing::warn!(
-                field = "r#weight",
-                value = self.r#weight,
-                min = 0f32,
+                field = "r#weight", value = self.r#weight, min = 0f32,
                 "Field got truncated"
             );
             self.r#weight = 0f32 as f32;
         }
         if self.r#weight > (1000000000f32 as f32) {
             tracing::warn!(
-                field = "r#weight",
-                value = self.r#weight,
-                max = 1000000000f32,
+                field = "r#weight", value = self.r#weight, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#weight = 1000000000f32 as f32;
         }
         if self.r#hit_points < (0f32 as i32) {
             tracing::warn!(
-                field = "r#hit_points",
-                value = self.r#hit_points,
-                min = 0f32,
+                field = "r#hit_points", value = self.r#hit_points, min = 0f32,
                 "Field got truncated"
             );
             self.r#hit_points = 0f32 as i32;
         }
         if self.r#hit_points > (1000000000f32 as i32) {
             tracing::warn!(
-                field = "r#hit_points",
-                value = self.r#hit_points,
-                max = 1000000000f32,
+                field = "r#hit_points", value = self.r#hit_points, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#hit_points = 1000000000f32 as i32;
         }
         if self.r#energy_cost < (0f32 as f32) {
             tracing::warn!(
-                field = "r#energy_cost",
-                value = self.r#energy_cost,
-                min = 0f32,
+                field = "r#energy_cost", value = self.r#energy_cost, min = 0f32,
                 "Field got truncated"
             );
             self.r#energy_cost = 0f32 as f32;
         }
         if self.r#energy_cost > (1000000000f32 as f32) {
             tracing::warn!(
-                field = "r#energy_cost",
-                value = self.r#energy_cost,
-                max = 1000000000f32,
+                field = "r#energy_cost", value = self.r#energy_cost, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#energy_cost = 1000000000f32 as f32;
@@ -11257,6 +11599,9 @@ impl DatabaseItem for BulletBody {
                 "Obsolete field usage detected, generated code may not work",
             );
         }
+    }
+    fn type_name() -> &'static str {
+        "BulletBody"
     }
 }
 impl Default for BulletBody {
@@ -11300,6 +11645,80 @@ impl From<BulletControllerParametric> for BulletController {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
+pub struct BulletControllerBeam {}
+impl BulletControllerBeam {
+    fn new() -> Self {
+        Self {}
+    }
+}
+impl DatabaseItem for BulletControllerBeam {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BulletControllerBeam"
+    }
+}
+impl Default for BulletControllerBeam {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BulletControllerHoming {
+    pub r#starting_velocity_modifier: f32,
+    pub r#ignore_rotation: bool,
+    pub r#smart_aim: bool,
+}
+impl BulletControllerHoming {
+    fn new() -> Self {
+        Self {
+            r#starting_velocity_modifier: 1f32,
+            r#ignore_rotation: Default::default(),
+            r#smart_aim: Default::default(),
+        }
+    }
+    pub fn with_starting_velocity_modifier(
+        mut self,
+        r#starting_velocity_modifier: f32,
+    ) -> Self {
+        self.r#starting_velocity_modifier = r#starting_velocity_modifier;
+        self
+    }
+    pub fn with_ignore_rotation(mut self, r#ignore_rotation: bool) -> Self {
+        self.r#ignore_rotation = r#ignore_rotation;
+        self
+    }
+    pub fn with_smart_aim(mut self, r#smart_aim: bool) -> Self {
+        self.r#smart_aim = r#smart_aim;
+        self
+    }
+}
+impl DatabaseItem for BulletControllerHoming {
+    fn validate(&mut self) {
+        if self.r#starting_velocity_modifier < (0f32 as f32) {
+            tracing::warn!(
+                field = "r#starting_velocity_modifier", value = self
+                .r#starting_velocity_modifier, min = 0f32, "Field got truncated"
+            );
+            self.r#starting_velocity_modifier = 0f32 as f32;
+        }
+        if self.r#starting_velocity_modifier > (1000f32 as f32) {
+            tracing::warn!(
+                field = "r#starting_velocity_modifier", value = self
+                .r#starting_velocity_modifier, max = 1000f32, "Field got truncated"
+            );
+            self.r#starting_velocity_modifier = 1000f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "BulletControllerHoming"
+    }
+}
+impl Default for BulletControllerHoming {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
 pub struct BulletControllerProjectile {}
 impl BulletControllerProjectile {
     fn new() -> Self {
@@ -11308,6 +11727,9 @@ impl BulletControllerProjectile {
 }
 impl DatabaseItem for BulletControllerProjectile {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BulletControllerProjectile"
+    }
 }
 impl Default for BulletControllerProjectile {
     fn default() -> Self {
@@ -11355,79 +11777,26 @@ impl BulletControllerParametric {
 }
 impl DatabaseItem for BulletControllerParametric {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BulletControllerParametric"
+    }
 }
 impl Default for BulletControllerParametric {
     fn default() -> Self {
         Self::new()
     }
 }
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BulletControllerHoming {
-    pub r#starting_velocity_modifier: f32,
-    pub r#ignore_rotation: bool,
-    pub r#smart_aim: bool,
-}
-impl BulletControllerHoming {
-    fn new() -> Self {
-        Self {
-            r#starting_velocity_modifier: 1f32,
-            r#ignore_rotation: Default::default(),
-            r#smart_aim: Default::default(),
-        }
-    }
-    pub fn with_starting_velocity_modifier(mut self, r#starting_velocity_modifier: f32) -> Self {
-        self.r#starting_velocity_modifier = r#starting_velocity_modifier;
-        self
-    }
-    pub fn with_ignore_rotation(mut self, r#ignore_rotation: bool) -> Self {
-        self.r#ignore_rotation = r#ignore_rotation;
-        self
-    }
-    pub fn with_smart_aim(mut self, r#smart_aim: bool) -> Self {
-        self.r#smart_aim = r#smart_aim;
-        self
-    }
-}
-impl DatabaseItem for BulletControllerHoming {
+impl DatabaseItem for BulletController {
     fn validate(&mut self) {
-        if self.r#starting_velocity_modifier < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#starting_velocity_modifier",
-                value = self.r#starting_velocity_modifier,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#starting_velocity_modifier = 0f32 as f32;
-        }
-        if self.r#starting_velocity_modifier > (1000f32 as f32) {
-            tracing::warn!(
-                field = "r#starting_velocity_modifier",
-                value = self.r#starting_velocity_modifier,
-                max = 1000f32,
-                "Field got truncated"
-            );
-            self.r#starting_velocity_modifier = 1000f32 as f32;
+        match self {
+            Self::Projectile(x) => x.validate(),
+            Self::Homing(x) => x.validate(),
+            Self::Beam(x) => x.validate(),
+            Self::Parametric(x) => x.validate(),
         }
     }
-}
-impl Default for BulletControllerHoming {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BulletControllerBeam {}
-impl BulletControllerBeam {
-    fn new() -> Self {
-        Self {}
-    }
-}
-impl DatabaseItem for BulletControllerBeam {
-    fn validate(&mut self) {}
-}
-impl Default for BulletControllerBeam {
-    fn default() -> Self {
-        Self::new()
+    fn type_name() -> &'static str {
+        "BulletController"
     }
 }
 
@@ -11618,103 +11987,83 @@ impl DatabaseItem for BulletTriggerSpawnBullet {
     fn validate(&mut self) {
         if self.r#quantity < (0f32 as i32) {
             tracing::warn!(
-                field = "r#quantity",
-                value = self.r#quantity,
-                min = 0f32,
+                field = "r#quantity", value = self.r#quantity, min = 0f32,
                 "Field got truncated"
             );
             self.r#quantity = 0f32 as i32;
         }
         if self.r#quantity > (1000f32 as i32) {
             tracing::warn!(
-                field = "r#quantity",
-                value = self.r#quantity,
-                max = 1000f32,
+                field = "r#quantity", value = self.r#quantity, max = 1000f32,
                 "Field got truncated"
             );
             self.r#quantity = 1000f32 as i32;
         }
         if self.r#size < (0f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#size", value = self.r#size, min = 0f32, "Field got truncated"
             );
             self.r#size = 0f32 as f32;
         }
         if self.r#size > (100f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                max = 100f32,
+                field = "r#size", value = self.r#size, max = 100f32,
                 "Field got truncated"
             );
             self.r#size = 100f32 as f32;
         }
         if self.r#cooldown < (0f32 as f32) {
             tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                min = 0f32,
+                field = "r#cooldown", value = self.r#cooldown, min = 0f32,
                 "Field got truncated"
             );
             self.r#cooldown = 0f32 as f32;
         }
         if self.r#cooldown > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                max = 1000f32,
+                field = "r#cooldown", value = self.r#cooldown, max = 1000f32,
                 "Field got truncated"
             );
             self.r#cooldown = 1000f32 as f32;
         }
         if self.r#random_factor < (0f32 as f32) {
             tracing::warn!(
-                field = "r#random_factor",
-                value = self.r#random_factor,
-                min = 0f32,
+                field = "r#random_factor", value = self.r#random_factor, min = 0f32,
                 "Field got truncated"
             );
             self.r#random_factor = 0f32 as f32;
         }
         if self.r#random_factor > (1f32 as f32) {
             tracing::warn!(
-                field = "r#random_factor",
-                value = self.r#random_factor,
-                max = 1f32,
+                field = "r#random_factor", value = self.r#random_factor, max = 1f32,
                 "Field got truncated"
             );
             self.r#random_factor = 1f32 as f32;
         }
         if self.r#power_multiplier < (0f32 as f32) {
             tracing::warn!(
-                field = "r#power_multiplier",
-                value = self.r#power_multiplier,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#power_multiplier", value = self.r#power_multiplier, min =
+                0f32, "Field got truncated"
             );
             self.r#power_multiplier = 0f32 as f32;
         }
         if self.r#max_nesting_level < (0f32 as i32) {
             tracing::warn!(
-                field = "r#max_nesting_level",
-                value = self.r#max_nesting_level,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#max_nesting_level", value = self.r#max_nesting_level, min =
+                0f32, "Field got truncated"
             );
             self.r#max_nesting_level = 0f32 as i32;
         }
         if self.r#max_nesting_level > (100f32 as i32) {
             tracing::warn!(
-                field = "r#max_nesting_level",
-                value = self.r#max_nesting_level,
-                max = 100f32,
-                "Field got truncated"
+                field = "r#max_nesting_level", value = self.r#max_nesting_level, max =
+                100f32, "Field got truncated"
             );
             self.r#max_nesting_level = 100f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "BulletTriggerSpawnBullet"
     }
 }
 impl Default for BulletTriggerSpawnBullet {
@@ -11759,49 +12108,41 @@ impl DatabaseItem for BulletTriggerGravityField {
     fn validate(&mut self) {
         if self.r#size < (0f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#size", value = self.r#size, min = 0f32, "Field got truncated"
             );
             self.r#size = 0f32 as f32;
         }
         if self.r#size > (100f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                max = 100f32,
+                field = "r#size", value = self.r#size, max = 100f32,
                 "Field got truncated"
             );
             self.r#size = 100f32 as f32;
         }
         if self.r#cooldown < (0f32 as f32) {
             tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                min = 0f32,
+                field = "r#cooldown", value = self.r#cooldown, min = 0f32,
                 "Field got truncated"
             );
             self.r#cooldown = 0f32 as f32;
         }
         if self.r#cooldown > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                max = 1000f32,
+                field = "r#cooldown", value = self.r#cooldown, max = 1000f32,
                 "Field got truncated"
             );
             self.r#cooldown = 1000f32 as f32;
         }
         if self.r#power_multiplier < (0f32 as f32) {
             tracing::warn!(
-                field = "r#power_multiplier",
-                value = self.r#power_multiplier,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#power_multiplier", value = self.r#power_multiplier, min =
+                0f32, "Field got truncated"
             );
             self.r#power_multiplier = 0f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "BulletTriggerGravityField"
     }
 }
 impl Default for BulletTriggerGravityField {
@@ -11810,26 +12151,14 @@ impl Default for BulletTriggerGravityField {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct BulletTriggerPlaySfx {
+pub struct BulletTriggerNone {
     pub r#condition: BulletTriggerCondition,
-    pub r#visual_effect: Option<VisualEffectId>,
-    pub r#audio_clip: String,
-    pub r#color: String,
-    pub r#color_mode: ColorMode,
-    pub r#size: f32,
-    pub r#lifetime: f32,
     pub r#cooldown: f32,
 }
-impl BulletTriggerPlaySfx {
+impl BulletTriggerNone {
     fn new() -> Self {
         Self {
             r#condition: Default::default(),
-            r#visual_effect: Default::default(),
-            r#audio_clip: Default::default(),
-            r#color: Default::default(),
-            r#color_mode: Default::default(),
-            r#size: Default::default(),
-            r#lifetime: Default::default(),
             r#cooldown: Default::default(),
         }
     }
@@ -11837,94 +12166,33 @@ impl BulletTriggerPlaySfx {
         self.r#condition = r#condition;
         self
     }
-    pub fn with_visual_effect(mut self, r#visual_effect: Option<VisualEffectId>) -> Self {
-        self.r#visual_effect = r#visual_effect;
-        self
-    }
-    pub fn with_audio_clip(mut self, r#audio_clip: String) -> Self {
-        self.r#audio_clip = r#audio_clip;
-        self
-    }
-    pub fn with_color(mut self, r#color: String) -> Self {
-        self.r#color = r#color;
-        self
-    }
-    pub fn with_color_mode(mut self, r#color_mode: ColorMode) -> Self {
-        self.r#color_mode = r#color_mode;
-        self
-    }
-    pub fn with_size(mut self, r#size: f32) -> Self {
-        self.r#size = r#size;
-        self
-    }
-    pub fn with_lifetime(mut self, r#lifetime: f32) -> Self {
-        self.r#lifetime = r#lifetime;
-        self
-    }
     pub fn with_cooldown(mut self, r#cooldown: f32) -> Self {
         self.r#cooldown = r#cooldown;
         self
     }
 }
-impl DatabaseItem for BulletTriggerPlaySfx {
+impl DatabaseItem for BulletTriggerNone {
     fn validate(&mut self) {
-        if self.r#size < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#size = 0f32 as f32;
-        }
-        if self.r#size > (100f32 as f32) {
-            tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                max = 100f32,
-                "Field got truncated"
-            );
-            self.r#size = 100f32 as f32;
-        }
-        if self.r#lifetime < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#lifetime",
-                value = self.r#lifetime,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#lifetime = 0f32 as f32;
-        }
-        if self.r#lifetime > (1000f32 as f32) {
-            tracing::warn!(
-                field = "r#lifetime",
-                value = self.r#lifetime,
-                max = 1000f32,
-                "Field got truncated"
-            );
-            self.r#lifetime = 1000f32 as f32;
-        }
         if self.r#cooldown < (0f32 as f32) {
             tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                min = 0f32,
+                field = "r#cooldown", value = self.r#cooldown, min = 0f32,
                 "Field got truncated"
             );
             self.r#cooldown = 0f32 as f32;
         }
         if self.r#cooldown > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                max = 1000f32,
+                field = "r#cooldown", value = self.r#cooldown, max = 1000f32,
                 "Field got truncated"
             );
             self.r#cooldown = 1000f32 as f32;
         }
     }
+    fn type_name() -> &'static str {
+        "BulletTriggerNone"
+    }
 }
-impl Default for BulletTriggerPlaySfx {
+impl Default for BulletTriggerNone {
     fn default() -> Self {
         Self::new()
     }
@@ -11957,7 +12225,10 @@ impl BulletTriggerSpawnStaticSfx {
         self.r#condition = r#condition;
         self
     }
-    pub fn with_visual_effect(mut self, r#visual_effect: Option<VisualEffectId>) -> Self {
+    pub fn with_visual_effect(
+        mut self,
+        r#visual_effect: Option<VisualEffectId>,
+    ) -> Self {
         self.r#visual_effect = r#visual_effect;
         self
     }
@@ -11990,61 +12261,164 @@ impl DatabaseItem for BulletTriggerSpawnStaticSfx {
     fn validate(&mut self) {
         if self.r#size < (0f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#size", value = self.r#size, min = 0f32, "Field got truncated"
             );
             self.r#size = 0f32 as f32;
         }
         if self.r#size > (100f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                max = 100f32,
+                field = "r#size", value = self.r#size, max = 100f32,
                 "Field got truncated"
             );
             self.r#size = 100f32 as f32;
         }
         if self.r#lifetime < (0f32 as f32) {
             tracing::warn!(
-                field = "r#lifetime",
-                value = self.r#lifetime,
-                min = 0f32,
+                field = "r#lifetime", value = self.r#lifetime, min = 0f32,
                 "Field got truncated"
             );
             self.r#lifetime = 0f32 as f32;
         }
         if self.r#lifetime > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#lifetime",
-                value = self.r#lifetime,
-                max = 1000f32,
+                field = "r#lifetime", value = self.r#lifetime, max = 1000f32,
                 "Field got truncated"
             );
             self.r#lifetime = 1000f32 as f32;
         }
         if self.r#cooldown < (0f32 as f32) {
             tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                min = 0f32,
+                field = "r#cooldown", value = self.r#cooldown, min = 0f32,
                 "Field got truncated"
             );
             self.r#cooldown = 0f32 as f32;
         }
         if self.r#cooldown > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                max = 1000f32,
+                field = "r#cooldown", value = self.r#cooldown, max = 1000f32,
                 "Field got truncated"
             );
             self.r#cooldown = 1000f32 as f32;
         }
     }
+    fn type_name() -> &'static str {
+        "BulletTriggerSpawnStaticSfx"
+    }
 }
 impl Default for BulletTriggerSpawnStaticSfx {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BulletTriggerPlaySfx {
+    pub r#condition: BulletTriggerCondition,
+    pub r#visual_effect: Option<VisualEffectId>,
+    pub r#audio_clip: String,
+    pub r#color: String,
+    pub r#color_mode: ColorMode,
+    pub r#size: f32,
+    pub r#lifetime: f32,
+    pub r#cooldown: f32,
+}
+impl BulletTriggerPlaySfx {
+    fn new() -> Self {
+        Self {
+            r#condition: Default::default(),
+            r#visual_effect: Default::default(),
+            r#audio_clip: Default::default(),
+            r#color: Default::default(),
+            r#color_mode: Default::default(),
+            r#size: Default::default(),
+            r#lifetime: Default::default(),
+            r#cooldown: Default::default(),
+        }
+    }
+    pub fn with_condition(mut self, r#condition: BulletTriggerCondition) -> Self {
+        self.r#condition = r#condition;
+        self
+    }
+    pub fn with_visual_effect(
+        mut self,
+        r#visual_effect: Option<VisualEffectId>,
+    ) -> Self {
+        self.r#visual_effect = r#visual_effect;
+        self
+    }
+    pub fn with_audio_clip(mut self, r#audio_clip: String) -> Self {
+        self.r#audio_clip = r#audio_clip;
+        self
+    }
+    pub fn with_color(mut self, r#color: String) -> Self {
+        self.r#color = r#color;
+        self
+    }
+    pub fn with_color_mode(mut self, r#color_mode: ColorMode) -> Self {
+        self.r#color_mode = r#color_mode;
+        self
+    }
+    pub fn with_size(mut self, r#size: f32) -> Self {
+        self.r#size = r#size;
+        self
+    }
+    pub fn with_lifetime(mut self, r#lifetime: f32) -> Self {
+        self.r#lifetime = r#lifetime;
+        self
+    }
+    pub fn with_cooldown(mut self, r#cooldown: f32) -> Self {
+        self.r#cooldown = r#cooldown;
+        self
+    }
+}
+impl DatabaseItem for BulletTriggerPlaySfx {
+    fn validate(&mut self) {
+        if self.r#size < (0f32 as f32) {
+            tracing::warn!(
+                field = "r#size", value = self.r#size, min = 0f32, "Field got truncated"
+            );
+            self.r#size = 0f32 as f32;
+        }
+        if self.r#size > (100f32 as f32) {
+            tracing::warn!(
+                field = "r#size", value = self.r#size, max = 100f32,
+                "Field got truncated"
+            );
+            self.r#size = 100f32 as f32;
+        }
+        if self.r#lifetime < (0f32 as f32) {
+            tracing::warn!(
+                field = "r#lifetime", value = self.r#lifetime, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#lifetime = 0f32 as f32;
+        }
+        if self.r#lifetime > (1000f32 as f32) {
+            tracing::warn!(
+                field = "r#lifetime", value = self.r#lifetime, max = 1000f32,
+                "Field got truncated"
+            );
+            self.r#lifetime = 1000f32 as f32;
+        }
+        if self.r#cooldown < (0f32 as f32) {
+            tracing::warn!(
+                field = "r#cooldown", value = self.r#cooldown, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#cooldown = 0f32 as f32;
+        }
+        if self.r#cooldown > (1000f32 as f32) {
+            tracing::warn!(
+                field = "r#cooldown", value = self.r#cooldown, max = 1000f32,
+                "Field got truncated"
+            );
+            self.r#cooldown = 1000f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "BulletTriggerPlaySfx"
+    }
+}
+impl Default for BulletTriggerPlaySfx {
     fn default() -> Self {
         Self::new()
     }
@@ -12074,22 +12448,21 @@ impl DatabaseItem for BulletTriggerDetonate {
     fn validate(&mut self) {
         if self.r#cooldown < (0f32 as f32) {
             tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                min = 0f32,
+                field = "r#cooldown", value = self.r#cooldown, min = 0f32,
                 "Field got truncated"
             );
             self.r#cooldown = 0f32 as f32;
         }
         if self.r#cooldown > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                max = 1000f32,
+                field = "r#cooldown", value = self.r#cooldown, max = 1000f32,
                 "Field got truncated"
             );
             self.r#cooldown = 1000f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "BulletTriggerDetonate"
     }
 }
 impl Default for BulletTriggerDetonate {
@@ -12097,52 +12470,19 @@ impl Default for BulletTriggerDetonate {
         Self::new()
     }
 }
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct BulletTriggerNone {
-    pub r#condition: BulletTriggerCondition,
-    pub r#cooldown: f32,
-}
-impl BulletTriggerNone {
-    fn new() -> Self {
-        Self {
-            r#condition: Default::default(),
-            r#cooldown: Default::default(),
-        }
-    }
-    pub fn with_condition(mut self, r#condition: BulletTriggerCondition) -> Self {
-        self.r#condition = r#condition;
-        self
-    }
-    pub fn with_cooldown(mut self, r#cooldown: f32) -> Self {
-        self.r#cooldown = r#cooldown;
-        self
-    }
-}
-impl DatabaseItem for BulletTriggerNone {
+impl DatabaseItem for BulletTrigger {
     fn validate(&mut self) {
-        if self.r#cooldown < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#cooldown = 0f32 as f32;
-        }
-        if self.r#cooldown > (1000f32 as f32) {
-            tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                max = 1000f32,
-                "Field got truncated"
-            );
-            self.r#cooldown = 1000f32 as f32;
+        match self {
+            Self::None(x) => x.validate(),
+            Self::PlaySfx(x) => x.validate(),
+            Self::SpawnBullet(x) => x.validate(),
+            Self::Detonate(x) => x.validate(),
+            Self::SpawnStaticSfx(x) => x.validate(),
+            Self::GravityField(x) => x.validate(),
         }
     }
-}
-impl Default for BulletTriggerNone {
-    fn default() -> Self {
-        Self::new()
+    fn type_name() -> &'static str {
+        "BulletTrigger"
     }
 }
 
@@ -12184,40 +12524,35 @@ impl DatabaseItem for ImpactEffect {
     fn validate(&mut self) {
         if self.r#power < (0f32 as f32) {
             tracing::warn!(
-                field = "r#power",
-                value = self.r#power,
-                min = 0f32,
+                field = "r#power", value = self.r#power, min = 0f32,
                 "Field got truncated"
             );
             self.r#power = 0f32 as f32;
         }
         if self.r#power > (1000000000f32 as f32) {
             tracing::warn!(
-                field = "r#power",
-                value = self.r#power,
-                max = 1000000000f32,
+                field = "r#power", value = self.r#power, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#power = 1000000000f32 as f32;
         }
         if self.r#factor < (0f32 as f32) {
             tracing::warn!(
-                field = "r#factor",
-                value = self.r#factor,
-                min = 0f32,
+                field = "r#factor", value = self.r#factor, min = 0f32,
                 "Field got truncated"
             );
             self.r#factor = 0f32 as f32;
         }
         if self.r#factor > (1f32 as f32) {
             tracing::warn!(
-                field = "r#factor",
-                value = self.r#factor,
-                max = 1f32,
+                field = "r#factor", value = self.r#factor, max = 1f32,
                 "Field got truncated"
             );
             self.r#factor = 1f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "ImpactEffect"
     }
 }
 impl Default for ImpactEffect {
@@ -12312,130 +12647,105 @@ impl DatabaseItem for VisualEffectElement {
     fn validate(&mut self) {
         if self.r#quantity < (1f32 as i32) {
             tracing::warn!(
-                field = "r#quantity",
-                value = self.r#quantity,
-                min = 1f32,
+                field = "r#quantity", value = self.r#quantity, min = 1f32,
                 "Field got truncated"
             );
             self.r#quantity = 1f32 as i32;
         }
         if self.r#quantity > (100f32 as i32) {
             tracing::warn!(
-                field = "r#quantity",
-                value = self.r#quantity,
-                max = 100f32,
+                field = "r#quantity", value = self.r#quantity, max = 100f32,
                 "Field got truncated"
             );
             self.r#quantity = 100f32 as i32;
         }
         if self.r#size < (0.001f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                min = 0.001f32,
+                field = "r#size", value = self.r#size, min = 0.001f32,
                 "Field got truncated"
             );
             self.r#size = 0.001f32 as f32;
         }
         if self.r#size > (100f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                max = 100f32,
+                field = "r#size", value = self.r#size, max = 100f32,
                 "Field got truncated"
             );
             self.r#size = 100f32 as f32;
         }
         if self.r#growth_rate < (-1f32 as f32) {
             tracing::warn!(
-                field = "r#growth_rate",
-                value = self.r#growth_rate,
-                min = -1f32,
+                field = "r#growth_rate", value = self.r#growth_rate, min = - 1f32,
                 "Field got truncated"
             );
             self.r#growth_rate = -1f32 as f32;
         }
         if self.r#growth_rate > (100f32 as f32) {
             tracing::warn!(
-                field = "r#growth_rate",
-                value = self.r#growth_rate,
-                max = 100f32,
+                field = "r#growth_rate", value = self.r#growth_rate, max = 100f32,
                 "Field got truncated"
             );
             self.r#growth_rate = 100f32 as f32;
         }
         if self.r#turn_rate < (-1000f32 as f32) {
             tracing::warn!(
-                field = "r#turn_rate",
-                value = self.r#turn_rate,
-                min = -1000f32,
+                field = "r#turn_rate", value = self.r#turn_rate, min = - 1000f32,
                 "Field got truncated"
             );
             self.r#turn_rate = -1000f32 as f32;
         }
         if self.r#turn_rate > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#turn_rate",
-                value = self.r#turn_rate,
-                max = 1000f32,
+                field = "r#turn_rate", value = self.r#turn_rate, max = 1000f32,
                 "Field got truncated"
             );
             self.r#turn_rate = 1000f32 as f32;
         }
         if self.r#start_time < (0f32 as f32) {
             tracing::warn!(
-                field = "r#start_time",
-                value = self.r#start_time,
-                min = 0f32,
+                field = "r#start_time", value = self.r#start_time, min = 0f32,
                 "Field got truncated"
             );
             self.r#start_time = 0f32 as f32;
         }
         if self.r#start_time > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#start_time",
-                value = self.r#start_time,
-                max = 1000f32,
+                field = "r#start_time", value = self.r#start_time, max = 1000f32,
                 "Field got truncated"
             );
             self.r#start_time = 1000f32 as f32;
         }
         if self.r#lifetime < (0f32 as f32) {
             tracing::warn!(
-                field = "r#lifetime",
-                value = self.r#lifetime,
-                min = 0f32,
+                field = "r#lifetime", value = self.r#lifetime, min = 0f32,
                 "Field got truncated"
             );
             self.r#lifetime = 0f32 as f32;
         }
         if self.r#lifetime > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#lifetime",
-                value = self.r#lifetime,
-                max = 1000f32,
+                field = "r#lifetime", value = self.r#lifetime, max = 1000f32,
                 "Field got truncated"
             );
             self.r#lifetime = 1000f32 as f32;
         }
         if self.r#particle_size < (0.001f32 as f32) {
             tracing::warn!(
-                field = "r#particle_size",
-                value = self.r#particle_size,
-                min = 0.001f32,
+                field = "r#particle_size", value = self.r#particle_size, min = 0.001f32,
                 "Field got truncated"
             );
             self.r#particle_size = 0.001f32 as f32;
         }
         if self.r#particle_size > (100f32 as f32) {
             tracing::warn!(
-                field = "r#particle_size",
-                value = self.r#particle_size,
-                max = 100f32,
+                field = "r#particle_size", value = self.r#particle_size, max = 100f32,
                 "Field got truncated"
             );
             self.r#particle_size = 100f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "VisualEffectElement"
     }
 }
 impl Default for VisualEffectElement {
@@ -12479,11 +12789,17 @@ impl CombatSettings {
         self.r#clone_ai = r#clone_ai;
         self
     }
-    pub fn with_defensive_drone_ai(mut self, r#defensive_drone_ai: Option<BehaviorTreeId>) -> Self {
+    pub fn with_defensive_drone_ai(
+        mut self,
+        r#defensive_drone_ai: Option<BehaviorTreeId>,
+    ) -> Self {
         self.r#defensive_drone_ai = r#defensive_drone_ai;
         self
     }
-    pub fn with_offensive_drone_ai(mut self, r#offensive_drone_ai: Option<BehaviorTreeId>) -> Self {
+    pub fn with_offensive_drone_ai(
+        mut self,
+        r#offensive_drone_ai: Option<BehaviorTreeId>,
+    ) -> Self {
         self.r#offensive_drone_ai = r#offensive_drone_ai;
         self
     }
@@ -12501,6 +12817,9 @@ impl CombatSettings {
 }
 impl DatabaseItem for CombatSettings {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "CombatSettings"
+    }
 }
 impl Default for CombatSettings {
     fn default() -> Self {
@@ -12549,7 +12868,10 @@ impl DatabaseSettings {
         self.r#mod_version = r#mod_version;
         self
     }
-    pub fn with_unload_original_database(mut self, r#unload_original_database: bool) -> Self {
+    pub fn with_unload_original_database(
+        mut self,
+        r#unload_original_database: bool,
+    ) -> Self {
         self.r#unload_original_database = r#unload_original_database;
         self
     }
@@ -12558,22 +12880,21 @@ impl DatabaseItem for DatabaseSettings {
     fn validate(&mut self) {
         if self.r#database_version < (1f32 as i32) {
             tracing::warn!(
-                field = "r#database_version",
-                value = self.r#database_version,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#database_version", value = self.r#database_version, min =
+                1f32, "Field got truncated"
             );
             self.r#database_version = 1f32 as i32;
         }
         if self.r#database_version_minor < (0f32 as i32) {
             tracing::warn!(
-                field = "r#database_version_minor",
-                value = self.r#database_version_minor,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#database_version_minor", value = self
+                .r#database_version_minor, min = 0f32, "Field got truncated"
             );
             self.r#database_version_minor = 0f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "DatabaseSettings"
     }
 }
 impl Default for DatabaseSettings {
@@ -12606,6 +12927,9 @@ impl DebugSettings {
 }
 impl DatabaseItem for DebugSettings {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "DebugSettings"
+    }
 }
 impl Default for DebugSettings {
     fn default() -> Self {
@@ -12647,7 +12971,10 @@ impl ExplorationSettings {
         self.r#infected_planet_faction = r#infected_planet_faction;
         self
     }
-    pub fn with_hive_ship_build(mut self, r#hive_ship_build: Option<ShipBuildId>) -> Self {
+    pub fn with_hive_ship_build(
+        mut self,
+        r#hive_ship_build: Option<ShipBuildId>,
+    ) -> Self {
         self.r#hive_ship_build = r#hive_ship_build;
         self
     }
@@ -12658,6 +12985,9 @@ impl ExplorationSettings {
 }
 impl DatabaseItem for ExplorationSettings {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "ExplorationSettings"
+    }
 }
 impl Default for ExplorationSettings {
     fn default() -> Self {
@@ -12680,7 +13010,10 @@ impl FactionsSettings {
             r#defense_loss_per_enemy_defeated: 10i32,
         }
     }
-    pub fn with_starbase_initial_defense(mut self, r#starbase_initial_defense: String) -> Self {
+    pub fn with_starbase_initial_defense(
+        mut self,
+        r#starbase_initial_defense: String,
+    ) -> Self {
         self.r#starbase_initial_defense = r#starbase_initial_defense;
         self
     }
@@ -12700,22 +13033,21 @@ impl DatabaseItem for FactionsSettings {
     fn validate(&mut self) {
         if self.r#starbase_min_defense < (1f32 as i32) {
             tracing::warn!(
-                field = "r#starbase_min_defense",
-                value = self.r#starbase_min_defense,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#starbase_min_defense", value = self.r#starbase_min_defense,
+                min = 1f32, "Field got truncated"
             );
             self.r#starbase_min_defense = 1f32 as i32;
         }
         if self.r#defense_loss_per_enemy_defeated < (0f32 as i32) {
             tracing::warn!(
-                field = "r#defense_loss_per_enemy_defeated",
-                value = self.r#defense_loss_per_enemy_defeated,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#defense_loss_per_enemy_defeated", value = self
+                .r#defense_loss_per_enemy_defeated, min = 0f32, "Field got truncated"
             );
             self.r#defense_loss_per_enemy_defeated = 0f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "FactionsSettings"
     }
 }
 impl Default for FactionsSettings {
@@ -12779,11 +13111,17 @@ impl FrontierSettings {
         self.r#base_command_points = r#base_command_points;
         self
     }
-    pub fn with_max_extra_command_points(mut self, r#max_extra_command_points: i32) -> Self {
+    pub fn with_max_extra_command_points(
+        mut self,
+        r#max_extra_command_points: i32,
+    ) -> Self {
         self.r#max_extra_command_points = r#max_extra_command_points;
         self
     }
-    pub fn with_supporter_pack_ship(mut self, r#supporter_pack_ship: Option<ShipId>) -> Self {
+    pub fn with_supporter_pack_ship(
+        mut self,
+        r#supporter_pack_ship: Option<ShipId>,
+    ) -> Self {
         self.r#supporter_pack_ship = r#supporter_pack_ship;
         self
     }
@@ -12791,7 +13129,10 @@ impl FrontierSettings {
         self.r#falcon_pack_ship = r#falcon_pack_ship;
         self
     }
-    pub fn with_big_boss_easy_build(mut self, r#big_boss_easy_build: Option<ShipBuildId>) -> Self {
+    pub fn with_big_boss_easy_build(
+        mut self,
+        r#big_boss_easy_build: Option<ShipBuildId>,
+    ) -> Self {
         self.r#big_boss_easy_build = r#big_boss_easy_build;
         self
     }
@@ -12802,7 +13143,10 @@ impl FrontierSettings {
         self.r#big_boss_normal_build = r#big_boss_normal_build;
         self
     }
-    pub fn with_big_boss_hard_build(mut self, r#big_boss_hard_build: Option<ShipBuildId>) -> Self {
+    pub fn with_big_boss_hard_build(
+        mut self,
+        r#big_boss_hard_build: Option<ShipBuildId>,
+    ) -> Self {
         self.r#big_boss_hard_build = r#big_boss_hard_build;
         self
     }
@@ -12827,19 +13171,31 @@ impl FrontierSettings {
         self.r#default_starbase_build = r#default_starbase_build;
         self
     }
-    pub fn with_exploration_starbase(mut self, r#exploration_starbase: Option<ShipId>) -> Self {
+    pub fn with_exploration_starbase(
+        mut self,
+        r#exploration_starbase: Option<ShipId>,
+    ) -> Self {
         self.r#exploration_starbase = r#exploration_starbase;
         self
     }
-    pub fn with_merchant_ship_build(mut self, r#merchant_ship_build: Option<ShipBuildId>) -> Self {
+    pub fn with_merchant_ship_build(
+        mut self,
+        r#merchant_ship_build: Option<ShipBuildId>,
+    ) -> Self {
         self.r#merchant_ship_build = r#merchant_ship_build;
         self
     }
-    pub fn with_smuggler_ship_build(mut self, r#smuggler_ship_build: Option<ShipBuildId>) -> Self {
+    pub fn with_smuggler_ship_build(
+        mut self,
+        r#smuggler_ship_build: Option<ShipBuildId>,
+    ) -> Self {
         self.r#smuggler_ship_build = r#smuggler_ship_build;
         self
     }
-    pub fn with_engineer_ship_build(mut self, r#engineer_ship_build: Option<ShipBuildId>) -> Self {
+    pub fn with_engineer_ship_build(
+        mut self,
+        r#engineer_ship_build: Option<ShipBuildId>,
+    ) -> Self {
         self.r#engineer_ship_build = r#engineer_ship_build;
         self
     }
@@ -12850,23 +13206,38 @@ impl FrontierSettings {
         self.r#mercenary_ship_build = r#mercenary_ship_build;
         self
     }
-    pub fn with_shipyard_ship_build(mut self, r#shipyard_ship_build: Option<ShipBuildId>) -> Self {
+    pub fn with_shipyard_ship_build(
+        mut self,
+        r#shipyard_ship_build: Option<ShipBuildId>,
+    ) -> Self {
         self.r#shipyard_ship_build = r#shipyard_ship_build;
         self
     }
-    pub fn with_santa_ship_build(mut self, r#santa_ship_build: Option<ShipBuildId>) -> Self {
+    pub fn with_santa_ship_build(
+        mut self,
+        r#santa_ship_build: Option<ShipBuildId>,
+    ) -> Self {
         self.r#santa_ship_build = r#santa_ship_build;
         self
     }
-    pub fn with_salvage_drone_build(mut self, r#salvage_drone_build: Option<ShipBuildId>) -> Self {
+    pub fn with_salvage_drone_build(
+        mut self,
+        r#salvage_drone_build: Option<ShipBuildId>,
+    ) -> Self {
         self.r#salvage_drone_build = r#salvage_drone_build;
         self
     }
-    pub fn with_custom_ship_levels(mut self, r#custom_ship_levels: Vec<ShipToValue>) -> Self {
+    pub fn with_custom_ship_levels(
+        mut self,
+        r#custom_ship_levels: Vec<ShipToValue>,
+    ) -> Self {
         self.r#custom_ship_levels = r#custom_ship_levels;
         self
     }
-    pub fn with_custom_ship_prices(mut self, r#custom_ship_prices: Vec<ShipToValue>) -> Self {
+    pub fn with_custom_ship_prices(
+        mut self,
+        r#custom_ship_prices: Vec<ShipToValue>,
+    ) -> Self {
         self.r#custom_ship_prices = r#custom_ship_prices;
         self
     }
@@ -12879,22 +13250,21 @@ impl DatabaseItem for FrontierSettings {
     fn validate(&mut self) {
         if self.r#base_command_points < (0f32 as i32) {
             tracing::warn!(
-                field = "r#base_command_points",
-                value = self.r#base_command_points,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#base_command_points", value = self.r#base_command_points, min
+                = 0f32, "Field got truncated"
             );
             self.r#base_command_points = 0f32 as i32;
         }
         if self.r#max_extra_command_points < (0f32 as i32) {
             tracing::warn!(
-                field = "r#max_extra_command_points",
-                value = self.r#max_extra_command_points,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#max_extra_command_points", value = self
+                .r#max_extra_command_points, min = 0f32, "Field got truncated"
             );
             self.r#max_extra_command_points = 0f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "FrontierSettings"
     }
 }
 impl Default for FrontierSettings {
@@ -12952,15 +13322,24 @@ impl GalaxySettings {
         self.r#abandoned_starbase_faction = r#abandoned_starbase_faction;
         self
     }
-    pub fn with_starting_ship_builds(mut self, r#starting_ship_builds: Vec<ShipBuildId>) -> Self {
+    pub fn with_starting_ship_builds(
+        mut self,
+        r#starting_ship_builds: Vec<ShipBuildId>,
+    ) -> Self {
         self.r#starting_ship_builds = r#starting_ship_builds;
         self
     }
-    pub fn with_starting_inventory(mut self, r#starting_inventory: Option<LootId>) -> Self {
+    pub fn with_starting_inventory(
+        mut self,
+        r#starting_inventory: Option<LootId>,
+    ) -> Self {
         self.r#starting_inventory = r#starting_inventory;
         self
     }
-    pub fn with_supporter_pack_ship(mut self, r#supporter_pack_ship: Option<ShipBuildId>) -> Self {
+    pub fn with_supporter_pack_ship(
+        mut self,
+        r#supporter_pack_ship: Option<ShipBuildId>,
+    ) -> Self {
         self.r#supporter_pack_ship = r#supporter_pack_ship;
         self
     }
@@ -12979,7 +13358,10 @@ impl GalaxySettings {
         self.r#enemy_level = r#enemy_level;
         self
     }
-    pub fn with_ship_min_spawn_distance(mut self, r#ship_min_spawn_distance: String) -> Self {
+    pub fn with_ship_min_spawn_distance(
+        mut self,
+        r#ship_min_spawn_distance: String,
+    ) -> Self {
         self.r#ship_min_spawn_distance = r#ship_min_spawn_distance;
         self
     }
@@ -12990,7 +13372,10 @@ impl GalaxySettings {
         self.r#capture_starbase_quest = r#capture_starbase_quest;
         self
     }
-    pub fn with_starting_invenory(mut self, r#starting_invenory: Option<LootId>) -> Self {
+    pub fn with_starting_invenory(
+        mut self,
+        r#starting_invenory: Option<LootId>,
+    ) -> Self {
         self.r#starting_invenory = r#starting_invenory;
         self
     }
@@ -13015,7 +13400,10 @@ impl GalaxySettings {
         self.r#flagship_combat_rules = r#flagship_combat_rules;
         self
     }
-    pub fn with_arena_combat_rules(mut self, r#arena_combat_rules: Option<CombatRulesId>) -> Self {
+    pub fn with_arena_combat_rules(
+        mut self,
+        r#arena_combat_rules: Option<CombatRulesId>,
+    ) -> Self {
         self.r#arena_combat_rules = r#arena_combat_rules;
         self
     }
@@ -13026,7 +13414,10 @@ impl GalaxySettings {
         self.r#challenge_combat_rules = r#challenge_combat_rules;
         self
     }
-    pub fn with_quick_combat_rules(mut self, r#quick_combat_rules: Option<CombatRulesId>) -> Self {
+    pub fn with_quick_combat_rules(
+        mut self,
+        r#quick_combat_rules: Option<CombatRulesId>,
+    ) -> Self {
         self.r#quick_combat_rules = r#quick_combat_rules;
         self
     }
@@ -13035,19 +13426,15 @@ impl DatabaseItem for GalaxySettings {
     fn validate(&mut self) {
         if self.r#max_enemy_ships_level < (0f32 as i32) {
             tracing::warn!(
-                field = "r#max_enemy_ships_level",
-                value = self.r#max_enemy_ships_level,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#max_enemy_ships_level", value = self.r#max_enemy_ships_level,
+                min = 0f32, "Field got truncated"
             );
             self.r#max_enemy_ships_level = 0f32 as i32;
         }
         if self.r#max_enemy_ships_level > (500f32 as i32) {
             tracing::warn!(
-                field = "r#max_enemy_ships_level",
-                value = self.r#max_enemy_ships_level,
-                max = 500f32,
-                "Field got truncated"
+                field = "r#max_enemy_ships_level", value = self.r#max_enemy_ships_level,
+                max = 500f32, "Field got truncated"
             );
             self.r#max_enemy_ships_level = 500f32 as i32;
         }
@@ -13058,6 +13445,9 @@ impl DatabaseItem for GalaxySettings {
                 "Obsolete field usage detected, generated code may not work",
             );
         }
+    }
+    fn type_name() -> &'static str {
+        "GalaxySettings"
     }
 }
 impl Default for GalaxySettings {
@@ -13095,13 +13485,19 @@ impl MusicPlaylist {
         self.r#combat_music = r#combat_music;
         self
     }
-    pub fn with_exploration_music(mut self, r#exploration_music: Vec<SoundTrack>) -> Self {
+    pub fn with_exploration_music(
+        mut self,
+        r#exploration_music: Vec<SoundTrack>,
+    ) -> Self {
         self.r#exploration_music = r#exploration_music;
         self
     }
 }
 impl DatabaseItem for MusicPlaylist {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "MusicPlaylist"
+    }
 }
 impl Default for MusicPlaylist {
     fn default() -> Self {
@@ -13134,7 +13530,10 @@ impl ShipModSettings {
             r#attack_reduction: 0.2f32,
         }
     }
-    pub fn with_remove_weapon_slot_mod(mut self, r#remove_weapon_slot_mod: bool) -> Self {
+    pub fn with_remove_weapon_slot_mod(
+        mut self,
+        r#remove_weapon_slot_mod: bool,
+    ) -> Self {
         self.r#remove_weapon_slot_mod = r#remove_weapon_slot_mod;
         self
     }
@@ -13171,130 +13570,105 @@ impl DatabaseItem for ShipModSettings {
     fn validate(&mut self) {
         if self.r#heat_defense_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#heat_defense_value",
-                value = self.r#heat_defense_value,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#heat_defense_value", value = self.r#heat_defense_value, min =
+                0f32, "Field got truncated"
             );
             self.r#heat_defense_value = 0f32 as f32;
         }
         if self.r#heat_defense_value > (1f32 as f32) {
             tracing::warn!(
-                field = "r#heat_defense_value",
-                value = self.r#heat_defense_value,
-                max = 1f32,
-                "Field got truncated"
+                field = "r#heat_defense_value", value = self.r#heat_defense_value, max =
+                1f32, "Field got truncated"
             );
             self.r#heat_defense_value = 1f32 as f32;
         }
         if self.r#kinetic_defense_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#kinetic_defense_value",
-                value = self.r#kinetic_defense_value,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#kinetic_defense_value", value = self.r#kinetic_defense_value,
+                min = 0f32, "Field got truncated"
             );
             self.r#kinetic_defense_value = 0f32 as f32;
         }
         if self.r#kinetic_defense_value > (1f32 as f32) {
             tracing::warn!(
-                field = "r#kinetic_defense_value",
-                value = self.r#kinetic_defense_value,
-                max = 1f32,
-                "Field got truncated"
+                field = "r#kinetic_defense_value", value = self.r#kinetic_defense_value,
+                max = 1f32, "Field got truncated"
             );
             self.r#kinetic_defense_value = 1f32 as f32;
         }
         if self.r#energy_defense_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#energy_defense_value",
-                value = self.r#energy_defense_value,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#energy_defense_value", value = self.r#energy_defense_value,
+                min = 0f32, "Field got truncated"
             );
             self.r#energy_defense_value = 0f32 as f32;
         }
         if self.r#energy_defense_value > (1f32 as f32) {
             tracing::warn!(
-                field = "r#energy_defense_value",
-                value = self.r#energy_defense_value,
-                max = 1f32,
-                "Field got truncated"
+                field = "r#energy_defense_value", value = self.r#energy_defense_value,
+                max = 1f32, "Field got truncated"
             );
             self.r#energy_defense_value = 1f32 as f32;
         }
         if self.r#regeneration_value < (0f32 as f32) {
             tracing::warn!(
-                field = "r#regeneration_value",
-                value = self.r#regeneration_value,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#regeneration_value", value = self.r#regeneration_value, min =
+                0f32, "Field got truncated"
             );
             self.r#regeneration_value = 0f32 as f32;
         }
         if self.r#regeneration_value > (1f32 as f32) {
             tracing::warn!(
-                field = "r#regeneration_value",
-                value = self.r#regeneration_value,
-                max = 1f32,
-                "Field got truncated"
+                field = "r#regeneration_value", value = self.r#regeneration_value, max =
+                1f32, "Field got truncated"
             );
             self.r#regeneration_value = 1f32 as f32;
         }
         if self.r#regeneration_armor < (0f32 as f32) {
             tracing::warn!(
-                field = "r#regeneration_armor",
-                value = self.r#regeneration_armor,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#regeneration_armor", value = self.r#regeneration_armor, min =
+                0f32, "Field got truncated"
             );
             self.r#regeneration_armor = 0f32 as f32;
         }
         if self.r#regeneration_armor > (1f32 as f32) {
             tracing::warn!(
-                field = "r#regeneration_armor",
-                value = self.r#regeneration_armor,
-                max = 1f32,
-                "Field got truncated"
+                field = "r#regeneration_armor", value = self.r#regeneration_armor, max =
+                1f32, "Field got truncated"
             );
             self.r#regeneration_armor = 1f32 as f32;
         }
         if self.r#weight_reduction < (0f32 as f32) {
             tracing::warn!(
-                field = "r#weight_reduction",
-                value = self.r#weight_reduction,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#weight_reduction", value = self.r#weight_reduction, min =
+                0f32, "Field got truncated"
             );
             self.r#weight_reduction = 0f32 as f32;
         }
         if self.r#weight_reduction > (1f32 as f32) {
             tracing::warn!(
-                field = "r#weight_reduction",
-                value = self.r#weight_reduction,
-                max = 1f32,
-                "Field got truncated"
+                field = "r#weight_reduction", value = self.r#weight_reduction, max =
+                1f32, "Field got truncated"
             );
             self.r#weight_reduction = 1f32 as f32;
         }
         if self.r#attack_reduction < (0f32 as f32) {
             tracing::warn!(
-                field = "r#attack_reduction",
-                value = self.r#attack_reduction,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#attack_reduction", value = self.r#attack_reduction, min =
+                0f32, "Field got truncated"
             );
             self.r#attack_reduction = 0f32 as f32;
         }
         if self.r#attack_reduction > (1f32 as f32) {
             tracing::warn!(
-                field = "r#attack_reduction",
-                value = self.r#attack_reduction,
-                max = 1f32,
-                "Field got truncated"
+                field = "r#attack_reduction", value = self.r#attack_reduction, max =
+                1f32, "Field got truncated"
             );
             self.r#attack_reduction = 1f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "ShipModSettings"
     }
 }
 impl Default for ShipModSettings {
@@ -13338,11 +13712,17 @@ impl ShipSettings {
             r#max_turn_rate: Default::default(),
         }
     }
-    pub fn with_default_weight_per_cell(mut self, r#default_weight_per_cell: f32) -> Self {
+    pub fn with_default_weight_per_cell(
+        mut self,
+        r#default_weight_per_cell: f32,
+    ) -> Self {
         self.r#default_weight_per_cell = r#default_weight_per_cell;
         self
     }
-    pub fn with_minimum_weight_per_cell(mut self, r#minimum_weight_per_cell: f32) -> Self {
+    pub fn with_minimum_weight_per_cell(
+        mut self,
+        r#minimum_weight_per_cell: f32,
+    ) -> Self {
         self.r#minimum_weight_per_cell = r#minimum_weight_per_cell;
         self
     }
@@ -13362,19 +13742,31 @@ impl ShipSettings {
         self.r#base_energy_points = r#base_energy_points;
         self
     }
-    pub fn with_base_energy_recharge_rate(mut self, r#base_energy_recharge_rate: f32) -> Self {
+    pub fn with_base_energy_recharge_rate(
+        mut self,
+        r#base_energy_recharge_rate: f32,
+    ) -> Self {
         self.r#base_energy_recharge_rate = r#base_energy_recharge_rate;
         self
     }
-    pub fn with_energy_recharge_cooldown(mut self, r#energy_recharge_cooldown: f32) -> Self {
+    pub fn with_energy_recharge_cooldown(
+        mut self,
+        r#energy_recharge_cooldown: f32,
+    ) -> Self {
         self.r#energy_recharge_cooldown = r#energy_recharge_cooldown;
         self
     }
-    pub fn with_base_shield_recharge_rate(mut self, r#base_shield_recharge_rate: f32) -> Self {
+    pub fn with_base_shield_recharge_rate(
+        mut self,
+        r#base_shield_recharge_rate: f32,
+    ) -> Self {
         self.r#base_shield_recharge_rate = r#base_shield_recharge_rate;
         self
     }
-    pub fn with_shield_recharge_cooldown(mut self, r#shield_recharge_cooldown: f32) -> Self {
+    pub fn with_shield_recharge_cooldown(
+        mut self,
+        r#shield_recharge_cooldown: f32,
+    ) -> Self {
         self.r#shield_recharge_cooldown = r#shield_recharge_cooldown;
         self
     }
@@ -13398,238 +13790,189 @@ impl DatabaseItem for ShipSettings {
     fn validate(&mut self) {
         if self.r#default_weight_per_cell < (1f32 as f32) {
             tracing::warn!(
-                field = "r#default_weight_per_cell",
-                value = self.r#default_weight_per_cell,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#default_weight_per_cell", value = self
+                .r#default_weight_per_cell, min = 1f32, "Field got truncated"
             );
             self.r#default_weight_per_cell = 1f32 as f32;
         }
         if self.r#default_weight_per_cell > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#default_weight_per_cell",
-                value = self.r#default_weight_per_cell,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#default_weight_per_cell", value = self
+                .r#default_weight_per_cell, max = 1000000f32, "Field got truncated"
             );
             self.r#default_weight_per_cell = 1000000f32 as f32;
         }
         if self.r#minimum_weight_per_cell < (1f32 as f32) {
             tracing::warn!(
-                field = "r#minimum_weight_per_cell",
-                value = self.r#minimum_weight_per_cell,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#minimum_weight_per_cell", value = self
+                .r#minimum_weight_per_cell, min = 1f32, "Field got truncated"
             );
             self.r#minimum_weight_per_cell = 1f32 as f32;
         }
         if self.r#minimum_weight_per_cell > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#minimum_weight_per_cell",
-                value = self.r#minimum_weight_per_cell,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#minimum_weight_per_cell", value = self
+                .r#minimum_weight_per_cell, max = 1000000f32, "Field got truncated"
             );
             self.r#minimum_weight_per_cell = 1000000f32 as f32;
         }
         if self.r#base_armor_points < (0f32 as f32) {
             tracing::warn!(
-                field = "r#base_armor_points",
-                value = self.r#base_armor_points,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#base_armor_points", value = self.r#base_armor_points, min =
+                0f32, "Field got truncated"
             );
             self.r#base_armor_points = 0f32 as f32;
         }
         if self.r#base_armor_points > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#base_armor_points",
-                value = self.r#base_armor_points,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#base_armor_points", value = self.r#base_armor_points, max =
+                1000000f32, "Field got truncated"
             );
             self.r#base_armor_points = 1000000f32 as f32;
         }
         if self.r#armor_points_per_cell < (0f32 as f32) {
             tracing::warn!(
-                field = "r#armor_points_per_cell",
-                value = self.r#armor_points_per_cell,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#armor_points_per_cell", value = self.r#armor_points_per_cell,
+                min = 0f32, "Field got truncated"
             );
             self.r#armor_points_per_cell = 0f32 as f32;
         }
         if self.r#armor_points_per_cell > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#armor_points_per_cell",
-                value = self.r#armor_points_per_cell,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#armor_points_per_cell", value = self.r#armor_points_per_cell,
+                max = 1000000f32, "Field got truncated"
             );
             self.r#armor_points_per_cell = 1000000f32 as f32;
         }
         if self.r#armor_repair_cooldown < (0f32 as f32) {
             tracing::warn!(
-                field = "r#armor_repair_cooldown",
-                value = self.r#armor_repair_cooldown,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#armor_repair_cooldown", value = self.r#armor_repair_cooldown,
+                min = 0f32, "Field got truncated"
             );
             self.r#armor_repair_cooldown = 0f32 as f32;
         }
         if self.r#armor_repair_cooldown > (60f32 as f32) {
             tracing::warn!(
-                field = "r#armor_repair_cooldown",
-                value = self.r#armor_repair_cooldown,
-                max = 60f32,
-                "Field got truncated"
+                field = "r#armor_repair_cooldown", value = self.r#armor_repair_cooldown,
+                max = 60f32, "Field got truncated"
             );
             self.r#armor_repair_cooldown = 60f32 as f32;
         }
         if self.r#base_energy_points < (0f32 as f32) {
             tracing::warn!(
-                field = "r#base_energy_points",
-                value = self.r#base_energy_points,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#base_energy_points", value = self.r#base_energy_points, min =
+                0f32, "Field got truncated"
             );
             self.r#base_energy_points = 0f32 as f32;
         }
         if self.r#base_energy_points > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#base_energy_points",
-                value = self.r#base_energy_points,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#base_energy_points", value = self.r#base_energy_points, max =
+                1000000f32, "Field got truncated"
             );
             self.r#base_energy_points = 1000000f32 as f32;
         }
         if self.r#base_energy_recharge_rate < (0f32 as f32) {
             tracing::warn!(
-                field = "r#base_energy_recharge_rate",
-                value = self.r#base_energy_recharge_rate,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#base_energy_recharge_rate", value = self
+                .r#base_energy_recharge_rate, min = 0f32, "Field got truncated"
             );
             self.r#base_energy_recharge_rate = 0f32 as f32;
         }
         if self.r#base_energy_recharge_rate > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#base_energy_recharge_rate",
-                value = self.r#base_energy_recharge_rate,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#base_energy_recharge_rate", value = self
+                .r#base_energy_recharge_rate, max = 1000000f32, "Field got truncated"
             );
             self.r#base_energy_recharge_rate = 1000000f32 as f32;
         }
         if self.r#energy_recharge_cooldown < (0f32 as f32) {
             tracing::warn!(
-                field = "r#energy_recharge_cooldown",
-                value = self.r#energy_recharge_cooldown,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#energy_recharge_cooldown", value = self
+                .r#energy_recharge_cooldown, min = 0f32, "Field got truncated"
             );
             self.r#energy_recharge_cooldown = 0f32 as f32;
         }
         if self.r#energy_recharge_cooldown > (60f32 as f32) {
             tracing::warn!(
-                field = "r#energy_recharge_cooldown",
-                value = self.r#energy_recharge_cooldown,
-                max = 60f32,
-                "Field got truncated"
+                field = "r#energy_recharge_cooldown", value = self
+                .r#energy_recharge_cooldown, max = 60f32, "Field got truncated"
             );
             self.r#energy_recharge_cooldown = 60f32 as f32;
         }
         if self.r#base_shield_recharge_rate < (0f32 as f32) {
             tracing::warn!(
-                field = "r#base_shield_recharge_rate",
-                value = self.r#base_shield_recharge_rate,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#base_shield_recharge_rate", value = self
+                .r#base_shield_recharge_rate, min = 0f32, "Field got truncated"
             );
             self.r#base_shield_recharge_rate = 0f32 as f32;
         }
         if self.r#base_shield_recharge_rate > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#base_shield_recharge_rate",
-                value = self.r#base_shield_recharge_rate,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#base_shield_recharge_rate", value = self
+                .r#base_shield_recharge_rate, max = 1000000f32, "Field got truncated"
             );
             self.r#base_shield_recharge_rate = 1000000f32 as f32;
         }
         if self.r#shield_recharge_cooldown < (0f32 as f32) {
             tracing::warn!(
-                field = "r#shield_recharge_cooldown",
-                value = self.r#shield_recharge_cooldown,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#shield_recharge_cooldown", value = self
+                .r#shield_recharge_cooldown, min = 0f32, "Field got truncated"
             );
             self.r#shield_recharge_cooldown = 0f32 as f32;
         }
         if self.r#shield_recharge_cooldown > (60f32 as f32) {
             tracing::warn!(
-                field = "r#shield_recharge_cooldown",
-                value = self.r#shield_recharge_cooldown,
-                max = 60f32,
-                "Field got truncated"
+                field = "r#shield_recharge_cooldown", value = self
+                .r#shield_recharge_cooldown, max = 60f32, "Field got truncated"
             );
             self.r#shield_recharge_cooldown = 60f32 as f32;
         }
         if self.r#base_drone_reconstruction_speed < (0f32 as f32) {
             tracing::warn!(
-                field = "r#base_drone_reconstruction_speed",
-                value = self.r#base_drone_reconstruction_speed,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#base_drone_reconstruction_speed", value = self
+                .r#base_drone_reconstruction_speed, min = 0f32, "Field got truncated"
             );
             self.r#base_drone_reconstruction_speed = 0f32 as f32;
         }
         if self.r#base_drone_reconstruction_speed > (100f32 as f32) {
             tracing::warn!(
-                field = "r#base_drone_reconstruction_speed",
-                value = self.r#base_drone_reconstruction_speed,
-                max = 100f32,
-                "Field got truncated"
+                field = "r#base_drone_reconstruction_speed", value = self
+                .r#base_drone_reconstruction_speed, max = 100f32, "Field got truncated"
             );
             self.r#base_drone_reconstruction_speed = 100f32 as f32;
         }
         if self.r#max_velocity < (5f32 as f32) {
             tracing::warn!(
-                field = "r#max_velocity",
-                value = self.r#max_velocity,
-                min = 5f32,
+                field = "r#max_velocity", value = self.r#max_velocity, min = 5f32,
                 "Field got truncated"
             );
             self.r#max_velocity = 5f32 as f32;
         }
         if self.r#max_velocity > (30f32 as f32) {
             tracing::warn!(
-                field = "r#max_velocity",
-                value = self.r#max_velocity,
-                max = 30f32,
+                field = "r#max_velocity", value = self.r#max_velocity, max = 30f32,
                 "Field got truncated"
             );
             self.r#max_velocity = 30f32 as f32;
         }
         if self.r#max_turn_rate < (5f32 as f32) {
             tracing::warn!(
-                field = "r#max_turn_rate",
-                value = self.r#max_turn_rate,
-                min = 5f32,
+                field = "r#max_turn_rate", value = self.r#max_turn_rate, min = 5f32,
                 "Field got truncated"
             );
             self.r#max_turn_rate = 5f32 as f32;
         }
         if self.r#max_turn_rate > (30f32 as f32) {
             tracing::warn!(
-                field = "r#max_turn_rate",
-                value = self.r#max_turn_rate,
-                max = 30f32,
+                field = "r#max_turn_rate", value = self.r#max_turn_rate, max = 30f32,
                 "Field got truncated"
             );
             self.r#max_turn_rate = 30f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "ShipSettings"
     }
 }
 impl Default for ShipSettings {
@@ -13698,7 +14041,10 @@ impl SkillSettings {
         self.r#beat_all_enemies_faction_list = r#beat_all_enemies_faction_list;
         self
     }
-    pub fn with_disable_exceed_the_limits(mut self, r#disable_exceed_the_limits: bool) -> Self {
+    pub fn with_disable_exceed_the_limits(
+        mut self,
+        r#disable_exceed_the_limits: bool,
+    ) -> Self {
         self.r#disable_exceed_the_limits = r#disable_exceed_the_limits;
         self
     }
@@ -13714,11 +14060,17 @@ impl SkillSettings {
         self.r#defense_bonus = r#defense_bonus;
         self
     }
-    pub fn with_shield_strength_bonus(mut self, r#shield_strength_bonus: String) -> Self {
+    pub fn with_shield_strength_bonus(
+        mut self,
+        r#shield_strength_bonus: String,
+    ) -> Self {
         self.r#shield_strength_bonus = r#shield_strength_bonus;
         self
     }
-    pub fn with_shield_recharge_bonus(mut self, r#shield_recharge_bonus: String) -> Self {
+    pub fn with_shield_recharge_bonus(
+        mut self,
+        r#shield_recharge_bonus: String,
+    ) -> Self {
         self.r#shield_recharge_bonus = r#shield_recharge_bonus;
         self
     }
@@ -13734,7 +14086,10 @@ impl SkillSettings {
         self.r#flight_range = r#flight_range;
         self
     }
-    pub fn with_exploration_loot_bonus(mut self, r#exploration_loot_bonus: String) -> Self {
+    pub fn with_exploration_loot_bonus(
+        mut self,
+        r#exploration_loot_bonus: String,
+    ) -> Self {
         self.r#exploration_loot_bonus = r#exploration_loot_bonus;
         self
     }
@@ -13750,15 +14105,24 @@ impl SkillSettings {
         self.r#energy_resistance = r#energy_resistance;
         self
     }
-    pub fn with_merchant_price_factor(mut self, r#merchant_price_factor: String) -> Self {
+    pub fn with_merchant_price_factor(
+        mut self,
+        r#merchant_price_factor: String,
+    ) -> Self {
         self.r#merchant_price_factor = r#merchant_price_factor;
         self
     }
-    pub fn with_crafting_price_factor(mut self, r#crafting_price_factor: String) -> Self {
+    pub fn with_crafting_price_factor(
+        mut self,
+        r#crafting_price_factor: String,
+    ) -> Self {
         self.r#crafting_price_factor = r#crafting_price_factor;
         self
     }
-    pub fn with_crafting_level_reduction(mut self, r#crafting_level_reduction: String) -> Self {
+    pub fn with_crafting_level_reduction(
+        mut self,
+        r#crafting_level_reduction: String,
+    ) -> Self {
         self.r#crafting_level_reduction = r#crafting_level_reduction;
         self
     }
@@ -13787,67 +14151,56 @@ impl DatabaseItem for SkillSettings {
     fn validate(&mut self) {
         if self.r#max_player_ships_level < (0f32 as i32) {
             tracing::warn!(
-                field = "r#max_player_ships_level",
-                value = self.r#max_player_ships_level,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#max_player_ships_level", value = self
+                .r#max_player_ships_level, min = 0f32, "Field got truncated"
             );
             self.r#max_player_ships_level = 0f32 as i32;
         }
         if self.r#max_player_ships_level > (500f32 as i32) {
             tracing::warn!(
-                field = "r#max_player_ships_level",
-                value = self.r#max_player_ships_level,
-                max = 500f32,
-                "Field got truncated"
+                field = "r#max_player_ships_level", value = self
+                .r#max_player_ships_level, max = 500f32, "Field got truncated"
             );
             self.r#max_player_ships_level = 500f32 as i32;
         }
         if self.r#increased_level_limit < (0f32 as i32) {
             tracing::warn!(
-                field = "r#increased_level_limit",
-                value = self.r#increased_level_limit,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#increased_level_limit", value = self.r#increased_level_limit,
+                min = 0f32, "Field got truncated"
             );
             self.r#increased_level_limit = 0f32 as i32;
         }
         if self.r#increased_level_limit > (1000f32 as i32) {
             tracing::warn!(
-                field = "r#increased_level_limit",
-                value = self.r#increased_level_limit,
-                max = 1000f32,
-                "Field got truncated"
+                field = "r#increased_level_limit", value = self.r#increased_level_limit,
+                max = 1000f32, "Field got truncated"
             );
             self.r#increased_level_limit = 1000f32 as i32;
         }
         if self.r#base_fuel_capacity < (10f32 as i32) {
             tracing::warn!(
-                field = "r#base_fuel_capacity",
-                value = self.r#base_fuel_capacity,
-                min = 10f32,
-                "Field got truncated"
+                field = "r#base_fuel_capacity", value = self.r#base_fuel_capacity, min =
+                10f32, "Field got truncated"
             );
             self.r#base_fuel_capacity = 10f32 as i32;
         }
         if self.r#base_flight_range < (1.5f32 as f32) {
             tracing::warn!(
-                field = "r#base_flight_range",
-                value = self.r#base_flight_range,
-                min = 1.5f32,
-                "Field got truncated"
+                field = "r#base_flight_range", value = self.r#base_flight_range, min =
+                1.5f32, "Field got truncated"
             );
             self.r#base_flight_range = 1.5f32 as f32;
         }
         if self.r#base_flight_speed < (1f32 as f32) {
             tracing::warn!(
-                field = "r#base_flight_speed",
-                value = self.r#base_flight_speed,
-                min = 1f32,
-                "Field got truncated"
+                field = "r#base_flight_speed", value = self.r#base_flight_speed, min =
+                1f32, "Field got truncated"
             );
             self.r#base_flight_speed = 1f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "SkillSettings"
     }
 }
 impl Default for SkillSettings {
@@ -13909,7 +14262,10 @@ impl SpecialEventSettings {
         self.r#xmas_quest = r#xmas_quest;
         self
     }
-    pub fn with_xmas_combat_rules(mut self, r#xmas_combat_rules: Option<CombatRulesId>) -> Self {
+    pub fn with_xmas_combat_rules(
+        mut self,
+        r#xmas_combat_rules: Option<CombatRulesId>,
+    ) -> Self {
         self.r#xmas_combat_rules = r#xmas_combat_rules;
         self
     }
@@ -13936,7 +14292,10 @@ impl SpecialEventSettings {
         self.r#easter_quest = r#easter_quest;
         self
     }
-    pub fn with_enable_halloween_event(mut self, r#enable_halloween_event: bool) -> Self {
+    pub fn with_enable_halloween_event(
+        mut self,
+        r#enable_halloween_event: bool,
+    ) -> Self {
         self.r#enable_halloween_event = r#enable_halloween_event;
         self
     }
@@ -13957,112 +14316,91 @@ impl DatabaseItem for SpecialEventSettings {
     fn validate(&mut self) {
         if self.r#xmas_days_before < (0f32 as i32) {
             tracing::warn!(
-                field = "r#xmas_days_before",
-                value = self.r#xmas_days_before,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#xmas_days_before", value = self.r#xmas_days_before, min =
+                0f32, "Field got truncated"
             );
             self.r#xmas_days_before = 0f32 as i32;
         }
         if self.r#xmas_days_before > (30f32 as i32) {
             tracing::warn!(
-                field = "r#xmas_days_before",
-                value = self.r#xmas_days_before,
-                max = 30f32,
-                "Field got truncated"
+                field = "r#xmas_days_before", value = self.r#xmas_days_before, max =
+                30f32, "Field got truncated"
             );
             self.r#xmas_days_before = 30f32 as i32;
         }
         if self.r#xmas_days_after < (0f32 as i32) {
             tracing::warn!(
-                field = "r#xmas_days_after",
-                value = self.r#xmas_days_after,
-                min = 0f32,
+                field = "r#xmas_days_after", value = self.r#xmas_days_after, min = 0f32,
                 "Field got truncated"
             );
             self.r#xmas_days_after = 0f32 as i32;
         }
         if self.r#xmas_days_after > (30f32 as i32) {
             tracing::warn!(
-                field = "r#xmas_days_after",
-                value = self.r#xmas_days_after,
-                max = 30f32,
+                field = "r#xmas_days_after", value = self.r#xmas_days_after, max = 30f32,
                 "Field got truncated"
             );
             self.r#xmas_days_after = 30f32 as i32;
         }
         if self.r#easter_days_before < (0f32 as i32) {
             tracing::warn!(
-                field = "r#easter_days_before",
-                value = self.r#easter_days_before,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#easter_days_before", value = self.r#easter_days_before, min =
+                0f32, "Field got truncated"
             );
             self.r#easter_days_before = 0f32 as i32;
         }
         if self.r#easter_days_before > (30f32 as i32) {
             tracing::warn!(
-                field = "r#easter_days_before",
-                value = self.r#easter_days_before,
-                max = 30f32,
-                "Field got truncated"
+                field = "r#easter_days_before", value = self.r#easter_days_before, max =
+                30f32, "Field got truncated"
             );
             self.r#easter_days_before = 30f32 as i32;
         }
         if self.r#easter_days_after < (0f32 as i32) {
             tracing::warn!(
-                field = "r#easter_days_after",
-                value = self.r#easter_days_after,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#easter_days_after", value = self.r#easter_days_after, min =
+                0f32, "Field got truncated"
             );
             self.r#easter_days_after = 0f32 as i32;
         }
         if self.r#easter_days_after > (30f32 as i32) {
             tracing::warn!(
-                field = "r#easter_days_after",
-                value = self.r#easter_days_after,
-                max = 30f32,
-                "Field got truncated"
+                field = "r#easter_days_after", value = self.r#easter_days_after, max =
+                30f32, "Field got truncated"
             );
             self.r#easter_days_after = 30f32 as i32;
         }
         if self.r#halloween_days_before < (0f32 as i32) {
             tracing::warn!(
-                field = "r#halloween_days_before",
-                value = self.r#halloween_days_before,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#halloween_days_before", value = self.r#halloween_days_before,
+                min = 0f32, "Field got truncated"
             );
             self.r#halloween_days_before = 0f32 as i32;
         }
         if self.r#halloween_days_before > (30f32 as i32) {
             tracing::warn!(
-                field = "r#halloween_days_before",
-                value = self.r#halloween_days_before,
-                max = 30f32,
-                "Field got truncated"
+                field = "r#halloween_days_before", value = self.r#halloween_days_before,
+                max = 30f32, "Field got truncated"
             );
             self.r#halloween_days_before = 30f32 as i32;
         }
         if self.r#halloween_days_after < (0f32 as i32) {
             tracing::warn!(
-                field = "r#halloween_days_after",
-                value = self.r#halloween_days_after,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#halloween_days_after", value = self.r#halloween_days_after,
+                min = 0f32, "Field got truncated"
             );
             self.r#halloween_days_after = 0f32 as i32;
         }
         if self.r#halloween_days_after > (30f32 as i32) {
             tracing::warn!(
-                field = "r#halloween_days_after",
-                value = self.r#halloween_days_after,
-                max = 30f32,
-                "Field got truncated"
+                field = "r#halloween_days_after", value = self.r#halloween_days_after,
+                max = 30f32, "Field got truncated"
             );
             self.r#halloween_days_after = 30f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "SpecialEventSettings"
     }
 }
 impl Default for SpecialEventSettings {
@@ -14188,15 +14526,24 @@ impl UiSettings {
         self.r#warning_button_color = r#warning_button_color;
         self
     }
-    pub fn with_warning_button_focus_color(mut self, r#warning_button_focus_color: String) -> Self {
+    pub fn with_warning_button_focus_color(
+        mut self,
+        r#warning_button_focus_color: String,
+    ) -> Self {
         self.r#warning_button_focus_color = r#warning_button_focus_color;
         self
     }
-    pub fn with_warning_button_text_color(mut self, r#warning_button_text_color: String) -> Self {
+    pub fn with_warning_button_text_color(
+        mut self,
+        r#warning_button_text_color: String,
+    ) -> Self {
         self.r#warning_button_text_color = r#warning_button_text_color;
         self
     }
-    pub fn with_warning_button_icon_color(mut self, r#warning_button_icon_color: String) -> Self {
+    pub fn with_warning_button_icon_color(
+        mut self,
+        r#warning_button_icon_color: String,
+    ) -> Self {
         self.r#warning_button_icon_color = r#warning_button_icon_color;
         self
     }
@@ -14204,15 +14551,24 @@ impl UiSettings {
         self.r#premium_button_color = r#premium_button_color;
         self
     }
-    pub fn with_premium_button_focus_color(mut self, r#premium_button_focus_color: String) -> Self {
+    pub fn with_premium_button_focus_color(
+        mut self,
+        r#premium_button_focus_color: String,
+    ) -> Self {
         self.r#premium_button_focus_color = r#premium_button_focus_color;
         self
     }
-    pub fn with_premium_button_text_color(mut self, r#premium_button_text_color: String) -> Self {
+    pub fn with_premium_button_text_color(
+        mut self,
+        r#premium_button_text_color: String,
+    ) -> Self {
         self.r#premium_button_text_color = r#premium_button_text_color;
         self
     }
-    pub fn with_premium_button_icon_color(mut self, r#premium_button_icon_color: String) -> Self {
+    pub fn with_premium_button_icon_color(
+        mut self,
+        r#premium_button_icon_color: String,
+    ) -> Self {
         self.r#premium_button_icon_color = r#premium_button_icon_color;
         self
     }
@@ -14240,23 +14596,38 @@ impl UiSettings {
         self.r#background_dark = r#background_dark;
         self
     }
-    pub fn with_low_quality_item_color(mut self, r#low_quality_item_color: String) -> Self {
+    pub fn with_low_quality_item_color(
+        mut self,
+        r#low_quality_item_color: String,
+    ) -> Self {
         self.r#low_quality_item_color = r#low_quality_item_color;
         self
     }
-    pub fn with_common_quality_item_color(mut self, r#common_quality_item_color: String) -> Self {
+    pub fn with_common_quality_item_color(
+        mut self,
+        r#common_quality_item_color: String,
+    ) -> Self {
         self.r#common_quality_item_color = r#common_quality_item_color;
         self
     }
-    pub fn with_medium_quality_item_color(mut self, r#medium_quality_item_color: String) -> Self {
+    pub fn with_medium_quality_item_color(
+        mut self,
+        r#medium_quality_item_color: String,
+    ) -> Self {
         self.r#medium_quality_item_color = r#medium_quality_item_color;
         self
     }
-    pub fn with_high_quality_item_color(mut self, r#high_quality_item_color: String) -> Self {
+    pub fn with_high_quality_item_color(
+        mut self,
+        r#high_quality_item_color: String,
+    ) -> Self {
         self.r#high_quality_item_color = r#high_quality_item_color;
         self
     }
-    pub fn with_perfect_quality_item_color(mut self, r#perfect_quality_item_color: String) -> Self {
+    pub fn with_perfect_quality_item_color(
+        mut self,
+        r#perfect_quality_item_color: String,
+    ) -> Self {
         self.r#perfect_quality_item_color = r#perfect_quality_item_color;
         self
     }
@@ -14264,7 +14635,10 @@ impl UiSettings {
         self.r#available_tech_color = r#available_tech_color;
         self
     }
-    pub fn with_unavailable_tech_color(mut self, r#unavailable_tech_color: String) -> Self {
+    pub fn with_unavailable_tech_color(
+        mut self,
+        r#unavailable_tech_color: String,
+    ) -> Self {
         self.r#unavailable_tech_color = r#unavailable_tech_color;
         self
     }
@@ -14299,6 +14673,9 @@ impl UiSettings {
 }
 impl DatabaseItem for UiSettings {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "UiSettings"
+    }
 }
 impl Default for UiSettings {
     fn default() -> Self {
@@ -14331,6 +14708,9 @@ impl BehaviorTree {
 }
 impl DatabaseItem for BehaviorTree {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "BehaviorTree"
+    }
 }
 
 // /home/juh9870/shared_projects/event-horizon-main/Assets/Modules/Database/.Schema/v1/Objects/AmmunitionObsolete.xml
@@ -14389,7 +14769,10 @@ impl AmmunitionObsolete {
         self.r#id = r#id;
         self
     }
-    pub fn with_ammunition_class(mut self, r#ammunition_class: AmmunitionClassObsolete) -> Self {
+    pub fn with_ammunition_class(
+        mut self,
+        r#ammunition_class: AmmunitionClassObsolete,
+    ) -> Self {
         self.r#ammunition_class = r#ammunition_class;
         self
     }
@@ -14477,184 +14860,146 @@ impl DatabaseItem for AmmunitionObsolete {
     fn validate(&mut self) {
         if self.r#impulse < (0f32 as f32) {
             tracing::warn!(
-                field = "r#impulse",
-                value = self.r#impulse,
-                min = 0f32,
+                field = "r#impulse", value = self.r#impulse, min = 0f32,
                 "Field got truncated"
             );
             self.r#impulse = 0f32 as f32;
         }
         if self.r#impulse > (10f32 as f32) {
             tracing::warn!(
-                field = "r#impulse",
-                value = self.r#impulse,
-                max = 10f32,
+                field = "r#impulse", value = self.r#impulse, max = 10f32,
                 "Field got truncated"
             );
             self.r#impulse = 10f32 as f32;
         }
         if self.r#recoil < (0f32 as f32) {
             tracing::warn!(
-                field = "r#recoil",
-                value = self.r#recoil,
-                min = 0f32,
+                field = "r#recoil", value = self.r#recoil, min = 0f32,
                 "Field got truncated"
             );
             self.r#recoil = 0f32 as f32;
         }
         if self.r#recoil > (10f32 as f32) {
             tracing::warn!(
-                field = "r#recoil",
-                value = self.r#recoil,
-                max = 10f32,
+                field = "r#recoil", value = self.r#recoil, max = 10f32,
                 "Field got truncated"
             );
             self.r#recoil = 10f32 as f32;
         }
         if self.r#size < (0f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#size", value = self.r#size, min = 0f32, "Field got truncated"
             );
             self.r#size = 0f32 as f32;
         }
         if self.r#size > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                max = 1000f32,
+                field = "r#size", value = self.r#size, max = 1000f32,
                 "Field got truncated"
             );
             self.r#size = 1000f32 as f32;
         }
         if self.r#area_of_effect < (0f32 as f32) {
             tracing::warn!(
-                field = "r#area_of_effect",
-                value = self.r#area_of_effect,
-                min = 0f32,
+                field = "r#area_of_effect", value = self.r#area_of_effect, min = 0f32,
                 "Field got truncated"
             );
             self.r#area_of_effect = 0f32 as f32;
         }
         if self.r#area_of_effect > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#area_of_effect",
-                value = self.r#area_of_effect,
-                max = 1000f32,
+                field = "r#area_of_effect", value = self.r#area_of_effect, max = 1000f32,
                 "Field got truncated"
             );
             self.r#area_of_effect = 1000f32 as f32;
         }
         if self.r#damage < (0f32 as f32) {
             tracing::warn!(
-                field = "r#damage",
-                value = self.r#damage,
-                min = 0f32,
+                field = "r#damage", value = self.r#damage, min = 0f32,
                 "Field got truncated"
             );
             self.r#damage = 0f32 as f32;
         }
         if self.r#damage > (1000000000f32 as f32) {
             tracing::warn!(
-                field = "r#damage",
-                value = self.r#damage,
-                max = 1000000000f32,
+                field = "r#damage", value = self.r#damage, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#damage = 1000000000f32 as f32;
         }
         if self.r#range < (0f32 as f32) {
             tracing::warn!(
-                field = "r#range",
-                value = self.r#range,
-                min = 0f32,
+                field = "r#range", value = self.r#range, min = 0f32,
                 "Field got truncated"
             );
             self.r#range = 0f32 as f32;
         }
         if self.r#range > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#range",
-                value = self.r#range,
-                max = 1000f32,
+                field = "r#range", value = self.r#range, max = 1000f32,
                 "Field got truncated"
             );
             self.r#range = 1000f32 as f32;
         }
         if self.r#velocity < (0f32 as f32) {
             tracing::warn!(
-                field = "r#velocity",
-                value = self.r#velocity,
-                min = 0f32,
+                field = "r#velocity", value = self.r#velocity, min = 0f32,
                 "Field got truncated"
             );
             self.r#velocity = 0f32 as f32;
         }
         if self.r#velocity > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#velocity",
-                value = self.r#velocity,
-                max = 1000f32,
+                field = "r#velocity", value = self.r#velocity, max = 1000f32,
                 "Field got truncated"
             );
             self.r#velocity = 1000f32 as f32;
         }
         if self.r#life_time < (0f32 as f32) {
             tracing::warn!(
-                field = "r#life_time",
-                value = self.r#life_time,
-                min = 0f32,
+                field = "r#life_time", value = self.r#life_time, min = 0f32,
                 "Field got truncated"
             );
             self.r#life_time = 0f32 as f32;
         }
         if self.r#life_time > (1000000000f32 as f32) {
             tracing::warn!(
-                field = "r#life_time",
-                value = self.r#life_time,
-                max = 1000000000f32,
+                field = "r#life_time", value = self.r#life_time, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#life_time = 1000000000f32 as f32;
         }
         if self.r#hit_points < (0f32 as i32) {
             tracing::warn!(
-                field = "r#hit_points",
-                value = self.r#hit_points,
-                min = 0f32,
+                field = "r#hit_points", value = self.r#hit_points, min = 0f32,
                 "Field got truncated"
             );
             self.r#hit_points = 0f32 as i32;
         }
         if self.r#hit_points > (1000000000f32 as i32) {
             tracing::warn!(
-                field = "r#hit_points",
-                value = self.r#hit_points,
-                max = 1000000000f32,
+                field = "r#hit_points", value = self.r#hit_points, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#hit_points = 1000000000f32 as i32;
         }
         if self.r#energy_cost < (0f32 as f32) {
             tracing::warn!(
-                field = "r#energy_cost",
-                value = self.r#energy_cost,
-                min = 0f32,
+                field = "r#energy_cost", value = self.r#energy_cost, min = 0f32,
                 "Field got truncated"
             );
             self.r#energy_cost = 0f32 as f32;
         }
         if self.r#energy_cost > (1000000000f32 as f32) {
             tracing::warn!(
-                field = "r#energy_cost",
-                value = self.r#energy_cost,
-                max = 1000000000f32,
+                field = "r#energy_cost", value = self.r#energy_cost, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#energy_cost = 1000000000f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "AmmunitionObsolete"
     }
 }
 
@@ -14720,7 +15065,10 @@ impl Component {
         self.r#description = r#description;
         self
     }
-    pub fn with_display_category(mut self, r#display_category: ComponentCategory) -> Self {
+    pub fn with_display_category(
+        mut self,
+        r#display_category: ComponentCategory,
+    ) -> Self {
         self.r#display_category = r#display_category;
         self
     }
@@ -14728,7 +15076,10 @@ impl Component {
         self.r#availability = r#availability;
         self
     }
-    pub fn with_component_stats_id(mut self, r#component_stats_id: ComponentStatsId) -> Self {
+    pub fn with_component_stats_id(
+        mut self,
+        r#component_stats_id: ComponentStatsId,
+    ) -> Self {
         self.r#component_stats_id = r#component_stats_id;
         self
     }
@@ -14796,9 +15147,7 @@ impl DatabaseItem for Component {
     fn validate(&mut self) {
         if self.r#level < (0f32 as i32) {
             tracing::warn!(
-                field = "r#level",
-                value = self.r#level,
-                min = 0f32,
+                field = "r#level", value = self.r#level, min = 0f32,
                 "Field got truncated"
             );
             self.r#level = 0f32 as i32;
@@ -14817,6 +15166,9 @@ impl DatabaseItem for Component {
                 "Obsolete field usage detected, generated code may not work",
             );
         }
+    }
+    fn type_name() -> &'static str {
+        "Component"
     }
 }
 
@@ -14851,6 +15203,9 @@ impl ComponentMod {
 }
 impl DatabaseItem for ComponentMod {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "ComponentMod"
+    }
 }
 
 // /home/juh9870/shared_projects/event-horizon-main/Assets/Modules/Database/.Schema/v1/Objects/ComponentStats.xml
@@ -15034,15 +15389,24 @@ impl ComponentStats {
         self.r#drone_speed_modifier = r#drone_speed_modifier;
         self
     }
-    pub fn with_drones_built_per_second(mut self, r#drones_built_per_second: f32) -> Self {
+    pub fn with_drones_built_per_second(
+        mut self,
+        r#drones_built_per_second: f32,
+    ) -> Self {
         self.r#drones_built_per_second = r#drones_built_per_second;
         self
     }
-    pub fn with_drone_build_time_modifier(mut self, r#drone_build_time_modifier: f32) -> Self {
+    pub fn with_drone_build_time_modifier(
+        mut self,
+        r#drone_build_time_modifier: f32,
+    ) -> Self {
         self.r#drone_build_time_modifier = r#drone_build_time_modifier;
         self
     }
-    pub fn with_weapon_fire_rate_modifier(mut self, r#weapon_fire_rate_modifier: f32) -> Self {
+    pub fn with_weapon_fire_rate_modifier(
+        mut self,
+        r#weapon_fire_rate_modifier: f32,
+    ) -> Self {
         self.r#weapon_fire_rate_modifier = r#weapon_fire_rate_modifier;
         self
     }
@@ -15054,7 +15418,10 @@ impl ComponentStats {
         self.r#weapon_range_modifier = r#weapon_range_modifier;
         self
     }
-    pub fn with_weapon_energy_cost_modifier(mut self, r#weapon_energy_cost_modifier: f32) -> Self {
+    pub fn with_weapon_energy_cost_modifier(
+        mut self,
+        r#weapon_energy_cost_modifier: f32,
+    ) -> Self {
         self.r#weapon_energy_cost_modifier = r#weapon_energy_cost_modifier;
         self
     }
@@ -15075,487 +15442,379 @@ impl DatabaseItem for ComponentStats {
     fn validate(&mut self) {
         if self.r#armor_points < (-1000000f32 as f32) {
             tracing::warn!(
-                field = "r#armor_points",
-                value = self.r#armor_points,
-                min = -1000000f32,
-                "Field got truncated"
+                field = "r#armor_points", value = self.r#armor_points, min = -
+                1000000f32, "Field got truncated"
             );
             self.r#armor_points = -1000000f32 as f32;
         }
         if self.r#armor_points > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#armor_points",
-                value = self.r#armor_points,
-                max = 1000000f32,
+                field = "r#armor_points", value = self.r#armor_points, max = 1000000f32,
                 "Field got truncated"
             );
             self.r#armor_points = 1000000f32 as f32;
         }
         if self.r#armor_repair_rate < (-1000000f32 as f32) {
             tracing::warn!(
-                field = "r#armor_repair_rate",
-                value = self.r#armor_repair_rate,
-                min = -1000000f32,
-                "Field got truncated"
+                field = "r#armor_repair_rate", value = self.r#armor_repair_rate, min = -
+                1000000f32, "Field got truncated"
             );
             self.r#armor_repair_rate = -1000000f32 as f32;
         }
         if self.r#armor_repair_rate > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#armor_repair_rate",
-                value = self.r#armor_repair_rate,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#armor_repair_rate", value = self.r#armor_repair_rate, max =
+                1000000f32, "Field got truncated"
             );
             self.r#armor_repair_rate = 1000000f32 as f32;
         }
         if self.r#armor_repair_cooldown_modifier < (-1f32 as f32) {
             tracing::warn!(
-                field = "r#armor_repair_cooldown_modifier",
-                value = self.r#armor_repair_cooldown_modifier,
-                min = -1f32,
-                "Field got truncated"
+                field = "r#armor_repair_cooldown_modifier", value = self
+                .r#armor_repair_cooldown_modifier, min = - 1f32, "Field got truncated"
             );
             self.r#armor_repair_cooldown_modifier = -1f32 as f32;
         }
         if self.r#armor_repair_cooldown_modifier > (1f32 as f32) {
             tracing::warn!(
-                field = "r#armor_repair_cooldown_modifier",
-                value = self.r#armor_repair_cooldown_modifier,
-                max = 1f32,
-                "Field got truncated"
+                field = "r#armor_repair_cooldown_modifier", value = self
+                .r#armor_repair_cooldown_modifier, max = 1f32, "Field got truncated"
             );
             self.r#armor_repair_cooldown_modifier = 1f32 as f32;
         }
         if self.r#energy_points < (-1000000f32 as f32) {
             tracing::warn!(
-                field = "r#energy_points",
-                value = self.r#energy_points,
-                min = -1000000f32,
-                "Field got truncated"
+                field = "r#energy_points", value = self.r#energy_points, min = -
+                1000000f32, "Field got truncated"
             );
             self.r#energy_points = -1000000f32 as f32;
         }
         if self.r#energy_points > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#energy_points",
-                value = self.r#energy_points,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#energy_points", value = self.r#energy_points, max =
+                1000000f32, "Field got truncated"
             );
             self.r#energy_points = 1000000f32 as f32;
         }
         if self.r#energy_recharge_rate < (-1000000f32 as f32) {
             tracing::warn!(
-                field = "r#energy_recharge_rate",
-                value = self.r#energy_recharge_rate,
-                min = -1000000f32,
-                "Field got truncated"
+                field = "r#energy_recharge_rate", value = self.r#energy_recharge_rate,
+                min = - 1000000f32, "Field got truncated"
             );
             self.r#energy_recharge_rate = -1000000f32 as f32;
         }
         if self.r#energy_recharge_rate > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#energy_recharge_rate",
-                value = self.r#energy_recharge_rate,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#energy_recharge_rate", value = self.r#energy_recharge_rate,
+                max = 1000000f32, "Field got truncated"
             );
             self.r#energy_recharge_rate = 1000000f32 as f32;
         }
         if self.r#energy_recharge_cooldown_modifier < (-5f32 as f32) {
             tracing::warn!(
-                field = "r#energy_recharge_cooldown_modifier",
-                value = self.r#energy_recharge_cooldown_modifier,
-                min = -5f32,
-                "Field got truncated"
+                field = "r#energy_recharge_cooldown_modifier", value = self
+                .r#energy_recharge_cooldown_modifier, min = - 5f32, "Field got truncated"
             );
             self.r#energy_recharge_cooldown_modifier = -5f32 as f32;
         }
         if self.r#energy_recharge_cooldown_modifier > (5f32 as f32) {
             tracing::warn!(
-                field = "r#energy_recharge_cooldown_modifier",
-                value = self.r#energy_recharge_cooldown_modifier,
-                max = 5f32,
-                "Field got truncated"
+                field = "r#energy_recharge_cooldown_modifier", value = self
+                .r#energy_recharge_cooldown_modifier, max = 5f32, "Field got truncated"
             );
             self.r#energy_recharge_cooldown_modifier = 5f32 as f32;
         }
         if self.r#shield_points < (-1000000f32 as f32) {
             tracing::warn!(
-                field = "r#shield_points",
-                value = self.r#shield_points,
-                min = -1000000f32,
-                "Field got truncated"
+                field = "r#shield_points", value = self.r#shield_points, min = -
+                1000000f32, "Field got truncated"
             );
             self.r#shield_points = -1000000f32 as f32;
         }
         if self.r#shield_points > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#shield_points",
-                value = self.r#shield_points,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#shield_points", value = self.r#shield_points, max =
+                1000000f32, "Field got truncated"
             );
             self.r#shield_points = 1000000f32 as f32;
         }
         if self.r#shield_recharge_rate < (-1000000f32 as f32) {
             tracing::warn!(
-                field = "r#shield_recharge_rate",
-                value = self.r#shield_recharge_rate,
-                min = -1000000f32,
-                "Field got truncated"
+                field = "r#shield_recharge_rate", value = self.r#shield_recharge_rate,
+                min = - 1000000f32, "Field got truncated"
             );
             self.r#shield_recharge_rate = -1000000f32 as f32;
         }
         if self.r#shield_recharge_rate > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#shield_recharge_rate",
-                value = self.r#shield_recharge_rate,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#shield_recharge_rate", value = self.r#shield_recharge_rate,
+                max = 1000000f32, "Field got truncated"
             );
             self.r#shield_recharge_rate = 1000000f32 as f32;
         }
         if self.r#shield_recharge_cooldown_modifier < (-5f32 as f32) {
             tracing::warn!(
-                field = "r#shield_recharge_cooldown_modifier",
-                value = self.r#shield_recharge_cooldown_modifier,
-                min = -5f32,
-                "Field got truncated"
+                field = "r#shield_recharge_cooldown_modifier", value = self
+                .r#shield_recharge_cooldown_modifier, min = - 5f32, "Field got truncated"
             );
             self.r#shield_recharge_cooldown_modifier = -5f32 as f32;
         }
         if self.r#shield_recharge_cooldown_modifier > (5f32 as f32) {
             tracing::warn!(
-                field = "r#shield_recharge_cooldown_modifier",
-                value = self.r#shield_recharge_cooldown_modifier,
-                max = 5f32,
-                "Field got truncated"
+                field = "r#shield_recharge_cooldown_modifier", value = self
+                .r#shield_recharge_cooldown_modifier, max = 5f32, "Field got truncated"
             );
             self.r#shield_recharge_cooldown_modifier = 5f32 as f32;
         }
         if self.r#weight < (-1000000f32 as f32) {
             tracing::warn!(
-                field = "r#weight",
-                value = self.r#weight,
-                min = -1000000f32,
+                field = "r#weight", value = self.r#weight, min = - 1000000f32,
                 "Field got truncated"
             );
             self.r#weight = -1000000f32 as f32;
         }
         if self.r#weight > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#weight",
-                value = self.r#weight,
-                max = 1000000f32,
+                field = "r#weight", value = self.r#weight, max = 1000000f32,
                 "Field got truncated"
             );
             self.r#weight = 1000000f32 as f32;
         }
         if self.r#ramming_damage < (-1000000f32 as f32) {
             tracing::warn!(
-                field = "r#ramming_damage",
-                value = self.r#ramming_damage,
-                min = -1000000f32,
-                "Field got truncated"
+                field = "r#ramming_damage", value = self.r#ramming_damage, min = -
+                1000000f32, "Field got truncated"
             );
             self.r#ramming_damage = -1000000f32 as f32;
         }
         if self.r#ramming_damage > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#ramming_damage",
-                value = self.r#ramming_damage,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#ramming_damage", value = self.r#ramming_damage, max =
+                1000000f32, "Field got truncated"
             );
             self.r#ramming_damage = 1000000f32 as f32;
         }
         if self.r#energy_absorption < (-1000000f32 as f32) {
             tracing::warn!(
-                field = "r#energy_absorption",
-                value = self.r#energy_absorption,
-                min = -1000000f32,
-                "Field got truncated"
+                field = "r#energy_absorption", value = self.r#energy_absorption, min = -
+                1000000f32, "Field got truncated"
             );
             self.r#energy_absorption = -1000000f32 as f32;
         }
         if self.r#energy_absorption > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#energy_absorption",
-                value = self.r#energy_absorption,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#energy_absorption", value = self.r#energy_absorption, max =
+                1000000f32, "Field got truncated"
             );
             self.r#energy_absorption = 1000000f32 as f32;
         }
         if self.r#kinetic_resistance < (-1000000f32 as f32) {
             tracing::warn!(
-                field = "r#kinetic_resistance",
-                value = self.r#kinetic_resistance,
-                min = -1000000f32,
-                "Field got truncated"
+                field = "r#kinetic_resistance", value = self.r#kinetic_resistance, min =
+                - 1000000f32, "Field got truncated"
             );
             self.r#kinetic_resistance = -1000000f32 as f32;
         }
         if self.r#kinetic_resistance > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#kinetic_resistance",
-                value = self.r#kinetic_resistance,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#kinetic_resistance", value = self.r#kinetic_resistance, max =
+                1000000f32, "Field got truncated"
             );
             self.r#kinetic_resistance = 1000000f32 as f32;
         }
         if self.r#energy_resistance < (-1000000f32 as f32) {
             tracing::warn!(
-                field = "r#energy_resistance",
-                value = self.r#energy_resistance,
-                min = -1000000f32,
-                "Field got truncated"
+                field = "r#energy_resistance", value = self.r#energy_resistance, min = -
+                1000000f32, "Field got truncated"
             );
             self.r#energy_resistance = -1000000f32 as f32;
         }
         if self.r#energy_resistance > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#energy_resistance",
-                value = self.r#energy_resistance,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#energy_resistance", value = self.r#energy_resistance, max =
+                1000000f32, "Field got truncated"
             );
             self.r#energy_resistance = 1000000f32 as f32;
         }
         if self.r#thermal_resistance < (-1000000f32 as f32) {
             tracing::warn!(
-                field = "r#thermal_resistance",
-                value = self.r#thermal_resistance,
-                min = -1000000f32,
-                "Field got truncated"
+                field = "r#thermal_resistance", value = self.r#thermal_resistance, min =
+                - 1000000f32, "Field got truncated"
             );
             self.r#thermal_resistance = -1000000f32 as f32;
         }
         if self.r#thermal_resistance > (1000000f32 as f32) {
             tracing::warn!(
-                field = "r#thermal_resistance",
-                value = self.r#thermal_resistance,
-                max = 1000000f32,
-                "Field got truncated"
+                field = "r#thermal_resistance", value = self.r#thermal_resistance, max =
+                1000000f32, "Field got truncated"
             );
             self.r#thermal_resistance = 1000000f32 as f32;
         }
         if self.r#engine_power < (0f32 as f32) {
             tracing::warn!(
-                field = "r#engine_power",
-                value = self.r#engine_power,
-                min = 0f32,
+                field = "r#engine_power", value = self.r#engine_power, min = 0f32,
                 "Field got truncated"
             );
             self.r#engine_power = 0f32 as f32;
         }
         if self.r#engine_power > (2000f32 as f32) {
             tracing::warn!(
-                field = "r#engine_power",
-                value = self.r#engine_power,
-                max = 2000f32,
+                field = "r#engine_power", value = self.r#engine_power, max = 2000f32,
                 "Field got truncated"
             );
             self.r#engine_power = 2000f32 as f32;
         }
         if self.r#turn_rate < (0f32 as f32) {
             tracing::warn!(
-                field = "r#turn_rate",
-                value = self.r#turn_rate,
-                min = 0f32,
+                field = "r#turn_rate", value = self.r#turn_rate, min = 0f32,
                 "Field got truncated"
             );
             self.r#turn_rate = 0f32 as f32;
         }
         if self.r#turn_rate > (2000f32 as f32) {
             tracing::warn!(
-                field = "r#turn_rate",
-                value = self.r#turn_rate,
-                max = 2000f32,
+                field = "r#turn_rate", value = self.r#turn_rate, max = 2000f32,
                 "Field got truncated"
             );
             self.r#turn_rate = 2000f32 as f32;
         }
         if self.r#drone_range_modifier < (-50f32 as f32) {
             tracing::warn!(
-                field = "r#drone_range_modifier",
-                value = self.r#drone_range_modifier,
-                min = -50f32,
-                "Field got truncated"
+                field = "r#drone_range_modifier", value = self.r#drone_range_modifier,
+                min = - 50f32, "Field got truncated"
             );
             self.r#drone_range_modifier = -50f32 as f32;
         }
         if self.r#drone_range_modifier > (50f32 as f32) {
             tracing::warn!(
-                field = "r#drone_range_modifier",
-                value = self.r#drone_range_modifier,
-                max = 50f32,
-                "Field got truncated"
+                field = "r#drone_range_modifier", value = self.r#drone_range_modifier,
+                max = 50f32, "Field got truncated"
             );
             self.r#drone_range_modifier = 50f32 as f32;
         }
         if self.r#drone_damage_modifier < (-50f32 as f32) {
             tracing::warn!(
-                field = "r#drone_damage_modifier",
-                value = self.r#drone_damage_modifier,
-                min = -50f32,
-                "Field got truncated"
+                field = "r#drone_damage_modifier", value = self.r#drone_damage_modifier,
+                min = - 50f32, "Field got truncated"
             );
             self.r#drone_damage_modifier = -50f32 as f32;
         }
         if self.r#drone_damage_modifier > (50f32 as f32) {
             tracing::warn!(
-                field = "r#drone_damage_modifier",
-                value = self.r#drone_damage_modifier,
-                max = 50f32,
-                "Field got truncated"
+                field = "r#drone_damage_modifier", value = self.r#drone_damage_modifier,
+                max = 50f32, "Field got truncated"
             );
             self.r#drone_damage_modifier = 50f32 as f32;
         }
         if self.r#drone_defense_modifier < (-50f32 as f32) {
             tracing::warn!(
-                field = "r#drone_defense_modifier",
-                value = self.r#drone_defense_modifier,
-                min = -50f32,
-                "Field got truncated"
+                field = "r#drone_defense_modifier", value = self
+                .r#drone_defense_modifier, min = - 50f32, "Field got truncated"
             );
             self.r#drone_defense_modifier = -50f32 as f32;
         }
         if self.r#drone_defense_modifier > (50f32 as f32) {
             tracing::warn!(
-                field = "r#drone_defense_modifier",
-                value = self.r#drone_defense_modifier,
-                max = 50f32,
-                "Field got truncated"
+                field = "r#drone_defense_modifier", value = self
+                .r#drone_defense_modifier, max = 50f32, "Field got truncated"
             );
             self.r#drone_defense_modifier = 50f32 as f32;
         }
         if self.r#drone_speed_modifier < (-50f32 as f32) {
             tracing::warn!(
-                field = "r#drone_speed_modifier",
-                value = self.r#drone_speed_modifier,
-                min = -50f32,
-                "Field got truncated"
+                field = "r#drone_speed_modifier", value = self.r#drone_speed_modifier,
+                min = - 50f32, "Field got truncated"
             );
             self.r#drone_speed_modifier = -50f32 as f32;
         }
         if self.r#drone_speed_modifier > (50f32 as f32) {
             tracing::warn!(
-                field = "r#drone_speed_modifier",
-                value = self.r#drone_speed_modifier,
-                max = 50f32,
-                "Field got truncated"
+                field = "r#drone_speed_modifier", value = self.r#drone_speed_modifier,
+                max = 50f32, "Field got truncated"
             );
             self.r#drone_speed_modifier = 50f32 as f32;
         }
         if self.r#drones_built_per_second < (0f32 as f32) {
             tracing::warn!(
-                field = "r#drones_built_per_second",
-                value = self.r#drones_built_per_second,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#drones_built_per_second", value = self
+                .r#drones_built_per_second, min = 0f32, "Field got truncated"
             );
             self.r#drones_built_per_second = 0f32 as f32;
         }
         if self.r#drones_built_per_second > (100f32 as f32) {
             tracing::warn!(
-                field = "r#drones_built_per_second",
-                value = self.r#drones_built_per_second,
-                max = 100f32,
-                "Field got truncated"
+                field = "r#drones_built_per_second", value = self
+                .r#drones_built_per_second, max = 100f32, "Field got truncated"
             );
             self.r#drones_built_per_second = 100f32 as f32;
         }
         if self.r#drone_build_time_modifier < (0f32 as f32) {
             tracing::warn!(
-                field = "r#drone_build_time_modifier",
-                value = self.r#drone_build_time_modifier,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#drone_build_time_modifier", value = self
+                .r#drone_build_time_modifier, min = 0f32, "Field got truncated"
             );
             self.r#drone_build_time_modifier = 0f32 as f32;
         }
         if self.r#drone_build_time_modifier > (100f32 as f32) {
             tracing::warn!(
-                field = "r#drone_build_time_modifier",
-                value = self.r#drone_build_time_modifier,
-                max = 100f32,
-                "Field got truncated"
+                field = "r#drone_build_time_modifier", value = self
+                .r#drone_build_time_modifier, max = 100f32, "Field got truncated"
             );
             self.r#drone_build_time_modifier = 100f32 as f32;
         }
         if self.r#weapon_fire_rate_modifier < (-100f32 as f32) {
             tracing::warn!(
-                field = "r#weapon_fire_rate_modifier",
-                value = self.r#weapon_fire_rate_modifier,
-                min = -100f32,
-                "Field got truncated"
+                field = "r#weapon_fire_rate_modifier", value = self
+                .r#weapon_fire_rate_modifier, min = - 100f32, "Field got truncated"
             );
             self.r#weapon_fire_rate_modifier = -100f32 as f32;
         }
         if self.r#weapon_fire_rate_modifier > (100f32 as f32) {
             tracing::warn!(
-                field = "r#weapon_fire_rate_modifier",
-                value = self.r#weapon_fire_rate_modifier,
-                max = 100f32,
-                "Field got truncated"
+                field = "r#weapon_fire_rate_modifier", value = self
+                .r#weapon_fire_rate_modifier, max = 100f32, "Field got truncated"
             );
             self.r#weapon_fire_rate_modifier = 100f32 as f32;
         }
         if self.r#weapon_damage_modifier < (-100f32 as f32) {
             tracing::warn!(
-                field = "r#weapon_damage_modifier",
-                value = self.r#weapon_damage_modifier,
-                min = -100f32,
-                "Field got truncated"
+                field = "r#weapon_damage_modifier", value = self
+                .r#weapon_damage_modifier, min = - 100f32, "Field got truncated"
             );
             self.r#weapon_damage_modifier = -100f32 as f32;
         }
         if self.r#weapon_damage_modifier > (100f32 as f32) {
             tracing::warn!(
-                field = "r#weapon_damage_modifier",
-                value = self.r#weapon_damage_modifier,
-                max = 100f32,
-                "Field got truncated"
+                field = "r#weapon_damage_modifier", value = self
+                .r#weapon_damage_modifier, max = 100f32, "Field got truncated"
             );
             self.r#weapon_damage_modifier = 100f32 as f32;
         }
         if self.r#weapon_range_modifier < (-100f32 as f32) {
             tracing::warn!(
-                field = "r#weapon_range_modifier",
-                value = self.r#weapon_range_modifier,
-                min = -100f32,
-                "Field got truncated"
+                field = "r#weapon_range_modifier", value = self.r#weapon_range_modifier,
+                min = - 100f32, "Field got truncated"
             );
             self.r#weapon_range_modifier = -100f32 as f32;
         }
         if self.r#weapon_range_modifier > (100f32 as f32) {
             tracing::warn!(
-                field = "r#weapon_range_modifier",
-                value = self.r#weapon_range_modifier,
-                max = 100f32,
-                "Field got truncated"
+                field = "r#weapon_range_modifier", value = self.r#weapon_range_modifier,
+                max = 100f32, "Field got truncated"
             );
             self.r#weapon_range_modifier = 100f32 as f32;
         }
         if self.r#weapon_energy_cost_modifier < (-100f32 as f32) {
             tracing::warn!(
-                field = "r#weapon_energy_cost_modifier",
-                value = self.r#weapon_energy_cost_modifier,
-                min = -100f32,
-                "Field got truncated"
+                field = "r#weapon_energy_cost_modifier", value = self
+                .r#weapon_energy_cost_modifier, min = - 100f32, "Field got truncated"
             );
             self.r#weapon_energy_cost_modifier = -100f32 as f32;
         }
         if self.r#weapon_energy_cost_modifier > (100f32 as f32) {
             tracing::warn!(
-                field = "r#weapon_energy_cost_modifier",
-                value = self.r#weapon_energy_cost_modifier,
-                max = 100f32,
-                "Field got truncated"
+                field = "r#weapon_energy_cost_modifier", value = self
+                .r#weapon_energy_cost_modifier, max = 100f32, "Field got truncated"
             );
             self.r#weapon_energy_cost_modifier = 100f32 as f32;
         }
@@ -15568,40 +15827,35 @@ impl DatabaseItem for ComponentStats {
         }
         if self.r#auto_aiming_arc < (0f32 as f32) {
             tracing::warn!(
-                field = "r#auto_aiming_arc",
-                value = self.r#auto_aiming_arc,
-                min = 0f32,
+                field = "r#auto_aiming_arc", value = self.r#auto_aiming_arc, min = 0f32,
                 "Field got truncated"
             );
             self.r#auto_aiming_arc = 0f32 as f32;
         }
         if self.r#auto_aiming_arc > (360f32 as f32) {
             tracing::warn!(
-                field = "r#auto_aiming_arc",
-                value = self.r#auto_aiming_arc,
-                max = 360f32,
-                "Field got truncated"
+                field = "r#auto_aiming_arc", value = self.r#auto_aiming_arc, max =
+                360f32, "Field got truncated"
             );
             self.r#auto_aiming_arc = 360f32 as f32;
         }
         if self.r#turret_turn_speed < (-1000f32 as f32) {
             tracing::warn!(
-                field = "r#turret_turn_speed",
-                value = self.r#turret_turn_speed,
-                min = -1000f32,
-                "Field got truncated"
+                field = "r#turret_turn_speed", value = self.r#turret_turn_speed, min = -
+                1000f32, "Field got truncated"
             );
             self.r#turret_turn_speed = -1000f32 as f32;
         }
         if self.r#turret_turn_speed > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#turret_turn_speed",
-                value = self.r#turret_turn_speed,
-                max = 1000f32,
-                "Field got truncated"
+                field = "r#turret_turn_speed", value = self.r#turret_turn_speed, max =
+                1000f32, "Field got truncated"
             );
             self.r#turret_turn_speed = 1000f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "ComponentStats"
     }
 }
 
@@ -15661,7 +15915,10 @@ impl Device {
         self.r#energy_consumption = r#energy_consumption;
         self
     }
-    pub fn with_passive_energy_consumption(mut self, r#passive_energy_consumption: f32) -> Self {
+    pub fn with_passive_energy_consumption(
+        mut self,
+        r#passive_energy_consumption: f32,
+    ) -> Self {
         self.r#passive_energy_consumption = r#passive_energy_consumption;
         self
     }
@@ -15722,130 +15979,104 @@ impl DatabaseItem for Device {
     fn validate(&mut self) {
         if self.r#energy_consumption < (0f32 as f32) {
             tracing::warn!(
-                field = "r#energy_consumption",
-                value = self.r#energy_consumption,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#energy_consumption", value = self.r#energy_consumption, min =
+                0f32, "Field got truncated"
             );
             self.r#energy_consumption = 0f32 as f32;
         }
         if self.r#energy_consumption > (1000000000f32 as f32) {
             tracing::warn!(
-                field = "r#energy_consumption",
-                value = self.r#energy_consumption,
-                max = 1000000000f32,
-                "Field got truncated"
+                field = "r#energy_consumption", value = self.r#energy_consumption, max =
+                1000000000f32, "Field got truncated"
             );
             self.r#energy_consumption = 1000000000f32 as f32;
         }
         if self.r#passive_energy_consumption < (0f32 as f32) {
             tracing::warn!(
-                field = "r#passive_energy_consumption",
-                value = self.r#passive_energy_consumption,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#passive_energy_consumption", value = self
+                .r#passive_energy_consumption, min = 0f32, "Field got truncated"
             );
             self.r#passive_energy_consumption = 0f32 as f32;
         }
         if self.r#passive_energy_consumption > (1000000000f32 as f32) {
             tracing::warn!(
-                field = "r#passive_energy_consumption",
-                value = self.r#passive_energy_consumption,
-                max = 1000000000f32,
-                "Field got truncated"
+                field = "r#passive_energy_consumption", value = self
+                .r#passive_energy_consumption, max = 1000000000f32, "Field got truncated"
             );
             self.r#passive_energy_consumption = 1000000000f32 as f32;
         }
         if self.r#power < (0f32 as f32) {
             tracing::warn!(
-                field = "r#power",
-                value = self.r#power,
-                min = 0f32,
+                field = "r#power", value = self.r#power, min = 0f32,
                 "Field got truncated"
             );
             self.r#power = 0f32 as f32;
         }
         if self.r#power > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#power",
-                value = self.r#power,
-                max = 1000f32,
+                field = "r#power", value = self.r#power, max = 1000f32,
                 "Field got truncated"
             );
             self.r#power = 1000f32 as f32;
         }
         if self.r#range < (0f32 as f32) {
             tracing::warn!(
-                field = "r#range",
-                value = self.r#range,
-                min = 0f32,
+                field = "r#range", value = self.r#range, min = 0f32,
                 "Field got truncated"
             );
             self.r#range = 0f32 as f32;
         }
         if self.r#range > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#range",
-                value = self.r#range,
-                max = 1000f32,
+                field = "r#range", value = self.r#range, max = 1000f32,
                 "Field got truncated"
             );
             self.r#range = 1000f32 as f32;
         }
         if self.r#size < (0f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#size", value = self.r#size, min = 0f32, "Field got truncated"
             );
             self.r#size = 0f32 as f32;
         }
         if self.r#size > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                max = 1000f32,
+                field = "r#size", value = self.r#size, max = 1000f32,
                 "Field got truncated"
             );
             self.r#size = 1000f32 as f32;
         }
         if self.r#cooldown < (0f32 as f32) {
             tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                min = 0f32,
+                field = "r#cooldown", value = self.r#cooldown, min = 0f32,
                 "Field got truncated"
             );
             self.r#cooldown = 0f32 as f32;
         }
         if self.r#cooldown > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#cooldown",
-                value = self.r#cooldown,
-                max = 1000f32,
+                field = "r#cooldown", value = self.r#cooldown, max = 1000f32,
                 "Field got truncated"
             );
             self.r#cooldown = 1000f32 as f32;
         }
         if self.r#lifetime < (0f32 as f32) {
             tracing::warn!(
-                field = "r#lifetime",
-                value = self.r#lifetime,
-                min = 0f32,
+                field = "r#lifetime", value = self.r#lifetime, min = 0f32,
                 "Field got truncated"
             );
             self.r#lifetime = 0f32 as f32;
         }
         if self.r#lifetime > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#lifetime",
-                value = self.r#lifetime,
-                max = 1000f32,
+                field = "r#lifetime", value = self.r#lifetime, max = 1000f32,
                 "Field got truncated"
             );
             self.r#lifetime = 1000f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "Device"
     }
 }
 
@@ -15899,7 +16130,10 @@ impl DroneBay {
         self.r#energy_consumption = r#energy_consumption;
         self
     }
-    pub fn with_passive_energy_consumption(mut self, r#passive_energy_consumption: f32) -> Self {
+    pub fn with_passive_energy_consumption(
+        mut self,
+        r#passive_energy_consumption: f32,
+    ) -> Self {
         self.r#passive_energy_consumption = r#passive_energy_consumption;
         self
     }
@@ -15947,11 +16181,17 @@ impl DroneBay {
         self.r#control_button_icon = r#control_button_icon;
         self
     }
-    pub fn with_defensive_drone_ai(mut self, r#defensive_drone_ai: Option<BehaviorTreeId>) -> Self {
+    pub fn with_defensive_drone_ai(
+        mut self,
+        r#defensive_drone_ai: Option<BehaviorTreeId>,
+    ) -> Self {
         self.r#defensive_drone_ai = r#defensive_drone_ai;
         self
     }
-    pub fn with_offensive_drone_ai(mut self, r#offensive_drone_ai: Option<BehaviorTreeId>) -> Self {
+    pub fn with_offensive_drone_ai(
+        mut self,
+        r#offensive_drone_ai: Option<BehaviorTreeId>,
+    ) -> Self {
         self.r#offensive_drone_ai = r#offensive_drone_ai;
         self
     }
@@ -15960,127 +16200,99 @@ impl DatabaseItem for DroneBay {
     fn validate(&mut self) {
         if self.r#energy_consumption < (0f32 as f32) {
             tracing::warn!(
-                field = "r#energy_consumption",
-                value = self.r#energy_consumption,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#energy_consumption", value = self.r#energy_consumption, min =
+                0f32, "Field got truncated"
             );
             self.r#energy_consumption = 0f32 as f32;
         }
         if self.r#energy_consumption > (1000000000f32 as f32) {
             tracing::warn!(
-                field = "r#energy_consumption",
-                value = self.r#energy_consumption,
-                max = 1000000000f32,
-                "Field got truncated"
+                field = "r#energy_consumption", value = self.r#energy_consumption, max =
+                1000000000f32, "Field got truncated"
             );
             self.r#energy_consumption = 1000000000f32 as f32;
         }
         if self.r#passive_energy_consumption < (0f32 as f32) {
             tracing::warn!(
-                field = "r#passive_energy_consumption",
-                value = self.r#passive_energy_consumption,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#passive_energy_consumption", value = self
+                .r#passive_energy_consumption, min = 0f32, "Field got truncated"
             );
             self.r#passive_energy_consumption = 0f32 as f32;
         }
         if self.r#passive_energy_consumption > (1000000000f32 as f32) {
             tracing::warn!(
-                field = "r#passive_energy_consumption",
-                value = self.r#passive_energy_consumption,
-                max = 1000000000f32,
-                "Field got truncated"
+                field = "r#passive_energy_consumption", value = self
+                .r#passive_energy_consumption, max = 1000000000f32, "Field got truncated"
             );
             self.r#passive_energy_consumption = 1000000000f32 as f32;
         }
         if self.r#range < (1f32 as f32) {
             tracing::warn!(
-                field = "r#range",
-                value = self.r#range,
-                min = 1f32,
+                field = "r#range", value = self.r#range, min = 1f32,
                 "Field got truncated"
             );
             self.r#range = 1f32 as f32;
         }
         if self.r#range > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#range",
-                value = self.r#range,
-                max = 1000f32,
+                field = "r#range", value = self.r#range, max = 1000f32,
                 "Field got truncated"
             );
             self.r#range = 1000f32 as f32;
         }
         if self.r#damage_multiplier < (0.01f32 as f32) {
             tracing::warn!(
-                field = "r#damage_multiplier",
-                value = self.r#damage_multiplier,
-                min = 0.01f32,
-                "Field got truncated"
+                field = "r#damage_multiplier", value = self.r#damage_multiplier, min =
+                0.01f32, "Field got truncated"
             );
             self.r#damage_multiplier = 0.01f32 as f32;
         }
         if self.r#damage_multiplier > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#damage_multiplier",
-                value = self.r#damage_multiplier,
-                max = 1000f32,
-                "Field got truncated"
+                field = "r#damage_multiplier", value = self.r#damage_multiplier, max =
+                1000f32, "Field got truncated"
             );
             self.r#damage_multiplier = 1000f32 as f32;
         }
         if self.r#defense_multiplier < (0.01f32 as f32) {
             tracing::warn!(
-                field = "r#defense_multiplier",
-                value = self.r#defense_multiplier,
-                min = 0.01f32,
-                "Field got truncated"
+                field = "r#defense_multiplier", value = self.r#defense_multiplier, min =
+                0.01f32, "Field got truncated"
             );
             self.r#defense_multiplier = 0.01f32 as f32;
         }
         if self.r#defense_multiplier > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#defense_multiplier",
-                value = self.r#defense_multiplier,
-                max = 1000f32,
-                "Field got truncated"
+                field = "r#defense_multiplier", value = self.r#defense_multiplier, max =
+                1000f32, "Field got truncated"
             );
             self.r#defense_multiplier = 1000f32 as f32;
         }
         if self.r#speed_multiplier < (0.01f32 as f32) {
             tracing::warn!(
-                field = "r#speed_multiplier",
-                value = self.r#speed_multiplier,
-                min = 0.01f32,
-                "Field got truncated"
+                field = "r#speed_multiplier", value = self.r#speed_multiplier, min =
+                0.01f32, "Field got truncated"
             );
             self.r#speed_multiplier = 0.01f32 as f32;
         }
         if self.r#speed_multiplier > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#speed_multiplier",
-                value = self.r#speed_multiplier,
-                max = 1000f32,
-                "Field got truncated"
+                field = "r#speed_multiplier", value = self.r#speed_multiplier, max =
+                1000f32, "Field got truncated"
             );
             self.r#speed_multiplier = 1000f32 as f32;
         }
         if self.r#build_extra_cycles < (0f32 as i32) {
             tracing::warn!(
-                field = "r#build_extra_cycles",
-                value = self.r#build_extra_cycles,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#build_extra_cycles", value = self.r#build_extra_cycles, min =
+                0f32, "Field got truncated"
             );
             self.r#build_extra_cycles = 0f32 as i32;
         }
         if self.r#build_extra_cycles > (100f32 as i32) {
             tracing::warn!(
-                field = "r#build_extra_cycles",
-                value = self.r#build_extra_cycles,
-                max = 100f32,
-                "Field got truncated"
+                field = "r#build_extra_cycles", value = self.r#build_extra_cycles, max =
+                100f32, "Field got truncated"
             );
             self.r#build_extra_cycles = 100f32 as i32;
         }
@@ -16093,22 +16305,21 @@ impl DatabaseItem for DroneBay {
         }
         if self.r#capacity < (1f32 as i32) {
             tracing::warn!(
-                field = "r#capacity",
-                value = self.r#capacity,
-                min = 1f32,
+                field = "r#capacity", value = self.r#capacity, min = 1f32,
                 "Field got truncated"
             );
             self.r#capacity = 1f32 as i32;
         }
         if self.r#capacity > (1000f32 as i32) {
             tracing::warn!(
-                field = "r#capacity",
-                value = self.r#capacity,
-                max = 1000f32,
+                field = "r#capacity", value = self.r#capacity, max = 1000f32,
                 "Field got truncated"
             );
             self.r#capacity = 1000f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "DroneBay"
     }
 }
 
@@ -16178,7 +16389,10 @@ impl Faction {
         self.r#no_wandering_ships = r#no_wandering_ships;
         self
     }
-    pub fn with_wandering_ships_distance(mut self, r#wandering_ships_distance: i32) -> Self {
+    pub fn with_wandering_ships_distance(
+        mut self,
+        r#wandering_ships_distance: i32,
+    ) -> Self {
         self.r#wandering_ships_distance = r#wandering_ships_distance;
         self
     }
@@ -16214,73 +16428,57 @@ impl DatabaseItem for Faction {
     fn validate(&mut self) {
         if self.r#home_star_distance < (0f32 as i32) {
             tracing::warn!(
-                field = "r#home_star_distance",
-                value = self.r#home_star_distance,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#home_star_distance", value = self.r#home_star_distance, min =
+                0f32, "Field got truncated"
             );
             self.r#home_star_distance = 0f32 as i32;
         }
         if self.r#home_star_distance > (5000f32 as i32) {
             tracing::warn!(
-                field = "r#home_star_distance",
-                value = self.r#home_star_distance,
-                max = 5000f32,
-                "Field got truncated"
+                field = "r#home_star_distance", value = self.r#home_star_distance, max =
+                5000f32, "Field got truncated"
             );
             self.r#home_star_distance = 5000f32 as i32;
         }
         if self.r#home_star_distance_max < (0f32 as i32) {
             tracing::warn!(
-                field = "r#home_star_distance_max",
-                value = self.r#home_star_distance_max,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#home_star_distance_max", value = self
+                .r#home_star_distance_max, min = 0f32, "Field got truncated"
             );
             self.r#home_star_distance_max = 0f32 as i32;
         }
         if self.r#home_star_distance_max > (5000f32 as i32) {
             tracing::warn!(
-                field = "r#home_star_distance_max",
-                value = self.r#home_star_distance_max,
-                max = 5000f32,
-                "Field got truncated"
+                field = "r#home_star_distance_max", value = self
+                .r#home_star_distance_max, max = 5000f32, "Field got truncated"
             );
             self.r#home_star_distance_max = 5000f32 as i32;
         }
         if self.r#wandering_ships_distance < (0f32 as i32) {
             tracing::warn!(
-                field = "r#wandering_ships_distance",
-                value = self.r#wandering_ships_distance,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#wandering_ships_distance", value = self
+                .r#wandering_ships_distance, min = 0f32, "Field got truncated"
             );
             self.r#wandering_ships_distance = 0f32 as i32;
         }
         if self.r#wandering_ships_distance > (5000f32 as i32) {
             tracing::warn!(
-                field = "r#wandering_ships_distance",
-                value = self.r#wandering_ships_distance,
-                max = 5000f32,
-                "Field got truncated"
+                field = "r#wandering_ships_distance", value = self
+                .r#wandering_ships_distance, max = 5000f32, "Field got truncated"
             );
             self.r#wandering_ships_distance = 5000f32 as i32;
         }
         if self.r#wandering_ships_distance_max < (0f32 as i32) {
             tracing::warn!(
-                field = "r#wandering_ships_distance_max",
-                value = self.r#wandering_ships_distance_max,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#wandering_ships_distance_max", value = self
+                .r#wandering_ships_distance_max, min = 0f32, "Field got truncated"
             );
             self.r#wandering_ships_distance_max = 0f32 as i32;
         }
         if self.r#wandering_ships_distance_max > (5000f32 as i32) {
             tracing::warn!(
-                field = "r#wandering_ships_distance_max",
-                value = self.r#wandering_ships_distance_max,
-                max = 5000f32,
-                "Field got truncated"
+                field = "r#wandering_ships_distance_max", value = self
+                .r#wandering_ships_distance_max, max = 5000f32, "Field got truncated"
             );
             self.r#wandering_ships_distance_max = 5000f32 as i32;
         }
@@ -16298,6 +16496,9 @@ impl DatabaseItem for Faction {
                 "Obsolete field usage detected, generated code may not work",
             );
         }
+    }
+    fn type_name() -> &'static str {
+        "Faction"
     }
 }
 
@@ -16350,71 +16551,6 @@ impl GameObjectPrefab {
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
-pub struct GameObjectPrefabCircularSpriteObject {
-    pub r#id: GameObjectPrefabId,
-    pub r#image_1: String,
-    pub r#image_scale: f32,
-}
-impl GameObjectPrefabCircularSpriteObject {
-    fn new(r#id: GameObjectPrefabId) -> Self {
-        Self {
-            r#id,
-            r#image_1: Default::default(),
-            r#image_scale: 1f32,
-        }
-    }
-    pub fn with_id(mut self, r#id: GameObjectPrefabId) -> Self {
-        self.r#id = r#id;
-        self
-    }
-    pub fn with_image_1(mut self, r#image_1: String) -> Self {
-        self.r#image_1 = r#image_1;
-        self
-    }
-    pub fn with_image_scale(mut self, r#image_scale: f32) -> Self {
-        self.r#image_scale = r#image_scale;
-        self
-    }
-}
-impl DatabaseItem for GameObjectPrefabCircularSpriteObject {
-    fn validate(&mut self) {
-        if self.r#image_scale < (0f32 as f32) {
-            tracing::warn!(
-                field = "r#image_scale",
-                value = self.r#image_scale,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#image_scale = 0f32 as f32;
-        }
-        if self.r#image_scale > (10f32 as f32) {
-            tracing::warn!(
-                field = "r#image_scale",
-                value = self.r#image_scale,
-                max = 10f32,
-                "Field got truncated"
-            );
-            self.r#image_scale = 10f32 as f32;
-        }
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct GameObjectPrefabUndefined {
-    pub r#id: GameObjectPrefabId,
-}
-impl GameObjectPrefabUndefined {
-    fn new(r#id: GameObjectPrefabId) -> Self {
-        Self { r#id }
-    }
-    pub fn with_id(mut self, r#id: GameObjectPrefabId) -> Self {
-        self.r#id = r#id;
-        self
-    }
-}
-impl DatabaseItem for GameObjectPrefabUndefined {
-    fn validate(&mut self) {}
-}
-#[derive(Debug, Clone, serde::Serialize)]
 pub struct GameObjectPrefabCircularOutlineObject {
     pub r#id: GameObjectPrefabId,
     pub r#image_1: String,
@@ -16457,58 +16593,116 @@ impl DatabaseItem for GameObjectPrefabCircularOutlineObject {
     fn validate(&mut self) {
         if self.r#image_scale < (0f32 as f32) {
             tracing::warn!(
-                field = "r#image_scale",
-                value = self.r#image_scale,
-                min = 0f32,
+                field = "r#image_scale", value = self.r#image_scale, min = 0f32,
                 "Field got truncated"
             );
             self.r#image_scale = 0f32 as f32;
         }
         if self.r#image_scale > (10f32 as f32) {
             tracing::warn!(
-                field = "r#image_scale",
-                value = self.r#image_scale,
-                max = 10f32,
+                field = "r#image_scale", value = self.r#image_scale, max = 10f32,
                 "Field got truncated"
             );
             self.r#image_scale = 10f32 as f32;
         }
         if self.r#thickness < (0f32 as f32) {
             tracing::warn!(
-                field = "r#thickness",
-                value = self.r#thickness,
-                min = 0f32,
+                field = "r#thickness", value = self.r#thickness, min = 0f32,
                 "Field got truncated"
             );
             self.r#thickness = 0f32 as f32;
         }
         if self.r#thickness > (1f32 as f32) {
             tracing::warn!(
-                field = "r#thickness",
-                value = self.r#thickness,
-                max = 1f32,
+                field = "r#thickness", value = self.r#thickness, max = 1f32,
                 "Field got truncated"
             );
             self.r#thickness = 1f32 as f32;
         }
         if self.r#aspect_ratio < (0f32 as f32) {
             tracing::warn!(
-                field = "r#aspect_ratio",
-                value = self.r#aspect_ratio,
-                min = 0f32,
+                field = "r#aspect_ratio", value = self.r#aspect_ratio, min = 0f32,
                 "Field got truncated"
             );
             self.r#aspect_ratio = 0f32 as f32;
         }
         if self.r#aspect_ratio > (100f32 as f32) {
             tracing::warn!(
-                field = "r#aspect_ratio",
-                value = self.r#aspect_ratio,
-                max = 100f32,
+                field = "r#aspect_ratio", value = self.r#aspect_ratio, max = 100f32,
                 "Field got truncated"
             );
             self.r#aspect_ratio = 100f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "GameObjectPrefabCircularOutlineObject"
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct GameObjectPrefabCircularSpriteObject {
+    pub r#id: GameObjectPrefabId,
+    pub r#image_1: String,
+    pub r#image_scale: f32,
+}
+impl GameObjectPrefabCircularSpriteObject {
+    fn new(r#id: GameObjectPrefabId) -> Self {
+        Self {
+            r#id,
+            r#image_1: Default::default(),
+            r#image_scale: 1f32,
+        }
+    }
+    pub fn with_id(mut self, r#id: GameObjectPrefabId) -> Self {
+        self.r#id = r#id;
+        self
+    }
+    pub fn with_image_1(mut self, r#image_1: String) -> Self {
+        self.r#image_1 = r#image_1;
+        self
+    }
+    pub fn with_image_scale(mut self, r#image_scale: f32) -> Self {
+        self.r#image_scale = r#image_scale;
+        self
+    }
+}
+impl DatabaseItem for GameObjectPrefabCircularSpriteObject {
+    fn validate(&mut self) {
+        if self.r#image_scale < (0f32 as f32) {
+            tracing::warn!(
+                field = "r#image_scale", value = self.r#image_scale, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#image_scale = 0f32 as f32;
+        }
+        if self.r#image_scale > (10f32 as f32) {
+            tracing::warn!(
+                field = "r#image_scale", value = self.r#image_scale, max = 10f32,
+                "Field got truncated"
+            );
+            self.r#image_scale = 10f32 as f32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "GameObjectPrefabCircularSpriteObject"
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct GameObjectPrefabUndefined {
+    pub r#id: GameObjectPrefabId,
+}
+impl GameObjectPrefabUndefined {
+    fn new(r#id: GameObjectPrefabId) -> Self {
+        Self { r#id }
+    }
+    pub fn with_id(mut self, r#id: GameObjectPrefabId) -> Self {
+        self.r#id = r#id;
+        self
+    }
+}
+impl DatabaseItem for GameObjectPrefabUndefined {
+    fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "GameObjectPrefabUndefined"
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
@@ -16584,130 +16778,118 @@ impl DatabaseItem for GameObjectPrefabWormTailSegment {
     fn validate(&mut self) {
         if self.r#image_scale < (0f32 as f32) {
             tracing::warn!(
-                field = "r#image_scale",
-                value = self.r#image_scale,
-                min = 0f32,
+                field = "r#image_scale", value = self.r#image_scale, min = 0f32,
                 "Field got truncated"
             );
             self.r#image_scale = 0f32 as f32;
         }
         if self.r#image_scale > (10f32 as f32) {
             tracing::warn!(
-                field = "r#image_scale",
-                value = self.r#image_scale,
-                max = 10f32,
+                field = "r#image_scale", value = self.r#image_scale, max = 10f32,
                 "Field got truncated"
             );
             self.r#image_scale = 10f32 as f32;
         }
         if self.r#image_offset < (-1f32 as f32) {
             tracing::warn!(
-                field = "r#image_offset",
-                value = self.r#image_offset,
-                min = -1f32,
+                field = "r#image_offset", value = self.r#image_offset, min = - 1f32,
                 "Field got truncated"
             );
             self.r#image_offset = -1f32 as f32;
         }
         if self.r#image_offset > (1f32 as f32) {
             tracing::warn!(
-                field = "r#image_offset",
-                value = self.r#image_offset,
-                max = 1f32,
+                field = "r#image_offset", value = self.r#image_offset, max = 1f32,
                 "Field got truncated"
             );
             self.r#image_offset = 1f32 as f32;
         }
         if self.r#length < (0f32 as f32) {
             tracing::warn!(
-                field = "r#length",
-                value = self.r#length,
-                min = 0f32,
+                field = "r#length", value = self.r#length, min = 0f32,
                 "Field got truncated"
             );
             self.r#length = 0f32 as f32;
         }
         if self.r#length > (1f32 as f32) {
             tracing::warn!(
-                field = "r#length",
-                value = self.r#length,
-                max = 1f32,
+                field = "r#length", value = self.r#length, max = 1f32,
                 "Field got truncated"
             );
             self.r#length = 1f32 as f32;
         }
         if self.r#offset_1 < (0f32 as f32) {
             tracing::warn!(
-                field = "r#offset_1",
-                value = self.r#offset_1,
-                min = 0f32,
+                field = "r#offset_1", value = self.r#offset_1, min = 0f32,
                 "Field got truncated"
             );
             self.r#offset_1 = 0f32 as f32;
         }
         if self.r#offset_1 > (1f32 as f32) {
             tracing::warn!(
-                field = "r#offset_1",
-                value = self.r#offset_1,
-                max = 1f32,
+                field = "r#offset_1", value = self.r#offset_1, max = 1f32,
                 "Field got truncated"
             );
             self.r#offset_1 = 1f32 as f32;
         }
         if self.r#offset_2 < (-1f32 as f32) {
             tracing::warn!(
-                field = "r#offset_2",
-                value = self.r#offset_2,
-                min = -1f32,
+                field = "r#offset_2", value = self.r#offset_2, min = - 1f32,
                 "Field got truncated"
             );
             self.r#offset_2 = -1f32 as f32;
         }
         if self.r#offset_2 > (1f32 as f32) {
             tracing::warn!(
-                field = "r#offset_2",
-                value = self.r#offset_2,
-                max = 1f32,
+                field = "r#offset_2", value = self.r#offset_2, max = 1f32,
                 "Field got truncated"
             );
             self.r#offset_2 = 1f32 as f32;
         }
         if self.r#angle_1 < (0f32 as f32) {
             tracing::warn!(
-                field = "r#angle_1",
-                value = self.r#angle_1,
-                min = 0f32,
+                field = "r#angle_1", value = self.r#angle_1, min = 0f32,
                 "Field got truncated"
             );
             self.r#angle_1 = 0f32 as f32;
         }
         if self.r#angle_1 > (180f32 as f32) {
             tracing::warn!(
-                field = "r#angle_1",
-                value = self.r#angle_1,
-                max = 180f32,
+                field = "r#angle_1", value = self.r#angle_1, max = 180f32,
                 "Field got truncated"
             );
             self.r#angle_1 = 180f32 as f32;
         }
         if self.r#angle_2 < (0f32 as f32) {
             tracing::warn!(
-                field = "r#angle_2",
-                value = self.r#angle_2,
-                min = 0f32,
+                field = "r#angle_2", value = self.r#angle_2, min = 0f32,
                 "Field got truncated"
             );
             self.r#angle_2 = 0f32 as f32;
         }
         if self.r#angle_2 > (180f32 as f32) {
             tracing::warn!(
-                field = "r#angle_2",
-                value = self.r#angle_2,
-                max = 180f32,
+                field = "r#angle_2", value = self.r#angle_2, max = 180f32,
                 "Field got truncated"
             );
             self.r#angle_2 = 180f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "GameObjectPrefabWormTailSegment"
+    }
+}
+impl DatabaseItem for GameObjectPrefab {
+    fn validate(&mut self) {
+        match self {
+            Self::Undefined(x) => x.validate(),
+            Self::WormTailSegment(x) => x.validate(),
+            Self::CircularSpriteObject(x) => x.validate(),
+            Self::CircularOutlineObject(x) => x.validate(),
+        }
+    }
+    fn type_name() -> &'static str {
+        "GameObjectPrefab"
     }
 }
 
@@ -16774,22 +16956,21 @@ impl DatabaseItem for Character {
     fn validate(&mut self) {
         if self.r#relations < (-100f32 as i32) {
             tracing::warn!(
-                field = "r#relations",
-                value = self.r#relations,
-                min = -100f32,
+                field = "r#relations", value = self.r#relations, min = - 100f32,
                 "Field got truncated"
             );
             self.r#relations = -100f32 as i32;
         }
         if self.r#relations > (100f32 as i32) {
             tracing::warn!(
-                field = "r#relations",
-                value = self.r#relations,
-                max = 100f32,
+                field = "r#relations", value = self.r#relations, max = 100f32,
                 "Field got truncated"
             );
             self.r#relations = 100f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "Character"
     }
 }
 
@@ -16867,7 +17048,10 @@ impl CombatRules {
         self.r#exp_condition = r#exp_condition;
         self
     }
-    pub fn with_ship_selection(mut self, r#ship_selection: PlayerShipSelectionMode) -> Self {
+    pub fn with_ship_selection(
+        mut self,
+        r#ship_selection: PlayerShipSelectionMode,
+    ) -> Self {
         self.r#ship_selection = r#ship_selection;
         self
     }
@@ -16895,7 +17079,10 @@ impl CombatRules {
         self.r#kill_them_all_button = r#kill_them_all_button;
         self
     }
-    pub fn with_custom_soundtrack(mut self, r#custom_soundtrack: Vec<SoundTrack>) -> Self {
+    pub fn with_custom_soundtrack(
+        mut self,
+        r#custom_soundtrack: Vec<SoundTrack>,
+    ) -> Self {
         self.r#custom_soundtrack = r#custom_soundtrack;
         self
     }
@@ -16904,13 +17091,14 @@ impl DatabaseItem for CombatRules {
     fn validate(&mut self) {
         if self.r#battle_map_size < (50f32 as i32) {
             tracing::warn!(
-                field = "r#battle_map_size",
-                value = self.r#battle_map_size,
-                min = 50f32,
+                field = "r#battle_map_size", value = self.r#battle_map_size, min = 50f32,
                 "Field got truncated"
             );
             self.r#battle_map_size = 50f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "CombatRules"
     }
 }
 
@@ -16995,37 +17183,29 @@ impl DatabaseItem for Fleet {
     fn validate(&mut self) {
         if self.r#level_bonus < (-10000f32 as i32) {
             tracing::warn!(
-                field = "r#level_bonus",
-                value = self.r#level_bonus,
-                min = -10000f32,
+                field = "r#level_bonus", value = self.r#level_bonus, min = - 10000f32,
                 "Field got truncated"
             );
             self.r#level_bonus = -10000f32 as i32;
         }
         if self.r#level_bonus > (10000f32 as i32) {
             tracing::warn!(
-                field = "r#level_bonus",
-                value = self.r#level_bonus,
-                max = 10000f32,
+                field = "r#level_bonus", value = self.r#level_bonus, max = 10000f32,
                 "Field got truncated"
             );
             self.r#level_bonus = 10000f32 as i32;
         }
         if self.r#combat_time_limit < (0f32 as i32) {
             tracing::warn!(
-                field = "r#combat_time_limit",
-                value = self.r#combat_time_limit,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#combat_time_limit", value = self.r#combat_time_limit, min =
+                0f32, "Field got truncated"
             );
             self.r#combat_time_limit = 0f32 as i32;
         }
         if self.r#combat_time_limit > (999f32 as i32) {
             tracing::warn!(
-                field = "r#combat_time_limit",
-                value = self.r#combat_time_limit,
-                max = 999f32,
-                "Field got truncated"
+                field = "r#combat_time_limit", value = self.r#combat_time_limit, max =
+                999f32, "Field got truncated"
             );
             self.r#combat_time_limit = 999f32 as i32;
         }
@@ -17065,6 +17245,9 @@ impl DatabaseItem for Fleet {
             );
         }
     }
+    fn type_name() -> &'static str {
+        "Fleet"
+    }
 }
 
 // /home/juh9870/shared_projects/event-horizon-main/Assets/Modules/Database/.Schema/v1/Objects/Quests/Loot.xml
@@ -17092,6 +17275,9 @@ impl Loot {
 }
 impl DatabaseItem for Loot {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "Loot"
+    }
 }
 
 // /home/juh9870/shared_projects/event-horizon-main/Assets/Modules/Database/.Schema/v1/Objects/Quests/Quest.xml
@@ -17169,40 +17355,35 @@ impl DatabaseItem for Quest {
     fn validate(&mut self) {
         if self.r#weight < (0f32 as f32) {
             tracing::warn!(
-                field = "r#weight",
-                value = self.r#weight,
-                min = 0f32,
+                field = "r#weight", value = self.r#weight, min = 0f32,
                 "Field got truncated"
             );
             self.r#weight = 0f32 as f32;
         }
         if self.r#weight > (1000f32 as f32) {
             tracing::warn!(
-                field = "r#weight",
-                value = self.r#weight,
-                max = 1000f32,
+                field = "r#weight", value = self.r#weight, max = 1000f32,
                 "Field got truncated"
             );
             self.r#weight = 1000f32 as f32;
         }
         if self.r#level < (0f32 as i32) {
             tracing::warn!(
-                field = "r#level",
-                value = self.r#level,
-                min = 0f32,
+                field = "r#level", value = self.r#level, min = 0f32,
                 "Field got truncated"
             );
             self.r#level = 0f32 as i32;
         }
         if self.r#level > (1000f32 as i32) {
             tracing::warn!(
-                field = "r#level",
-                value = self.r#level,
-                max = 1000f32,
+                field = "r#level", value = self.r#level, max = 1000f32,
                 "Field got truncated"
             );
             self.r#level = 1000f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "Quest"
     }
 }
 
@@ -17257,22 +17438,21 @@ impl DatabaseItem for QuestItem {
     fn validate(&mut self) {
         if self.r#price < (0f32 as i32) {
             tracing::warn!(
-                field = "r#price",
-                value = self.r#price,
-                min = 0f32,
+                field = "r#price", value = self.r#price, min = 0f32,
                 "Field got truncated"
             );
             self.r#price = 0f32 as i32;
         }
         if self.r#price > (1000000000f32 as i32) {
             tracing::warn!(
-                field = "r#price",
-                value = self.r#price,
-                max = 1000000000f32,
+                field = "r#price", value = self.r#price, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#price = 1000000000f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "QuestItem"
     }
 }
 
@@ -17333,22 +17513,21 @@ impl DatabaseItem for Satellite {
     fn validate(&mut self) {
         if self.r#model_scale < (0.1f32 as f32) {
             tracing::warn!(
-                field = "r#model_scale",
-                value = self.r#model_scale,
-                min = 0.1f32,
+                field = "r#model_scale", value = self.r#model_scale, min = 0.1f32,
                 "Field got truncated"
             );
             self.r#model_scale = 0.1f32 as f32;
         }
         if self.r#model_scale > (100f32 as f32) {
             tracing::warn!(
-                field = "r#model_scale",
-                value = self.r#model_scale,
-                max = 100f32,
+                field = "r#model_scale", value = self.r#model_scale, max = 100f32,
                 "Field got truncated"
             );
             self.r#model_scale = 100f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "Satellite"
     }
 }
 
@@ -17395,6 +17574,9 @@ impl SatelliteBuild {
 }
 impl DatabaseItem for SatelliteBuild {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "SatelliteBuild"
+    }
 }
 
 // /home/juh9870/shared_projects/event-horizon-main/Assets/Modules/Database/.Schema/v1/Objects/Ship.xml
@@ -17568,55 +17750,43 @@ impl DatabaseItem for Ship {
     fn validate(&mut self) {
         if self.r#icon_scale < (0.1f32 as f32) {
             tracing::warn!(
-                field = "r#icon_scale",
-                value = self.r#icon_scale,
-                min = 0.1f32,
+                field = "r#icon_scale", value = self.r#icon_scale, min = 0.1f32,
                 "Field got truncated"
             );
             self.r#icon_scale = 0.1f32 as f32;
         }
         if self.r#icon_scale > (100f32 as f32) {
             tracing::warn!(
-                field = "r#icon_scale",
-                value = self.r#icon_scale,
-                max = 100f32,
+                field = "r#icon_scale", value = self.r#icon_scale, max = 100f32,
                 "Field got truncated"
             );
             self.r#icon_scale = 100f32 as f32;
         }
         if self.r#model_scale < (0.1f32 as f32) {
             tracing::warn!(
-                field = "r#model_scale",
-                value = self.r#model_scale,
-                min = 0.1f32,
+                field = "r#model_scale", value = self.r#model_scale, min = 0.1f32,
                 "Field got truncated"
             );
             self.r#model_scale = 0.1f32 as f32;
         }
         if self.r#model_scale > (100f32 as f32) {
             tracing::warn!(
-                field = "r#model_scale",
-                value = self.r#model_scale,
-                max = 100f32,
+                field = "r#model_scale", value = self.r#model_scale, max = 100f32,
                 "Field got truncated"
             );
             self.r#model_scale = 100f32 as f32;
         }
         if self.r#collider_tolerance < (0f32 as f32) {
             tracing::warn!(
-                field = "r#collider_tolerance",
-                value = self.r#collider_tolerance,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#collider_tolerance", value = self.r#collider_tolerance, min =
+                0f32, "Field got truncated"
             );
             self.r#collider_tolerance = 0f32 as f32;
         }
         if self.r#collider_tolerance > (1f32 as f32) {
             tracing::warn!(
-                field = "r#collider_tolerance",
-                value = self.r#collider_tolerance,
-                max = 1f32,
-                "Field got truncated"
+                field = "r#collider_tolerance", value = self.r#collider_tolerance, max =
+                1f32, "Field got truncated"
             );
             self.r#collider_tolerance = 1f32 as f32;
         }
@@ -17683,6 +17853,9 @@ impl DatabaseItem for Ship {
                 "Obsolete field usage detected, generated code may not work",
             );
         }
+    }
+    fn type_name() -> &'static str {
+        "Ship"
     }
 }
 
@@ -17761,6 +17934,9 @@ impl DatabaseItem for ShipBuild {
             );
         }
     }
+    fn type_name() -> &'static str {
+        "ShipBuild"
+    }
 }
 
 // /home/juh9870/shared_projects/event-horizon-main/Assets/Modules/Database/.Schema/v1/Objects/Skill.xml
@@ -17832,94 +18008,77 @@ impl DatabaseItem for Skill {
     fn validate(&mut self) {
         if self.r#base_requirement < (0f32 as f32) {
             tracing::warn!(
-                field = "r#base_requirement",
-                value = self.r#base_requirement,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#base_requirement", value = self.r#base_requirement, min =
+                0f32, "Field got truncated"
             );
             self.r#base_requirement = 0f32 as f32;
         }
         if self.r#base_requirement > (100f32 as f32) {
             tracing::warn!(
-                field = "r#base_requirement",
-                value = self.r#base_requirement,
-                max = 100f32,
-                "Field got truncated"
+                field = "r#base_requirement", value = self.r#base_requirement, max =
+                100f32, "Field got truncated"
             );
             self.r#base_requirement = 100f32 as f32;
         }
         if self.r#requirement_per_level < (0f32 as f32) {
             tracing::warn!(
-                field = "r#requirement_per_level",
-                value = self.r#requirement_per_level,
-                min = 0f32,
-                "Field got truncated"
+                field = "r#requirement_per_level", value = self.r#requirement_per_level,
+                min = 0f32, "Field got truncated"
             );
             self.r#requirement_per_level = 0f32 as f32;
         }
         if self.r#requirement_per_level > (100f32 as f32) {
             tracing::warn!(
-                field = "r#requirement_per_level",
-                value = self.r#requirement_per_level,
-                max = 100f32,
-                "Field got truncated"
+                field = "r#requirement_per_level", value = self.r#requirement_per_level,
+                max = 100f32, "Field got truncated"
             );
             self.r#requirement_per_level = 100f32 as f32;
         }
         if self.r#base_price < (0f32 as f32) {
             tracing::warn!(
-                field = "r#base_price",
-                value = self.r#base_price,
-                min = 0f32,
+                field = "r#base_price", value = self.r#base_price, min = 0f32,
                 "Field got truncated"
             );
             self.r#base_price = 0f32 as f32;
         }
         if self.r#base_price > (100f32 as f32) {
             tracing::warn!(
-                field = "r#base_price",
-                value = self.r#base_price,
-                max = 100f32,
+                field = "r#base_price", value = self.r#base_price, max = 100f32,
                 "Field got truncated"
             );
             self.r#base_price = 100f32 as f32;
         }
         if self.r#price_per_level < (0f32 as f32) {
             tracing::warn!(
-                field = "r#price_per_level",
-                value = self.r#price_per_level,
-                min = 0f32,
+                field = "r#price_per_level", value = self.r#price_per_level, min = 0f32,
                 "Field got truncated"
             );
             self.r#price_per_level = 0f32 as f32;
         }
         if self.r#price_per_level > (100f32 as f32) {
             tracing::warn!(
-                field = "r#price_per_level",
-                value = self.r#price_per_level,
-                max = 100f32,
-                "Field got truncated"
+                field = "r#price_per_level", value = self.r#price_per_level, max =
+                100f32, "Field got truncated"
             );
             self.r#price_per_level = 100f32 as f32;
         }
         if self.r#max_level < (1f32 as i32) {
             tracing::warn!(
-                field = "r#max_level",
-                value = self.r#max_level,
-                min = 1f32,
+                field = "r#max_level", value = self.r#max_level, min = 1f32,
                 "Field got truncated"
             );
             self.r#max_level = 1f32 as i32;
         }
         if self.r#max_level > (1000f32 as i32) {
             tracing::warn!(
-                field = "r#max_level",
-                value = self.r#max_level,
-                max = 1000f32,
+                field = "r#max_level", value = self.r#max_level, max = 1000f32,
                 "Field got truncated"
             );
             self.r#max_level = 1000f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "Skill"
     }
 }
 
@@ -18082,22 +18241,87 @@ impl DatabaseItem for TechnologySatellite {
     fn validate(&mut self) {
         if self.r#price < (0f32 as i32) {
             tracing::warn!(
-                field = "r#price",
-                value = self.r#price,
-                min = 0f32,
+                field = "r#price", value = self.r#price, min = 0f32,
                 "Field got truncated"
             );
             self.r#price = 0f32 as i32;
         }
         if self.r#price > (10000f32 as i32) {
             tracing::warn!(
-                field = "r#price",
-                value = self.r#price,
-                max = 10000f32,
+                field = "r#price", value = self.r#price, max = 10000f32,
                 "Field got truncated"
             );
             self.r#price = 10000f32 as i32;
         }
+    }
+    fn type_name() -> &'static str {
+        "TechnologySatellite"
+    }
+}
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct TechnologyShip {
+    pub r#id: TechnologyId,
+    pub r#item_id: ShipId,
+    pub r#price: i32,
+    pub r#hidden: bool,
+    pub r#special: bool,
+    pub r#dependencies: Vec<TechnologyId>,
+}
+impl TechnologyShip {
+    fn new(r#id: TechnologyId, r#item_id: ShipId) -> Self {
+        Self {
+            r#id,
+            r#item_id,
+            r#price: Default::default(),
+            r#hidden: Default::default(),
+            r#special: Default::default(),
+            r#dependencies: Default::default(),
+        }
+    }
+    pub fn with_id(mut self, r#id: TechnologyId) -> Self {
+        self.r#id = r#id;
+        self
+    }
+    pub fn with_item_id(mut self, r#item_id: ShipId) -> Self {
+        self.r#item_id = r#item_id;
+        self
+    }
+    pub fn with_price(mut self, r#price: i32) -> Self {
+        self.r#price = r#price;
+        self
+    }
+    pub fn with_hidden(mut self, r#hidden: bool) -> Self {
+        self.r#hidden = r#hidden;
+        self
+    }
+    pub fn with_special(mut self, r#special: bool) -> Self {
+        self.r#special = r#special;
+        self
+    }
+    pub fn with_dependencies(mut self, r#dependencies: Vec<TechnologyId>) -> Self {
+        self.r#dependencies = r#dependencies;
+        self
+    }
+}
+impl DatabaseItem for TechnologyShip {
+    fn validate(&mut self) {
+        if self.r#price < (0f32 as i32) {
+            tracing::warn!(
+                field = "r#price", value = self.r#price, min = 0f32,
+                "Field got truncated"
+            );
+            self.r#price = 0f32 as i32;
+        }
+        if self.r#price > (10000f32 as i32) {
+            tracing::warn!(
+                field = "r#price", value = self.r#price, max = 10000f32,
+                "Field got truncated"
+            );
+            self.r#price = 10000f32 as i32;
+        }
+    }
+    fn type_name() -> &'static str {
+        "TechnologyShip"
     }
 }
 #[derive(Debug, Clone, serde::Serialize)]
@@ -18155,89 +18379,33 @@ impl DatabaseItem for TechnologyComponent {
     fn validate(&mut self) {
         if self.r#price < (0f32 as i32) {
             tracing::warn!(
-                field = "r#price",
-                value = self.r#price,
-                min = 0f32,
+                field = "r#price", value = self.r#price, min = 0f32,
                 "Field got truncated"
             );
             self.r#price = 0f32 as i32;
         }
         if self.r#price > (10000f32 as i32) {
             tracing::warn!(
-                field = "r#price",
-                value = self.r#price,
-                max = 10000f32,
+                field = "r#price", value = self.r#price, max = 10000f32,
                 "Field got truncated"
             );
             self.r#price = 10000f32 as i32;
         }
     }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct TechnologyShip {
-    pub r#id: TechnologyId,
-    pub r#item_id: ShipId,
-    pub r#price: i32,
-    pub r#hidden: bool,
-    pub r#special: bool,
-    pub r#dependencies: Vec<TechnologyId>,
-}
-impl TechnologyShip {
-    fn new(r#id: TechnologyId, r#item_id: ShipId) -> Self {
-        Self {
-            r#id,
-            r#item_id,
-            r#price: Default::default(),
-            r#hidden: Default::default(),
-            r#special: Default::default(),
-            r#dependencies: Default::default(),
-        }
-    }
-    pub fn with_id(mut self, r#id: TechnologyId) -> Self {
-        self.r#id = r#id;
-        self
-    }
-    pub fn with_item_id(mut self, r#item_id: ShipId) -> Self {
-        self.r#item_id = r#item_id;
-        self
-    }
-    pub fn with_price(mut self, r#price: i32) -> Self {
-        self.r#price = r#price;
-        self
-    }
-    pub fn with_hidden(mut self, r#hidden: bool) -> Self {
-        self.r#hidden = r#hidden;
-        self
-    }
-    pub fn with_special(mut self, r#special: bool) -> Self {
-        self.r#special = r#special;
-        self
-    }
-    pub fn with_dependencies(mut self, r#dependencies: Vec<TechnologyId>) -> Self {
-        self.r#dependencies = r#dependencies;
-        self
+    fn type_name() -> &'static str {
+        "TechnologyComponent"
     }
 }
-impl DatabaseItem for TechnologyShip {
+impl DatabaseItem for Technology {
     fn validate(&mut self) {
-        if self.r#price < (0f32 as i32) {
-            tracing::warn!(
-                field = "r#price",
-                value = self.r#price,
-                min = 0f32,
-                "Field got truncated"
-            );
-            self.r#price = 0f32 as i32;
+        match self {
+            Self::Component(x) => x.validate(),
+            Self::Ship(x) => x.validate(),
+            Self::Satellite(x) => x.validate(),
         }
-        if self.r#price > (10000f32 as i32) {
-            tracing::warn!(
-                field = "r#price",
-                value = self.r#price,
-                max = 10000f32,
-                "Field got truncated"
-            );
-            self.r#price = 10000f32 as i32;
-        }
+    }
+    fn type_name() -> &'static str {
+        "Technology"
     }
 }
 
@@ -18290,6 +18458,9 @@ impl Ammunition {
 }
 impl DatabaseItem for Ammunition {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "Ammunition"
+    }
 }
 
 // /home/juh9870/shared_projects/event-horizon-main/Assets/Modules/Database/.Schema/v1/Objects/Weapon/BulletPerfab.xml
@@ -18367,58 +18538,49 @@ impl DatabaseItem for BulletPrefab {
     fn validate(&mut self) {
         if self.r#size < (0.01f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                min = 0.01f32,
+                field = "r#size", value = self.r#size, min = 0.01f32,
                 "Field got truncated"
             );
             self.r#size = 0.01f32 as f32;
         }
         if self.r#size > (100f32 as f32) {
             tracing::warn!(
-                field = "r#size",
-                value = self.r#size,
-                max = 100f32,
+                field = "r#size", value = self.r#size, max = 100f32,
                 "Field got truncated"
             );
             self.r#size = 100f32 as f32;
         }
         if self.r#margins < (0f32 as f32) {
             tracing::warn!(
-                field = "r#margins",
-                value = self.r#margins,
-                min = 0f32,
+                field = "r#margins", value = self.r#margins, min = 0f32,
                 "Field got truncated"
             );
             self.r#margins = 0f32 as f32;
         }
         if self.r#margins > (1f32 as f32) {
             tracing::warn!(
-                field = "r#margins",
-                value = self.r#margins,
-                max = 1f32,
+                field = "r#margins", value = self.r#margins, max = 1f32,
                 "Field got truncated"
             );
             self.r#margins = 1f32 as f32;
         }
         if self.r#deformation < (-100f32 as f32) {
             tracing::warn!(
-                field = "r#deformation",
-                value = self.r#deformation,
-                min = -100f32,
+                field = "r#deformation", value = self.r#deformation, min = - 100f32,
                 "Field got truncated"
             );
             self.r#deformation = -100f32 as f32;
         }
         if self.r#deformation > (100f32 as f32) {
             tracing::warn!(
-                field = "r#deformation",
-                value = self.r#deformation,
-                max = 100f32,
+                field = "r#deformation", value = self.r#deformation, max = 100f32,
                 "Field got truncated"
             );
             self.r#deformation = 100f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "BulletPrefab"
     }
 }
 
@@ -18447,6 +18609,9 @@ impl VisualEffect {
 }
 impl DatabaseItem for VisualEffect {
     fn validate(&mut self) {}
+    fn type_name() -> &'static str {
+        "VisualEffect"
+    }
 }
 
 // /home/juh9870/shared_projects/event-horizon-main/Assets/Modules/Database/.Schema/v1/Objects/Weapon/Weapon.xml
@@ -18519,7 +18684,10 @@ impl Weapon {
         self.r#shot_effect_prefab = r#shot_effect_prefab;
         self
     }
-    pub fn with_visual_effect(mut self, r#visual_effect: Option<VisualEffectId>) -> Self {
+    pub fn with_visual_effect(
+        mut self,
+        r#visual_effect: Option<VisualEffectId>,
+    ) -> Self {
         self.r#visual_effect = r#visual_effect;
         self
     }
@@ -18536,75 +18704,62 @@ impl DatabaseItem for Weapon {
     fn validate(&mut self) {
         if self.r#fire_rate < (0f32 as f32) {
             tracing::warn!(
-                field = "r#fire_rate",
-                value = self.r#fire_rate,
-                min = 0f32,
+                field = "r#fire_rate", value = self.r#fire_rate, min = 0f32,
                 "Field got truncated"
             );
             self.r#fire_rate = 0f32 as f32;
         }
         if self.r#fire_rate > (100f32 as f32) {
             tracing::warn!(
-                field = "r#fire_rate",
-                value = self.r#fire_rate,
-                max = 100f32,
+                field = "r#fire_rate", value = self.r#fire_rate, max = 100f32,
                 "Field got truncated"
             );
             self.r#fire_rate = 100f32 as f32;
         }
         if self.r#spread < (0f32 as f32) {
             tracing::warn!(
-                field = "r#spread",
-                value = self.r#spread,
-                min = 0f32,
+                field = "r#spread", value = self.r#spread, min = 0f32,
                 "Field got truncated"
             );
             self.r#spread = 0f32 as f32;
         }
         if self.r#spread > (360f32 as f32) {
             tracing::warn!(
-                field = "r#spread",
-                value = self.r#spread,
-                max = 360f32,
+                field = "r#spread", value = self.r#spread, max = 360f32,
                 "Field got truncated"
             );
             self.r#spread = 360f32 as f32;
         }
         if self.r#magazine < (0f32 as i32) {
             tracing::warn!(
-                field = "r#magazine",
-                value = self.r#magazine,
-                min = 0f32,
+                field = "r#magazine", value = self.r#magazine, min = 0f32,
                 "Field got truncated"
             );
             self.r#magazine = 0f32 as i32;
         }
         if self.r#magazine > (1000000000f32 as i32) {
             tracing::warn!(
-                field = "r#magazine",
-                value = self.r#magazine,
-                max = 1000000000f32,
+                field = "r#magazine", value = self.r#magazine, max = 1000000000f32,
                 "Field got truncated"
             );
             self.r#magazine = 1000000000f32 as i32;
         }
         if self.r#effect_size < (0f32 as f32) {
             tracing::warn!(
-                field = "r#effect_size",
-                value = self.r#effect_size,
-                min = 0f32,
+                field = "r#effect_size", value = self.r#effect_size, min = 0f32,
                 "Field got truncated"
             );
             self.r#effect_size = 0f32 as f32;
         }
         if self.r#effect_size > (100f32 as f32) {
             tracing::warn!(
-                field = "r#effect_size",
-                value = self.r#effect_size,
-                max = 100f32,
+                field = "r#effect_size", value = self.r#effect_size, max = 100f32,
                 "Field got truncated"
             );
             self.r#effect_size = 100f32 as f32;
         }
+    }
+    fn type_name() -> &'static str {
+        "Weapon"
     }
 }

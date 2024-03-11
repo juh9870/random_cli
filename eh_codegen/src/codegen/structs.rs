@@ -176,6 +176,8 @@ impl CodegenState {
             }
         });
 
+        let name_str = name.to_string();
+
         Ok(quote! {
             #[derive(Debug, Clone, serde::Serialize)]
             pub struct #name {
@@ -195,6 +197,10 @@ impl CodegenState {
             impl DatabaseItem for #name {
                 fn validate(&mut self) {
                     #(#validations)*
+                }
+
+                fn type_name() -> &'static str {
+                    #name_str
                 }
             }
 

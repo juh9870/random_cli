@@ -7,7 +7,6 @@ use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use std::collections::HashMap;
 
-
 impl CodegenState {
     pub fn codegen_switch_struct(
         &mut self,
@@ -171,6 +170,22 @@ impl CodegenState {
             let code = self.codegen_struct(variant_ident, fields, None)?;
             blocks.push(code);
         }
+
+        let name_str = ident.to_string();
+
+        let validations = matcher(quote!(x.validate()));
+
+        blocks.push(quote! {
+            impl DatabaseItem for #ident {
+                fn validate(&mut self) {
+                    #validations
+                }
+
+                fn type_name() -> &'static str {
+                    #name_str
+                }
+            }
+        });
 
         Ok(quote! {
             #(#blocks)*

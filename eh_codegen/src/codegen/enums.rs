@@ -93,12 +93,22 @@ impl CodegenState {
 
         let repr = if is_char { quote!(u32) } else { quote!(i32) };
 
+        let name_str = name.to_string();
+
         Ok(quote! {
             #[repr(#repr)]
             #[derive(Debug, Copy, Clone, Default, Eq, PartialEq)]
             pub enum #name {
                 #[default]
                 #(#variants)*
+            }
+
+            impl DatabaseItem for #name {
+                fn validate(&mut self) {}
+
+                fn type_name() -> &'static str {
+                    #name_str
+                }
             }
 
             #impls

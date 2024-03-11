@@ -25,12 +25,30 @@ impl CodegenState {
                 quote! {
                     pub trait DatabaseItem: serde::Serialize {
                         fn validate(&mut self);
+                        fn type_name() -> &'static str;
                     }
 
-                    #[derive(Debug)]
-                    pub struct DatabaseItemId<T>(isize, std::marker::PhantomData<T>);
+                    pub struct DatabaseItemId<T: DatabaseItem>(pub i32, std::marker::PhantomData<T>);
 
-                    impl<T> serde::Serialize for DatabaseItemId<T> {
+                    impl<T: DatabaseItem> DatabaseItemId<T> {
+                        pub fn new(id: i32) -> Self {
+                            Self(id, Default::default())
+                        }
+                    }
+
+                    impl<T: DatabaseItem> From<i32> for DatabaseItemId<T> {
+                        fn from(x: i32) -> Self {
+                            Self::new(x)
+                        }
+                    }
+
+                    impl<T: DatabaseItem> From<DatabaseItemId<T>> for i32 {
+                        fn from(x: DatabaseItemId<T>) -> Self {
+                            x.0
+                        }
+                    }
+
+                    impl<T: DatabaseItem> serde::Serialize for DatabaseItemId<T> {
                         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
                         where
                             S: serde::Serializer,
@@ -39,21 +57,30 @@ impl CodegenState {
                         }
                     }
 
-                    impl<T> PartialEq for DatabaseItemId<T> {
+                    impl<T: DatabaseItem> PartialEq for DatabaseItemId<T> {
                         fn eq(&self, other: &Self) -> bool {
                             self.0 == other.0
                         }
                     }
 
-                    impl<T> Eq for DatabaseItemId<T> {}
+                    impl<T: DatabaseItem> Eq for DatabaseItemId<T> {}
 
-                    impl<T> Clone for DatabaseItemId<T> {
+                    impl<T: DatabaseItem> Clone for DatabaseItemId<T> {
                         fn clone(&self) -> Self {
                             Self(self.0, Default::default())
                         }
                     }
 
-                    impl<T> Copy for DatabaseItemId<T> {}
+                    impl<T: DatabaseItem> Copy for DatabaseItemId<T> {}
+
+                    impl<T: DatabaseItem> std::fmt::Debug for DatabaseItemId<T> {
+                        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                            f.debug_tuple(&format!("DatabaseItemId::<{}>", T::type_name()))
+                                .field(&self.0)
+                                .field(&format_args!("_"))
+                                .finish()
+                        }
+                    }
                 }
             }
             SchemaItem::Data(data) => {
