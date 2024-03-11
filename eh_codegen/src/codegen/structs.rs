@@ -7,7 +7,7 @@ use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 
 use crate::codegen::{CodegenState, TokensResult};
-use crate::schema::{SchemaItem, SchemaStructMember, SchemaStructMemberType};
+use crate::schema::{SchemaStructMember, SchemaStructMemberType};
 
 #[derive(Debug)]
 pub struct Field {

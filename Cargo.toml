@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 
-members = ["btreeprint", "eh_codegen", "json_verify", "nocommit", "xtask"]
+members = ["btreeprint", "eh_codegen", "eh_schema", "json_verify", "nocommit", "xtask"]
 
 [workspace.dependencies]
 ahash = "0.8.7"
