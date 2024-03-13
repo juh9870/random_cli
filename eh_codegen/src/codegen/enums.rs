@@ -16,7 +16,7 @@ impl CodegenState {
         );
         let variants: Vec<_> = items
             .iter()
-            .map(|SchemaEnumItem { name, value:raw_value, .. }| {
+            .map(|SchemaEnumItem { name, value:raw_value, description, .. }| {
                 m_try(|| {
                     let ident = format_ident!("{}", name);
                     let value = match raw_value {
@@ -43,15 +43,13 @@ impl CodegenState {
                             }
                         },
                     };
-                    let doc_comment = if let Some(value) = raw_value {
-                        quote!(#[doc = #value])
-                    } else {
-                        quote!()
-                    };
+                    let char_comment = raw_value.as_ref().filter(|s|s.starts_with('\'')).map(|value|quote!(#[doc = #value]));
+                    let desc_comment = description.as_ref().map(|value|quote!(#[doc = #value]));
                     Ok(quote! {
-                    #doc_comment
-                    #ident #value,
-                })
+                        #desc_comment
+                        #char_comment
+                        #ident #value,
+                    })
                 })
             })
             .try_collect()?;

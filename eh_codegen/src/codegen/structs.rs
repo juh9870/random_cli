@@ -36,9 +36,13 @@ impl Field {
     }
 
     pub fn struct_field(&self) -> TokenStream {
-        let Self { ident, ty, .. } = self;
+        let Self {
+            ident, ty, field, ..
+        } = self;
 
+        let desc = field.description.as_ref().map(|s| quote!(#[doc = #s]));
         quote! {
+            #desc
             pub #ident: #ty,
         }
     }
@@ -185,7 +189,7 @@ impl CodegenState {
             }
 
             impl #name {
-                fn new(#(#constructor_arguments)*) -> Self {
+                pub fn new(#(#constructor_arguments)*) -> Self {
                     Self {
                         #(#field_construction)*
                     }

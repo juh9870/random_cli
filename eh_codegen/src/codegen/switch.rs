@@ -26,12 +26,13 @@ impl CodegenState {
         if !matches!(switch_field.ty, SchemaStructMemberType::Enum) {
             bail!("switch field must be an enum");
         };
-        let Some(ty) = &switch_field.typeid else {
+        let Some(enum_ty) = &switch_field.typeid else {
             bail!("switch field is missing a typeid")
         };
-        let Some(enum_items) = self.enums.get(ty) else {
-            bail!("switch typeid points at the unknown enum `{}`", ty)
+        let Some(enum_items) = self.enums.get(enum_ty) else {
+            bail!("switch typeid points at the unknown enum `{}`", enum_ty)
         };
+        let enum_ident = format_ident!("{enum_ty}");
 
         let mut variants: HashMap<String, Vec<SchemaStructMember>> = HashMap::default();
 
@@ -103,8 +104,7 @@ impl CodegenState {
         });
 
         let shared_enum = quote! {
-            #[derive(Debug, Clone, serde::Serialize)]
-            #[serde(tag = #tag_name)]
+            #[derive(Debug, Clone)]
             pub enum #ident {
                 #(#enum_variants)*
             }
@@ -113,6 +113,8 @@ impl CodegenState {
         };
 
         let mut blocks: Vec<TokenStream> = vec![shared_enum];
+
+        let ident_str = ident.to_string();
 
         let shared_fields: Vec<Field> = neutrals
             .into_iter()
@@ -143,6 +145,36 @@ impl CodegenState {
             }
         };
 
+        let serde_matcher = variant_names.iter().map(|name| {
+            quote! {
+                Self::#name(x) => AdjTagged { t: #enum_ident::#name, c: x }.serialize(serializer),
+            }
+        });
+
+        let serde_impl = quote! {
+            impl serde::Serialize for #ident {
+                fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+                where
+                    S: serde::Serializer
+                {
+                    #[derive(serde::Serialize)]
+                    #[serde(rename = #ident_str)]
+                    struct AdjTagged<T> {
+                        #[serde(rename = #tag_name)]
+                        t: #enum_ident,
+                        #[serde(flatten)]
+                        c: T,
+                    }
+
+                    match self {
+                        #(#serde_matcher)*
+                    }
+                }
+            }
+        };
+
+        blocks.push(serde_impl);
+
         for Field {
             ident: field_name,
             ty,
@@ -171,8 +203,6 @@ impl CodegenState {
             blocks.push(code);
         }
 
-        let name_str = ident.to_string();
-
         let validations = matcher(quote!(x.validate()));
 
         blocks.push(quote! {
@@ -182,7 +212,7 @@ impl CodegenState {
                 }
 
                 fn type_name() -> &'static str {
-                    #name_str
+                    #ident_str
                 }
             }
         });
