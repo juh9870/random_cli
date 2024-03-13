@@ -128,6 +128,12 @@ impl CodegenState {
                         Self::#variant_name(item)
                     }
                 }
+
+                impl #struct_name {
+                    fn wrap(self) -> #ident {
+                        self.into()
+                    }
+                }
             });
         }
 

@@ -1,4 +1,4 @@
-use crate::schema::{SchemaDataType, SchemaItem, SchemaStructMember, SchemaStructMemberType};
+use crate::schema::{SchemaDataType, SchemaItem};
 use miette::{miette, Diagnostic, IntoDiagnostic, LabeledSpan, Report, SourceCode};
 use miette::{Context, Result};
 use proc_macro2::TokenStream;
@@ -8,6 +8,7 @@ use std::iter::once;
 use thiserror::Error;
 
 mod enums;
+mod objects;
 mod structs;
 mod switch;
 
@@ -23,64 +24,7 @@ impl CodegenState {
         let tokens = match item {
             SchemaItem::Schema { .. } => {
                 quote! {
-                    pub trait DatabaseItem: serde::Serialize {
-                        fn validate(&mut self);
-                        fn type_name() -> &'static str;
-                    }
-
-                    pub struct DatabaseItemId<T: DatabaseItem>(pub i32, std::marker::PhantomData<T>);
-
-                    impl<T: DatabaseItem> DatabaseItemId<T> {
-                        pub fn new(id: i32) -> Self {
-                            Self(id, Default::default())
-                        }
-                    }
-
-                    impl<T: DatabaseItem> From<i32> for DatabaseItemId<T> {
-                        fn from(x: i32) -> Self {
-                            Self::new(x)
-                        }
-                    }
-
-                    impl<T: DatabaseItem> From<DatabaseItemId<T>> for i32 {
-                        fn from(x: DatabaseItemId<T>) -> Self {
-                            x.0
-                        }
-                    }
-
-                    impl<T: DatabaseItem> serde::Serialize for DatabaseItemId<T> {
-                        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-                        where
-                            S: serde::Serializer,
-                        {
-                            self.0.serialize(serializer)
-                        }
-                    }
-
-                    impl<T: DatabaseItem> PartialEq for DatabaseItemId<T> {
-                        fn eq(&self, other: &Self) -> bool {
-                            self.0 == other.0
-                        }
-                    }
-
-                    impl<T: DatabaseItem> Eq for DatabaseItemId<T> {}
-
-                    impl<T: DatabaseItem> Clone for DatabaseItemId<T> {
-                        fn clone(&self) -> Self {
-                            Self(self.0, Default::default())
-                        }
-                    }
-
-                    impl<T: DatabaseItem> Copy for DatabaseItemId<T> {}
-
-                    impl<T: DatabaseItem> std::fmt::Debug for DatabaseItemId<T> {
-                        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                            f.debug_tuple(&format!("DatabaseItemId::<{}>", T::type_name()))
-                                .field(&self.0)
-                                .field(&format_args!("_"))
-                                .finish()
-                        }
-                    }
+                    pub use crate::helpers::*;
                 }
             }
             SchemaItem::Data(data) => {
@@ -95,39 +39,14 @@ impl CodegenState {
                             data.switch,
                         )
                         .context("Failed to generate struct data")?,
-                    SchemaDataType::Object => {
-                        let mut members = data
-                            .member
-                            .ok_or_else(|| miette!("Got struct or settings without members"))?;
-
-                        members.insert(
-                            0,
-                            SchemaStructMember {
-                                name: "Id".to_string(),
-                                ty: SchemaStructMemberType::Object,
-                                minvalue: None,
-                                maxvalue: None,
-                                typeid: Some(data.name.clone()),
-                                options: Some("notnull".to_string()),
-                                case: None,
-                                alias: None,
-                                default: None,
-                                arguments: None,
-                                description: None,
-                            },
-                        );
-
-                        let code = self
-                            .codegen_struct(ident.clone(), members, data.switch)
-                            .context("Failed to generate object data")?;
-
-                        let id_name = format_ident!("{}Id", ident);
-                        quote! {
-                            type #id_name = DatabaseItemId::<#ident>;
-
-                            #code
-                        }
-                    }
+                    SchemaDataType::Object => self
+                        .codegen_object(
+                            ident,
+                            data.member
+                                .ok_or_else(|| miette!("Got object without members"))?,
+                            data.switch,
+                        )
+                        .context("Failed to generate object data")?,
                     SchemaDataType::Enum => self
                         .codegen_enum(
                             ident,

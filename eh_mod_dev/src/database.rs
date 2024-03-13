@@ -7,7 +7,7 @@ use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet};
 use std::ops::{Deref, Range};
 use std::path::{Path, PathBuf};
-use tracing::{error_span};
+use tracing::error_span;
 
 trait ErasedDbItem: Serialize + Any {}
 
