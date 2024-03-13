@@ -43,7 +43,7 @@ impl CodegenState {
         };
 
         Ok(quote! {
-            type #id_name = DatabaseItemId::<#name>;
+            pub type #id_name = DatabaseItemId::<#name>;
             #code
 
             impl DatabaseItemWithId for #name {
