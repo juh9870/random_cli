@@ -2,51 +2,79 @@ use bimap::BiMap;
 use eh_schema::schema::{DatabaseItem, DatabaseItemId};
 use erased_serde::{Serialize, Serializer};
 use std::any::{Any, TypeId};
+use std::cell::RefCell;
 use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet};
 use std::ops::{Deref, Range};
-use std::path::PathBuf;
-use std::process::exit;
-use tracing::{error, error_span};
-
-fn abort() -> ! {
-    exit(1);
-}
+use std::path::{Path, PathBuf};
+use tracing::{error_span};
 
 trait ErasedDbItem: Serialize + Any {}
 
 impl<T: Any + Serialize> ErasedDbItem for T {}
 
+const MAPPINGS_NAME: &str = "id_mappings.json5";
+const MAPPINGS_BACKUP_NAME: &str = "id_mappings.json5.backup";
+
 pub struct Database {
     pub path: PathBuf,
-    ids: HashMap<TypeId, BiMap<String, i32>>,
-    available_ids: HashMap<TypeId, Vec<Range<i32>>>,
+    ids: RefCell<HashMap<String, BiMap<String, i32>>>,
+    available_ids: RefCell<HashMap<TypeId, Vec<Range<i32>>>>,
     default_ids: Vec<Range<i32>>,
     items: HashMap<TypeId, (&'static str, HashMap<i32, Box<dyn Serialize>>)>,
 }
 
-impl Default for Database {
-    fn default() -> Self {
-        Self::new()
+fn check_no_backup(path: &Path) {
+    let _guard =
+        error_span!("Checking for mapping backup file presence", path=%path.display()).entered();
+    if path.exists() {
+        panic!("Mappings backup file exists, this means that there was an error during the previous invocation, please manually check your ID files to avoid data corruption. Remove the file after data integrity is ensured.")
     }
 }
 
 impl Database {
     /// Constructs a new database builder. Don't forget to allocate ID space
     /// via [add_id_range] or [add_id_range_for] methods
-    pub fn new() -> Self {
+    ///
+    /// # Panics
+    /// Will panic if output path contains a mappings file but it can't be read or invalid
+    ///
+    /// Will panic if mappings backup exists
+    pub fn new(output_path: impl AsRef<Path>) -> Self {
+        let output_path = std::env::current_dir()
+            .expect("Should be able to get current directory info from process env")
+            .join(output_path);
+
+        let _guard =
+            error_span!("Creating a new database", output_path=%output_path.display()).entered();
+        if !output_path.exists() {
+            panic!("Target directory does not exist")
+        }
+
+        let mappings_path = output_path.join(MAPPINGS_NAME);
+        let mappings = mappings_path
+            .exists()
+            .then(|| {
+                let data = fs_err::read_to_string(output_path.join(MAPPINGS_NAME))
+                    .expect("Should be able to read mappings file");
+                serde_json5::from_str(&data).expect("Should be able to deserialize mappings file")
+            })
+            .unwrap_or_default();
+
+        check_no_backup(&output_path.join(MAPPINGS_BACKUP_NAME));
+
         Self {
-            path: Default::default(),
-            ids: Default::default(),
+            path: output_path.to_path_buf(),
+            ids: mappings,
             available_ids: Default::default(),
-            default_ids: vec![],
+            default_ids: Default::default(),
             items: Default::default(),
         }
     }
 
     /// Adds another ID range to use for all types
     pub fn add_id_range(&mut self, range: Range<i32>) {
-        for ids in self.available_ids.values_mut() {
+        for ids in self.available_ids.get_mut().values_mut() {
             ids.push(range.clone());
         }
         self.default_ids.push(range);
@@ -56,6 +84,7 @@ impl Database {
     pub fn add_id_range_for<T: 'static + DatabaseItem>(&mut self, range: Range<i32>) {
         let type_id = TypeId::of::<T>();
         self.available_ids
+            .get_mut()
             .entry(type_id)
             .or_insert_with(|| self.default_ids.clone())
             .push(range)
@@ -67,6 +96,7 @@ impl Database {
     pub fn clear_id_ranges_for<T: 'static + DatabaseItem>(&mut self, range: Range<i32>) {
         let type_id = TypeId::of::<T>();
         self.available_ids
+            .get_mut()
             .entry(type_id)
             .or_insert_with(|| self.default_ids.clone())
             .push(range)
@@ -75,17 +105,23 @@ impl Database {
     /// Converts string ID into database item ID
     ///
     /// Aborts the execution if generating ID is not possible
-    pub fn id<T: 'static + DatabaseItem>(&mut self, id: impl Into<String>) -> DatabaseItemId<T> {
+    pub fn id<T: 'static + DatabaseItem>(&self, id: impl Into<String>) -> DatabaseItemId<T> {
         let id_str = id.into();
         let _guard = error_span!("Getting item ID", id = id_str, ty = T::type_name()).entered();
 
-        let type_id = TypeId::of::<T>();
-        let mapping = self.ids.entry(type_id).or_default();
+        let type_name = T::type_name();
+        let mut ids_borrow = self.ids.borrow_mut();
+        let mapping = ids_borrow.entry(type_name.to_string()).or_default();
 
         match mapping.get_by_left(&id_str) {
             None => {
-                let id = self.next_id_raw(type_id);
-                self.ids.get_mut(&type_id).unwrap().insert(id_str, id);
+                drop(ids_borrow);
+                let id = self.next_id_raw::<T>();
+                self.ids
+                    .borrow_mut()
+                    .get_mut(type_name)
+                    .expect("ID entry should be present at this point")
+                    .insert(id_str, id);
                 id.into()
             }
             Some(id) => (*id).into(),
@@ -93,7 +129,8 @@ impl Database {
     }
 
     /// Gets the immutable reference to the item that was previously recorded in database
-    pub fn get_item<T: 'static + DatabaseItem>(&self, id: DatabaseItemId<T>) -> Option<&T> {
+    pub fn get_item<T: 'static + DatabaseItem>(&self, id: impl DatabaseIdLike<T>) -> Option<&T> {
+        let id = id.into_id(self);
         let _guard = error_span!("Getting item", id = id.0, ty = T::type_name()).entered();
 
         let type_id = TypeId::of::<T>();
@@ -109,8 +146,9 @@ impl Database {
     /// Gets the mutable reference to the item that was previously recorded in database
     pub fn get_item_mut<T: 'static + DatabaseItem>(
         &mut self,
-        id: DatabaseItemId<T>,
+        id: impl DatabaseIdLike<T>,
     ) -> Option<&mut T> {
+        let id = id.into_id(self);
         let _guard = error_span!("Getting item", id = id.0, ty = T::type_name()).entered();
 
         let type_id = TypeId::of::<T>();
@@ -123,7 +161,12 @@ impl Database {
     }
 
     /// Adds an item to the database
-    pub fn add_item<T: 'static + DatabaseItem + Any>(&mut self, id: DatabaseItemId<T>, item: T) {
+    pub fn add_item<T: 'static + DatabaseItem + Any>(
+        &mut self,
+        id: impl DatabaseIdLike<T>,
+        item: T,
+    ) {
+        let id = id.into_id(self);
         let _guard = error_span!("Inserting item", id = id.0, ty = T::type_name()).entered();
 
         let type_id = TypeId::of::<T>();
@@ -134,8 +177,7 @@ impl Database {
 
         match mapping.1.entry(id.0) {
             Entry::Occupied(_) => {
-                error!("Item with this ID and type is already added");
-                abort();
+                panic!("Item with this ID and type is already added");
             }
             Entry::Vacant(entry) => entry.insert(Box::new(item)),
         };
@@ -146,19 +188,38 @@ impl Database {
         let path = self.path;
         let _guard = error_span!("Saving database", path=%path.display()).entered();
 
-        let path = path.canonicalize().unwrap();
+        let path = path
+            .canonicalize()
+            .expect("Should be able to canonicalize path");
 
         if !path.is_dir() {
-            error!("Output path is not a directory");
-            abort();
+            panic!("Output path is not a directory");
         }
 
         let mut saved_files = HashSet::new();
 
-        saved_files.insert(path.join("ids.mappings"));
+        let mappings_path = path.join(MAPPINGS_NAME);
+        let mappings_bk_path = path.join(MAPPINGS_BACKUP_NAME);
+        check_no_backup(&mappings_bk_path);
 
-        for (type_id, (type_name, files)) in self.items {
-            let id_name = self.ids.entry(type_id).or_default();
+        let code =
+            serde_json::to_string_pretty(&self.ids).expect("Should be able to serialize mappings");
+
+        if mappings_path.exists() {
+            fs_err::copy(&mappings_path, &mappings_bk_path)
+                .expect("Should be able to create mappings backup");
+            fs_err::write(&mappings_path, code).expect("Should be able to write mappings file");
+        } else {
+            fs_err::write(&mappings_path, code).expect("Should be able to write mappings file");
+            fs_err::copy(&mappings_path, &mappings_bk_path)
+                .expect("Should be able to create mappings backup");
+        }
+
+        saved_files.insert(mappings_path);
+        saved_files.insert(mappings_bk_path.clone());
+
+        for (_, (type_name, files)) in self.items {
+            let id_name = self.ids.get_mut().entry(type_name.to_string()).or_default();
             for (id, file) in files {
                 let id = id_name
                     .get_by_right(&id)
@@ -172,28 +233,28 @@ impl Database {
                 let _guard = error_span!("Saving file", path=%path.display()).entered();
 
                 if saved_files.contains(&path) {
-                    error!("File with this name was already saved");
-                    abort();
+                    panic!("File with this name was already saved");
                 }
 
                 let mut buf: Vec<u8> = vec![];
                 let mut json_serializer = serde_json::Serializer::pretty(&mut buf);
                 let mut json = Box::new(<dyn Serializer>::erase(&mut json_serializer));
 
-                <dyn Serialize>::erased_serialize(&file, &mut json).unwrap();
+                <dyn Serialize>::erased_serialize(&file, &mut json)
+                    .expect("Should be able to serialize an item");
                 drop(json);
-                fs_err::write(&path, buf).unwrap();
+                fs_err::write(&path, buf).expect("Should be able to write the file");
 
                 saved_files.insert(path);
             }
         }
 
-        let files = fs_err::read_dir(path).unwrap();
+        let files = fs_err::read_dir(path).expect("Should be able to read output directory");
         for file in files {
-            let file = file.unwrap();
+            let file = file.expect("Should be able to read a dir entry");
+            let _guard = error_span!("Checking entry", path=%file.path().display()).entered();
             if !file.path().is_file() {
-                error!(path=%file.path().display(), "Output directory contains a non-file entry");
-                abort();
+                panic!("Output directory contains a non-file entry");
             }
 
             if saved_files.contains(&file.path()) {
@@ -202,22 +263,29 @@ impl Database {
 
             let _guard = error_span!("Cleaning up old file", path=%file.path().display()).entered();
 
-            fs_err::remove_file(file.path()).unwrap();
+            fs_err::remove_file(file.path()).expect("Should be able to delete old file");
         }
+
+        fs_err::remove_file(mappings_bk_path).expect("Should remove mappings backup file");
     }
 
-    fn next_id_raw(&mut self, type_id: TypeId) -> i32 {
+    fn next_id_raw<T: 'static + DatabaseItem>(&self) -> i32 {
         if self.default_ids.is_empty() {
-            error!(
+            panic!(
                 "No ID range were given for Database to assign, please use `add_id_range` method"
             )
         }
-        let ids = self
-            .available_ids
+
+        let type_id = TypeId::of::<T>();
+        let type_name = T::type_name();
+        let mut available_ids_borrow = self.available_ids.borrow_mut();
+        let ids = available_ids_borrow
             .entry(type_id)
             .or_insert_with(|| self.default_ids.clone());
 
-        let mappings = self.ids.entry(type_id).or_default();
+        let mut ids_borrow = self.ids.borrow_mut();
+
+        let mappings = ids_borrow.entry(type_name.to_string()).or_default();
 
         while let Some(id) = ids.iter_mut().find_map(|range| range.next()) {
             // Check that ID is not already in use
@@ -226,8 +294,7 @@ impl Database {
             }
         }
 
-        error!("No free IDs are left for this type");
-        abort();
+        panic!("No free IDs are left for this type");
     }
 }
 
@@ -245,5 +312,27 @@ impl<T> Deref for Readonly<T> {
 impl<T> AsRef<T> for Readonly<T> {
     fn as_ref(&self) -> &T {
         &self.0
+    }
+}
+
+pub trait DatabaseIdLike<T: 'static + DatabaseItem> {
+    fn into_id(self, database: &Database) -> DatabaseItemId<T>;
+}
+
+impl<T: 'static + DatabaseItem> DatabaseIdLike<T> for DatabaseItemId<T> {
+    fn into_id(self, _database: &Database) -> DatabaseItemId<T> {
+        self
+    }
+}
+
+impl<T: 'static + DatabaseItem> DatabaseIdLike<T> for &str {
+    fn into_id(self, database: &Database) -> DatabaseItemId<T> {
+        database.id(self)
+    }
+}
+
+impl<T: 'static + DatabaseItem> DatabaseIdLike<T> for String {
+    fn into_id(self, database: &Database) -> DatabaseItemId<T> {
+        database.id(self)
     }
 }

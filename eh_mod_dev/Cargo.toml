@@ -8,10 +8,12 @@ edition = "2021"
 bimap = { workspace = true, features = ["serde"] }
 
 clap = { workspace = true, features = ["derive"] }
+color-backtrace = { workspace = true }
 eh_schema = { path = "../eh_schema" }
 erased-serde = { workspace = true }
 fs-err = { workspace = true }
 serde_json = { workspace = true }
+serde_json5 = { workspace = true }
 tracing = { workspace = true }
 tracing-panic = { workspace = true }
 tracing-subscriber = { workspace = true, features = ["env-filter"] }

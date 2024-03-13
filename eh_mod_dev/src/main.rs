@@ -18,9 +18,10 @@ fn main() {
 
     tracing::subscriber::set_global_default(subscriber).unwrap();
 
-    let prev_hook = std::panic::take_hook();
+    color_backtrace::install();
+    let _prev_hook = std::panic::take_hook();
     std::panic::set_hook(Box::new(move |panic_info| {
         panic_hook(panic_info);
-        prev_hook(panic_info);
+        // prev_hook(panic_info);
     }));
 }
