@@ -56,8 +56,8 @@ impl Field {
         } = self;
 
         quote! {
-            pub fn #builder_fn_ident(mut self, #ident: #ty) -> Self {
-                self.#ident = #ident;
+            pub fn #builder_fn_ident(mut self, #ident: impl Into<#ty>) -> Self {
+                self.#ident = #ident.into();
                 self
             }
         }
