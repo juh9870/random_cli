@@ -130,7 +130,7 @@ impl CodegenState {
                 }
 
                 impl #struct_name {
-                    fn wrap(self) -> #ident {
+                    pub fn wrap(self) -> #ident {
                         self.into()
                     }
                 }
