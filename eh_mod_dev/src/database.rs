@@ -1,17 +1,46 @@
 use bimap::BiMap;
-use eh_schema::schema::{DatabaseItem, DatabaseItemId};
+use eh_schema::schema::{DatabaseItem, DatabaseItemId, DatabaseItemWithId};
 use erased_serde::{Serialize, Serializer};
 use std::any::{Any, TypeId};
-use std::cell::RefCell;
+use std::cell::{Ref, RefCell, RefMut};
 use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet};
 use std::ops::{Deref, Range};
 use std::path::{Path, PathBuf};
 use tracing::error_span;
 
-trait ErasedDbItem: Serialize + Any {}
+pub trait ErasedDbItem: Serialize + Any {
+    fn as_any(&self) -> &dyn Any;
+    fn as_any_mut(&mut self) -> &mut dyn Any;
+}
 
-impl<T: Any + Serialize> ErasedDbItem for T {}
+impl<T: Any + Serialize> ErasedDbItem for T {
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn Any {
+        self
+    }
+}
+
+pub fn borrow_downcast<T: Any>(cell: &RefCell<dyn Any>) -> Option<Ref<T>> {
+    let r = cell.borrow();
+    if (*r).type_id() == TypeId::of::<T>() {
+        Some(Ref::map(r, |x| x.downcast_ref::<T>().unwrap()))
+    } else {
+        None
+    }
+}
+
+pub fn borrow_downcast_mut<T: Any>(cell: &RefCell<dyn Any>) -> Option<RefMut<T>> {
+    let r = cell.borrow_mut();
+    if (*r).type_id() == TypeId::of::<T>() {
+        Some(RefMut::map(r, |x| x.downcast_mut::<T>().unwrap()))
+    } else {
+        None
+    }
+}
 
 const MAPPINGS_NAME: &str = "id_mappings.json5";
 const MAPPINGS_BACKUP_NAME: &str = "id_mappings.json5.backup";
@@ -21,7 +50,7 @@ pub struct Database {
     ids: RefCell<HashMap<String, BiMap<String, i32>>>,
     available_ids: RefCell<HashMap<TypeId, Vec<Range<i32>>>>,
     default_ids: Vec<Range<i32>>,
-    items: HashMap<TypeId, (&'static str, HashMap<i32, Box<dyn Serialize>>)>,
+    items: HashMap<TypeId, (&'static str, HashMap<i32, RefCell<Box<dyn ErasedDbItem>>>)>,
 }
 
 fn check_no_backup(path: &Path) {
@@ -129,7 +158,13 @@ impl Database {
     }
 
     /// Gets the immutable reference to the item that was previously recorded in database
-    pub fn get_item<T: 'static + DatabaseItem>(&self, id: impl DatabaseIdLike<T>) -> Option<&T> {
+    ///
+    /// # Panics
+    /// All items are stored behind a [RefCell], so regular runtime borrowing rules apply
+    pub fn get_item<T: 'static + DatabaseItem>(
+        &self,
+        id: impl DatabaseIdLike<T>,
+    ) -> Option<Ref<T>> {
         let id = id.into_id(self);
         let _guard = error_span!("Getting item", id = id.0, ty = T::type_name()).entered();
 
@@ -137,35 +172,67 @@ impl Database {
 
         self.items.get(&type_id).and_then(|mapping| {
             mapping.1.get(&id.0).map(|item| {
-                <dyn Any>::downcast_ref::<T>(item)
-                    .expect("Only item of the valid type should be stored in the map")
+                Ref::map(item.borrow(), |r| {
+                    r.as_any()
+                        .downcast_ref::<T>()
+                        .expect("Only item of the valid type should be stored in the map")
+                })
+                // item.borrow()
+                //     .as_any()
+                //     .downcast_ref()
+                //     .expect("Only item of the valid type should be stored in the map")
             })
         })
     }
 
     /// Gets the mutable reference to the item that was previously recorded in database
+    ///
+    /// # Panics
+    /// All items are stored behind a [RefCell], so regular runtime borrowing rules apply
     pub fn get_item_mut<T: 'static + DatabaseItem>(
-        &mut self,
+        &self,
         id: impl DatabaseIdLike<T>,
-    ) -> Option<&mut T> {
+    ) -> Option<RefMut<T>> {
         let id = id.into_id(self);
-        let _guard = error_span!("Getting item", id = id.0, ty = T::type_name()).entered();
+        let _guard = error_span!("Getting item (mut)", id = id.0, ty = T::type_name()).entered();
 
         let type_id = TypeId::of::<T>();
-        let mapping = self.items.entry(type_id).or_default();
 
-        mapping.1.get_mut(&id.0).map(|item| {
-            <dyn Any>::downcast_mut::<T>(item)
-                .expect("Only item of the valid type should be stored in the map")
+        self.items.get(&type_id).and_then(|mapping| {
+            mapping.1.get(&id.0).map(|item| {
+                RefMut::map(item.borrow_mut(), |r| {
+                    r.as_any_mut()
+                        .downcast_mut::<T>()
+                        .expect("Only item of the valid type should be stored in the map")
+                })
+                // item.borrow_mut()
+                //     .as_any_mut()
+                //     .downcast_mut()
+                //     .expect("Only item of the valid type should be stored in the map")
+            })
         })
     }
+    /// Adds an item to the database, using manually provided ID
+    ///
+    /// Returns a mutable reference to the inserted item
+    ///
+    /// # Panics
+    /// All items are stored behind a [RefCell], so regular runtime borrowing rules apply
+    pub fn add_item<T: 'static + DatabaseItemWithId + Any>(&mut self, item: T) -> RefMut<T> {
+        self.add_item_manual(item.id(), item)
+    }
 
-    /// Adds an item to the database
-    pub fn add_item<T: 'static + DatabaseItem + Any>(
+    /// Adds an item to the database, using manually provided ID
+    ///
+    /// Returns a mutable reference to the inserted item
+    ///
+    /// # Panics
+    /// All items are stored behind a [RefCell], so regular runtime borrowing rules apply
+    pub fn add_item_manual<T: 'static + DatabaseItem + Any>(
         &mut self,
         id: impl DatabaseIdLike<T>,
         item: T,
-    ) {
+    ) -> RefMut<T> {
         let id = id.into_id(self);
         let _guard = error_span!("Inserting item", id = id.0, ty = T::type_name()).entered();
 
@@ -175,12 +242,18 @@ impl Database {
             .entry(type_id)
             .or_insert_with(|| (T::type_name(), Default::default()));
 
-        match mapping.1.entry(id.0) {
+        let boxed = match mapping.1.entry(id.0) {
             Entry::Occupied(_) => {
                 panic!("Item with this ID and type is already added");
             }
-            Entry::Vacant(entry) => entry.insert(Box::new(item)),
+            Entry::Vacant(entry) => entry.insert(RefCell::new(Box::new(item))),
         };
+
+        RefMut::map(boxed.borrow_mut(), |r| {
+            r.as_any_mut()
+                .downcast_mut::<T>()
+                .expect("Only item of the valid type should be stored in the map")
+        })
     }
 
     /// Saves database to the file system, overriding old files
@@ -240,7 +313,8 @@ impl Database {
                 let mut json_serializer = serde_json::Serializer::pretty(&mut buf);
                 let mut json = Box::new(<dyn Serializer>::erase(&mut json_serializer));
 
-                <dyn Serialize>::erased_serialize(&file, &mut json)
+                file.into_inner()
+                    .erased_serialize(&mut json)
                     .expect("Should be able to serialize an item");
                 drop(json);
                 fs_err::write(&path, buf).expect("Should be able to write the file");
