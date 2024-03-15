@@ -1,4 +1,5 @@
-use crate::codegen::{CodegenState, TokensResult};
+use crate::codegen::structs::StructData;
+use crate::codegen::CodegenState;
 use crate::schema::{SchemaStructMember, SchemaStructMemberType};
 use miette::Context;
 use proc_macro2::Ident;
@@ -10,7 +11,7 @@ impl CodegenState {
         name: Ident,
         mut fields: Vec<SchemaStructMember>,
         switch: Option<String>,
-    ) -> TokensResult {
+    ) -> miette::Result<StructData> {
         fields.insert(
             0,
             SchemaStructMember {
@@ -30,7 +31,7 @@ impl CodegenState {
 
         let is_switch = switch.is_some();
 
-        let code = self
+        let mut data = self
             .codegen_struct(name.clone(), fields, switch)
             .context("Failed to generate object data")?;
 
@@ -42,7 +43,9 @@ impl CodegenState {
             quote!(self.id)
         };
 
-        Ok(quote! {
+        let code = data.code;
+
+        data.code = quote! {
             pub type #id_name = DatabaseItemId::<#name>;
             #code
 
@@ -51,6 +54,7 @@ impl CodegenState {
                     #id_field_getter
                 }
             }
-        })
+        };
+        Ok(data)
     }
 }

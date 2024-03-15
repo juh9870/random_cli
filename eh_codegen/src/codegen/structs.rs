@@ -9,7 +9,7 @@ use quote::{format_ident, quote};
 use crate::codegen::{CodegenState, TokensResult};
 use crate::schema::{SchemaStructMember, SchemaStructMemberType};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Field {
     pub ident: Ident,
     pub builder_fn_ident: Ident,
@@ -138,18 +138,35 @@ impl Field {
     }
 }
 
+#[derive(Debug)]
+pub struct StructData {
+    pub ident: Ident,
+    pub fields: Vec<Field>,
+    pub code: TokenStream,
+    pub ctor_params: Option<Vec<Field>>,
+    pub has_default: bool,
+}
+
 impl CodegenState {
     pub fn codegen_struct(
         &mut self,
         name: Ident,
         mut fields: Vec<SchemaStructMember>,
         switch: Option<String>,
-    ) -> TokensResult {
+    ) -> Result<StructData> {
         if let Some(switch) = switch {
             return self.codegen_switch_struct(name, fields, switch);
         }
-
         fields.dedup_by(|a, b| a.name == b.name);
+
+        if fields.iter().enumerate().any(|(i1, f1)| {
+            fields
+                .iter()
+                .enumerate()
+                .any(|(i2, f2)| &f1.name == &f2.name && i1 != i2)
+        }) {
+            bail!("Struct {name} contains duplicate fields");
+        }
 
         let fields: Vec<Field> = fields
             .into_iter()
@@ -182,8 +199,9 @@ impl CodegenState {
 
         let name_str = name.to_string();
 
-        Ok(quote! {
+        let code = quote! {
             #[derive(Debug, Clone, serde::Serialize)]
+            #[serde(rename_all = "PascalCase")]
             pub struct #name {
                 #(#struct_fields)*
             }
@@ -209,6 +227,14 @@ impl CodegenState {
             }
 
             #default_impl
+        };
+        Ok(StructData {
+            ident: name,
+            ctor_params: (!contructed.is_empty())
+                .then(|| contructed.into_iter().cloned().collect()),
+            fields,
+            code,
+            has_default: default_impl.is_some(),
         })
     }
 }

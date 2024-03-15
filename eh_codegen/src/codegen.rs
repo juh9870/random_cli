@@ -1,3 +1,5 @@
+use crate::codegen::structs::StructData;
+use crate::codegen::switch::Variant;
 use crate::schema::{SchemaDataType, SchemaItem};
 use miette::{miette, Diagnostic, IntoDiagnostic, LabeledSpan, Report, SourceCode};
 use miette::{Context, Result};
@@ -17,10 +19,11 @@ type TokensResult = Result<TokenStream>;
 #[derive(Debug, Default)]
 pub struct CodegenState {
     pub enums: HashMap<String, Vec<String>>,
+    pub objects: HashMap<String, StructData>,
 }
 
 impl CodegenState {
-    pub fn codegen(&mut self, item: SchemaItem) -> Result<Option<String>> {
+    pub fn codegen(&mut self, item: SchemaItem) -> Result<Option<TokenStream>> {
         let tokens = match item {
             SchemaItem::Schema { .. } => {
                 quote! {
@@ -31,22 +34,37 @@ impl CodegenState {
                 let ident = format_ident!("{}", data.name);
 
                 match data.ty {
-                    SchemaDataType::Struct | SchemaDataType::Settings => self
-                        .codegen_struct(
-                            ident,
-                            data.member
-                                .ok_or_else(|| miette!("Got struct or settings without members"))?,
-                            data.switch,
-                        )
-                        .context("Failed to generate struct data")?,
-                    SchemaDataType::Object => self
-                        .codegen_object(
-                            ident,
-                            data.member
-                                .ok_or_else(|| miette!("Got object without members"))?,
-                            data.switch,
-                        )
-                        .context("Failed to generate object data")?,
+                    SchemaDataType::Struct | SchemaDataType::Settings => {
+                        let obj = self
+                            .codegen_struct(
+                                ident,
+                                data.member.ok_or_else(|| {
+                                    miette!("Got struct or settings without members")
+                                })?,
+                                data.switch,
+                            )
+                            .context("Failed to generate struct data")?;
+                        let code = obj.code.clone();
+                        if let Some(id) = &data.typeid {
+                            self.objects.insert(id.clone(), obj);
+                        }
+                        code
+                    }
+                    SchemaDataType::Object => {
+                        let obj = self
+                            .codegen_object(
+                                ident,
+                                data.member
+                                    .ok_or_else(|| miette!("Got object without members"))?,
+                                data.switch,
+                            )
+                            .context("Failed to generate object data")?;
+                        let code = obj.code.clone();
+                        if let Some(id) = &data.typeid {
+                            self.objects.insert(id.clone(), obj);
+                        }
+                        code
+                    }
                     SchemaDataType::Enum => self
                         .codegen_enum(
                             ident,
@@ -58,15 +76,58 @@ impl CodegenState {
             }
         };
 
-        let source = tokens.to_string();
+        Ok(Some(tokens))
+    }
 
-        let text = prettyplease::unparse(
-            &syn::parse_file(&source)
-                .into_diagnostic()
-                .map_err(|e| SourceParseError(source, e))
-                .context("Generated code is not a valid Rust")?,
-        );
-        Ok(Some(text))
+    pub fn codegen_core_db_item(&mut self) -> TokensResult {
+        let data = self
+            .enums
+            .get("ItemType")
+            .ok_or_else(|| miette!("`ItemType` enum was not present in schema"))?;
+
+        let mut variants = vec![];
+        for variant in data {
+            if variant == "Undefined" {
+                continue;
+            }
+            let data = self.objects.remove(variant).ok_or_else(|| {
+                miette!(
+                    "Object or Setting with typeid `{}` was not present in schema",
+                    variant
+                )
+            })?;
+            variants.push(Variant {
+                ident: format_ident!("{variant}"),
+                data,
+            })
+        }
+
+        self.codegen_custom_switch(
+            format_ident!("Item"),
+            format_ident!("ItemType"),
+            variants.as_slice(),
+            false,
+            [],
+            "ItemType",
+            false,
+        )
+    }
+
+    pub fn format_tokens(tokens: Option<TokenStream>) -> Result<Option<String>> {
+        match tokens {
+            None => Ok(None),
+            Some(tokens) => {
+                let source = tokens.to_string();
+
+                let text = prettyplease::unparse(
+                    &syn::parse_file(&source)
+                        .into_diagnostic()
+                        .map_err(|e| SourceParseError(source, e))
+                        .context("Generated code is not a valid Rust")?,
+                );
+                Ok(Some(text))
+            }
+        }
     }
 }
 
