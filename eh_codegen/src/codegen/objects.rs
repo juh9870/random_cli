@@ -38,12 +38,14 @@ impl CodegenState {
         let id_name = format_ident!("{}Id", name);
 
         let id_field_getter = if is_switch {
-            quote!(*self.id())
+            quote!(*x.id())
         } else {
-            quote!(self.id)
+            quote!(x.id)
         };
 
         let code = data.code;
+
+        data.id_access = Some(id_field_getter.clone());
 
         data.code = quote! {
             pub type #id_name = DatabaseItemId::<#name>;
@@ -51,10 +53,12 @@ impl CodegenState {
 
             impl DatabaseItemWithId for #name {
                 fn id(&self) -> DatabaseItemId<Self> {
+                    let x = self;
                     #id_field_getter
                 }
             }
         };
+
         Ok(data)
     }
 }

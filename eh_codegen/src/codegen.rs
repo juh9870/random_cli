@@ -102,15 +102,41 @@ impl CodegenState {
             })
         }
 
-        self.codegen_custom_switch(
-            format_ident!("Item"),
+        let id_fetchers = variants.iter().map(|Variant { ident, data }| {
+            if let Some(id_access) = &data.id_access {
+                quote! {
+                    Self::#ident(x) => Some((#id_access).0),
+                }
+            } else {
+                quote! {
+                    Self::#ident(_) => None,
+                }
+            }
+        });
+
+        let ident = format_ident!("Item");
+        let code = self.codegen_custom_switch(
+            ident.clone(),
             format_ident!("ItemType"),
             variants.as_slice(),
             false,
             [],
             "ItemType",
             false,
-        )
+        )?;
+
+        Ok(quote! {
+            #code
+
+            impl #ident {
+                /// Fetches untyped ID of the inner item, or None if content is a setting
+                pub fn id(&self) -> Option<i32> {
+                    match self {
+                        #(#id_fetchers)*
+                    }
+                }
+            }
+        })
     }
 
     pub fn format_tokens(tokens: Option<TokenStream>) -> Result<Option<String>> {

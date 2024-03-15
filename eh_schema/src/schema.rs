@@ -2569,6 +2569,40 @@ impl DatabaseItem for BehaviorNodeRequirement {
         "BehaviorNodeRequirement"
     }
 }
+impl BehaviorNodeRequirement {
+    pub fn inner_type_name(&self) -> &'static str {
+        match self {
+            Self::Empty(_) => BehaviorNodeRequirementEmpty::type_name(),
+            Self::Any(_) => BehaviorNodeRequirementAny::type_name(),
+            Self::All(_) => BehaviorNodeRequirementAll::type_name(),
+            Self::None(_) => BehaviorNodeRequirementNone::type_name(),
+            Self::AiLevel(_) => BehaviorNodeRequirementAiLevel::type_name(),
+            Self::MinAiLevel(_) => BehaviorNodeRequirementMinAiLevel::type_name(),
+            Self::SizeClass(_) => BehaviorNodeRequirementSizeClass::type_name(),
+            Self::HasDevice(_) => BehaviorNodeRequirementHasDevice::type_name(),
+            Self::HasDrones(_) => BehaviorNodeRequirementHasDrones::type_name(),
+            Self::HasAnyWeapon(_) => BehaviorNodeRequirementHasAnyWeapon::type_name(),
+            Self::CanRepairAllies(_) => BehaviorNodeRequirementCanRepairAllies::type_name(),
+            Self::HasHighRecoilWeapon(_) => BehaviorNodeRequirementHasHighRecoilWeapon::type_name(),
+            Self::HasChargeableWeapon(_) => BehaviorNodeRequirementHasChargeableWeapon::type_name(),
+            Self::HasRemotelyControlledWeapon(_) => {
+                BehaviorNodeRequirementHasRemotelyControlledWeapon::type_name()
+            }
+            Self::HasLongRangeWeapon(_) => BehaviorNodeRequirementHasLongRangeWeapon::type_name(),
+            Self::HasEngine(_) => BehaviorNodeRequirementHasEngine::type_name(),
+            Self::IsDrone(_) => BehaviorNodeRequirementIsDrone::type_name(),
+            Self::HasKineticResistance(_) => {
+                BehaviorNodeRequirementHasKineticResistance::type_name()
+            }
+            Self::HasHighManeuverability(_) => {
+                BehaviorNodeRequirementHasHighManeuverability::type_name()
+            }
+            Self::HasHighRammingDamage(_) => {
+                BehaviorNodeRequirementHasHighRammingDamage::type_name()
+            }
+        }
+    }
+}
 
 // /home/juh9870/shared_projects/event-horizon-main/Assets/Modules/Database/.Schema/v1/Objects/Ai/BehaviorTreeNode.xml
 #[derive(Debug, Clone)]
@@ -7608,6 +7642,103 @@ impl DatabaseItem for BehaviorTreeNode {
         "BehaviorTreeNode"
     }
 }
+impl BehaviorTreeNode {
+    pub fn inner_type_name(&self) -> &'static str {
+        match self {
+            Self::Success(_) => BehaviorTreeNodeSuccess::type_name(),
+            Self::Failure(_) => BehaviorTreeNodeFailure::type_name(),
+            Self::SubTree(_) => BehaviorTreeNodeSubTree::type_name(),
+            Self::Selector(_) => BehaviorTreeNodeSelector::type_name(),
+            Self::Sequence(_) => BehaviorTreeNodeSequence::type_name(),
+            Self::Parallel(_) => BehaviorTreeNodeParallel::type_name(),
+            Self::RandomSelector(_) => BehaviorTreeNodeRandomSelector::type_name(),
+            Self::Invertor(_) => BehaviorTreeNodeInvertor::type_name(),
+            Self::Cooldown(_) => BehaviorTreeNodeCooldown::type_name(),
+            Self::Execute(_) => BehaviorTreeNodeExecute::type_name(),
+            Self::ParallelSequence(_) => BehaviorTreeNodeParallelSequence::type_name(),
+            Self::PreserveTarget(_) => BehaviorTreeNodePreserveTarget::type_name(),
+            Self::IfThenElse(_) => BehaviorTreeNodeIfThenElse::type_name(),
+            Self::HasEnoughEnergy(_) => BehaviorTreeNodeHasEnoughEnergy::type_name(),
+            Self::IsLowOnHp(_) => BehaviorTreeNodeIsLowOnHp::type_name(),
+            Self::IsControledByPlayer(_) => BehaviorTreeNodeIsControledByPlayer::type_name(),
+            Self::HasIncomingThreat(_) => BehaviorTreeNodeHasIncomingThreat::type_name(),
+            Self::HasAdditionalTargets(_) => BehaviorTreeNodeHasAdditionalTargets::type_name(),
+            Self::IsFasterThanTarget(_) => BehaviorTreeNodeIsFasterThanTarget::type_name(),
+            Self::HasMainTarget(_) => BehaviorTreeNodeHasMainTarget::type_name(),
+            Self::MainTargetIsAlly(_) => BehaviorTreeNodeMainTargetIsAlly::type_name(),
+            Self::MainTargetIsEnemy(_) => BehaviorTreeNodeMainTargetIsEnemy::type_name(),
+            Self::MainTargetLowHp(_) => BehaviorTreeNodeMainTargetLowHp::type_name(),
+            Self::MainTargetWithinAttackRange(_) => {
+                BehaviorTreeNodeMainTargetWithinAttackRange::type_name()
+            }
+            Self::HasMothership(_) => BehaviorTreeNodeHasMothership::type_name(),
+            Self::TargetDistance(_) => BehaviorTreeNodeTargetDistance::type_name(),
+            Self::HasLongerAttackRange(_) => BehaviorTreeNodeHasLongerAttackRange::type_name(),
+            Self::FindEnemy(_) => BehaviorTreeNodeFindEnemy::type_name(),
+            Self::MoveToAttackRange(_) => BehaviorTreeNodeMoveToAttackRange::type_name(),
+            Self::AttackMainTarget(_) => BehaviorTreeNodeAttackMainTarget::type_name(),
+            Self::SelectWeapon(_) => BehaviorTreeNodeSelectWeapon::type_name(),
+            Self::SpawnDrones(_) => BehaviorTreeNodeSpawnDrones::type_name(),
+            Self::Ram(_) => BehaviorTreeNodeRam::type_name(),
+            Self::DetonateShip(_) => BehaviorTreeNodeDetonateShip::type_name(),
+            Self::Vanish(_) => BehaviorTreeNodeVanish::type_name(),
+            Self::MaintainAttackRange(_) => BehaviorTreeNodeMaintainAttackRange::type_name(),
+            Self::Wait(_) => BehaviorTreeNodeWait::type_name(),
+            Self::LookAtTarget(_) => BehaviorTreeNodeLookAtTarget::type_name(),
+            Self::LookForAdditionalTargets(_) => {
+                BehaviorTreeNodeLookForAdditionalTargets::type_name()
+            }
+            Self::LookForThreats(_) => BehaviorTreeNodeLookForThreats::type_name(),
+            Self::MatchVelocityWithTarget(_) => {
+                BehaviorTreeNodeMatchVelocityWithTarget::type_name()
+            }
+            Self::ActivateDevice(_) => BehaviorTreeNodeActivateDevice::type_name(),
+            Self::RechargeEnergy(_) => BehaviorTreeNodeRechargeEnergy::type_name(),
+            Self::SustainAim(_) => BehaviorTreeNodeSustainAim::type_name(),
+            Self::ChargeWeapons(_) => BehaviorTreeNodeChargeWeapons::type_name(),
+            Self::Chase(_) => BehaviorTreeNodeChase::type_name(),
+            Self::AvoidThreats(_) => BehaviorTreeNodeAvoidThreats::type_name(),
+            Self::SlowDown(_) => BehaviorTreeNodeSlowDown::type_name(),
+            Self::UseRecoil(_) => BehaviorTreeNodeUseRecoil::type_name(),
+            Self::DefendWithFronalShield(_) => BehaviorTreeNodeDefendWithFronalShield::type_name(),
+            Self::TrackControllableAmmo(_) => BehaviorTreeNodeTrackControllableAmmo::type_name(),
+            Self::KeepDistance(_) => BehaviorTreeNodeKeepDistance::type_name(),
+            Self::ForgetMainTarget(_) => BehaviorTreeNodeForgetMainTarget::type_name(),
+            Self::EscapeTargetAttackRadius(_) => {
+                BehaviorTreeNodeEscapeTargetAttackRadius::type_name()
+            }
+            Self::AttackAdditionalTargets(_) => {
+                BehaviorTreeNodeAttackAdditionalTargets::type_name()
+            }
+            Self::TargetAllyStarbase(_) => BehaviorTreeNodeTargetAllyStarbase::type_name(),
+            Self::TargetEnemyStarbase(_) => BehaviorTreeNodeTargetEnemyStarbase::type_name(),
+            Self::BypassObstacles(_) => BehaviorTreeNodeBypassObstacles::type_name(),
+            Self::AttackTurretTargets(_) => BehaviorTreeNodeAttackTurretTargets::type_name(),
+            Self::EnginePropulsionForce(_) => BehaviorTreeNodeEnginePropulsionForce::type_name(),
+            Self::MotherShipRetreated(_) => BehaviorTreeNodeMotherShipRetreated::type_name(),
+            Self::MotherShipDestroyed(_) => BehaviorTreeNodeMotherShipDestroyed::type_name(),
+            Self::FlyAroundMothership(_) => BehaviorTreeNodeFlyAroundMothership::type_name(),
+            Self::GoBerserk(_) => BehaviorTreeNodeGoBerserk::type_name(),
+            Self::TargetMothership(_) => BehaviorTreeNodeTargetMothership::type_name(),
+            Self::MothershipLowHp(_) => BehaviorTreeNodeMothershipLowHp::type_name(),
+            Self::MothershipDistanceExceeded(_) => {
+                BehaviorTreeNodeMothershipDistanceExceeded::type_name()
+            }
+            Self::MakeTargetMothership(_) => BehaviorTreeNodeMakeTargetMothership::type_name(),
+            Self::ShowMessage(_) => BehaviorTreeNodeShowMessage::type_name(),
+            Self::DebugLog(_) => BehaviorTreeNodeDebugLog::type_name(),
+            Self::SetValue(_) => BehaviorTreeNodeSetValue::type_name(),
+            Self::GetValue(_) => BehaviorTreeNodeGetValue::type_name(),
+            Self::SendMessage(_) => BehaviorTreeNodeSendMessage::type_name(),
+            Self::MessageReceived(_) => BehaviorTreeNodeMessageReceived::type_name(),
+            Self::TargetMessageSender(_) => BehaviorTreeNodeTargetMessageSender::type_name(),
+            Self::SaveTarget(_) => BehaviorTreeNodeSaveTarget::type_name(),
+            Self::LoadTarget(_) => BehaviorTreeNodeLoadTarget::type_name(),
+            Self::HasSavedTarget(_) => BehaviorTreeNodeHasSavedTarget::type_name(),
+            Self::ForgetSavedTarget(_) => BehaviorTreeNodeForgetSavedTarget::type_name(),
+        }
+    }
+}
 
 // /home/juh9870/shared_projects/event-horizon-main/Assets/Modules/Database/.Schema/v1/Objects/Barrel.xml
 #[derive(Debug, Clone, serde::Serialize)]
@@ -9379,6 +9510,29 @@ impl DatabaseItem for LootContent {
     }
     fn type_name() -> &'static str {
         "LootContent"
+    }
+}
+impl LootContent {
+    pub fn inner_type_name(&self) -> &'static str {
+        match self {
+            Self::None(_) => LootContentNone::type_name(),
+            Self::SomeMoney(_) => LootContentSomeMoney::type_name(),
+            Self::Fuel(_) => LootContentFuel::type_name(),
+            Self::Money(_) => LootContentMoney::type_name(),
+            Self::Stars(_) => LootContentStars::type_name(),
+            Self::StarMap(_) => LootContentStarMap::type_name(),
+            Self::RandomComponents(_) => LootContentRandomComponents::type_name(),
+            Self::RandomItems(_) => LootContentRandomItems::type_name(),
+            Self::AllItems(_) => LootContentAllItems::type_name(),
+            Self::ItemsWithChance(_) => LootContentItemsWithChance::type_name(),
+            Self::QuestItem(_) => LootContentQuestItem::type_name(),
+            Self::Ship(_) => LootContentShip::type_name(),
+            Self::EmptyShip(_) => LootContentEmptyShip::type_name(),
+            Self::Component(_) => LootContentComponent::type_name(),
+            Self::Blueprint(_) => LootContentBlueprint::type_name(),
+            Self::ResearchPoints(_) => LootContentResearchPoints::type_name(),
+            Self::Satellite(_) => LootContentSatellite::type_name(),
+        }
     }
 }
 
@@ -12518,6 +12672,42 @@ impl DatabaseItem for Node {
         "Node"
     }
 }
+impl Node {
+    pub fn inner_type_name(&self) -> &'static str {
+        match self {
+            Self::Undefined(_) => NodeUndefined::type_name(),
+            Self::ComingSoon(_) => NodeComingSoon::type_name(),
+            Self::ShowDialog(_) => NodeShowDialog::type_name(),
+            Self::OpenShipyard(_) => NodeOpenShipyard::type_name(),
+            Self::OpenWorkshop(_) => NodeOpenWorkshop::type_name(),
+            Self::Switch(_) => NodeSwitch::type_name(),
+            Self::Random(_) => NodeRandom::type_name(),
+            Self::Condition(_) => NodeCondition::type_name(),
+            Self::AttackFleet(_) => NodeAttackFleet::type_name(),
+            Self::AttackOccupants(_) => NodeAttackOccupants::type_name(),
+            Self::AttackStarbase(_) => NodeAttackStarbase::type_name(),
+            Self::DestroyOccupants(_) => NodeDestroyOccupants::type_name(),
+            Self::SuppressOccupants(_) => NodeSuppressOccupants::type_name(),
+            Self::Retreat(_) => NodeRetreat::type_name(),
+            Self::ReceiveItem(_) => NodeReceiveItem::type_name(),
+            Self::RemoveItem(_) => NodeRemoveItem::type_name(),
+            Self::Trade(_) => NodeTrade::type_name(),
+            Self::CompleteQuest(_) => NodeCompleteQuest::type_name(),
+            Self::FailQuest(_) => NodeFailQuest::type_name(),
+            Self::CancelQuest(_) => NodeCancelQuest::type_name(),
+            Self::StartQuest(_) => NodeStartQuest::type_name(),
+            Self::SetCharacterRelations(_) => NodeSetCharacterRelations::type_name(),
+            Self::SetFactionRelations(_) => NodeSetFactionRelations::type_name(),
+            Self::SetFactionStarbasePower(_) => NodeSetFactionStarbasePower::type_name(),
+            Self::ChangeCharacterRelations(_) => NodeChangeCharacterRelations::type_name(),
+            Self::ChangeFactionRelations(_) => NodeChangeFactionRelations::type_name(),
+            Self::ChangeFactionStarbasePower(_) => NodeChangeFactionStarbasePower::type_name(),
+            Self::CaptureStarBase(_) => NodeCaptureStarBase::type_name(),
+            Self::LiberateStarBase(_) => NodeLiberateStarBase::type_name(),
+            Self::ChangeFaction(_) => NodeChangeFaction::type_name(),
+        }
+    }
+}
 
 // /home/juh9870/shared_projects/event-horizon-main/Assets/Modules/Database/.Schema/v1/Objects/Quests/NodeAction.xml
 #[derive(Debug, Clone, serde::Serialize)]
@@ -14167,6 +14357,33 @@ impl DatabaseItem for Requirement {
         "Requirement"
     }
 }
+impl Requirement {
+    pub fn inner_type_name(&self) -> &'static str {
+        match self {
+            Self::Empty(_) => RequirementEmpty::type_name(),
+            Self::Any(_) => RequirementAny::type_name(),
+            Self::All(_) => RequirementAll::type_name(),
+            Self::None(_) => RequirementNone::type_name(),
+            Self::PlayerPosition(_) => RequirementPlayerPosition::type_name(),
+            Self::RandomStarSystem(_) => RequirementRandomStarSystem::type_name(),
+            Self::AggressiveOccupants(_) => RequirementAggressiveOccupants::type_name(),
+            Self::QuestCompleted(_) => RequirementQuestCompleted::type_name(),
+            Self::QuestActive(_) => RequirementQuestActive::type_name(),
+            Self::CharacterRelations(_) => RequirementCharacterRelations::type_name(),
+            Self::FactionRelations(_) => RequirementFactionRelations::type_name(),
+            Self::StarbaseCaptured(_) => RequirementStarbaseCaptured::type_name(),
+            Self::FactionStarbasePower(_) => RequirementFactionStarbasePower::type_name(),
+            Self::IsHostileFaction(_) => RequirementIsHostileFaction::type_name(),
+            Self::Faction(_) => RequirementFaction::type_name(),
+            Self::HaveQuestItem(_) => RequirementHaveQuestItem::type_name(),
+            Self::HaveItem(_) => RequirementHaveItem::type_name(),
+            Self::HaveItemById(_) => RequirementHaveItemById::type_name(),
+            Self::ComeToOrigin(_) => RequirementComeToOrigin::type_name(),
+            Self::TimeSinceQuestStart(_) => RequirementTimeSinceQuestStart::type_name(),
+            Self::TimeSinceLastCompletion(_) => RequirementTimeSinceLastCompletion::type_name(),
+        }
+    }
+}
 
 // /home/juh9870/shared_projects/event-horizon-main/Assets/Modules/Database/.Schema/v1/Objects/Settings/DebugCode.xml
 #[derive(Debug, Clone, serde::Serialize)]
@@ -15208,6 +15425,16 @@ impl DatabaseItem for BulletController {
         "BulletController"
     }
 }
+impl BulletController {
+    pub fn inner_type_name(&self) -> &'static str {
+        match self {
+            Self::Projectile(_) => BulletControllerProjectile::type_name(),
+            Self::Homing(_) => BulletControllerHoming::type_name(),
+            Self::Beam(_) => BulletControllerBeam::type_name(),
+            Self::Parametric(_) => BulletControllerParametric::type_name(),
+        }
+    }
+}
 
 // /home/juh9870/shared_projects/event-horizon-main/Assets/Modules/Database/.Schema/v1/Objects/Weapon/BulletTrigger.xml
 #[derive(Debug, Clone)]
@@ -16072,6 +16299,18 @@ impl DatabaseItem for BulletTrigger {
     }
     fn type_name() -> &'static str {
         "BulletTrigger"
+    }
+}
+impl BulletTrigger {
+    pub fn inner_type_name(&self) -> &'static str {
+        match self {
+            Self::None(_) => BulletTriggerNone::type_name(),
+            Self::PlaySfx(_) => BulletTriggerPlaySfx::type_name(),
+            Self::SpawnBullet(_) => BulletTriggerSpawnBullet::type_name(),
+            Self::Detonate(_) => BulletTriggerDetonate::type_name(),
+            Self::SpawnStaticSfx(_) => BulletTriggerSpawnStaticSfx::type_name(),
+            Self::GravityField(_) => BulletTriggerGravityField::type_name(),
+        }
     }
 }
 
@@ -18489,7 +18728,8 @@ impl DatabaseItem for BehaviorTree {
 }
 impl DatabaseItemWithId for BehaviorTree {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -18826,7 +19066,8 @@ impl DatabaseItem for AmmunitionObsolete {
 }
 impl DatabaseItemWithId for AmmunitionObsolete {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -19003,7 +19244,8 @@ impl DatabaseItem for Component {
 }
 impl DatabaseItemWithId for Component {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -19045,7 +19287,8 @@ impl DatabaseItem for ComponentMod {
 }
 impl DatabaseItemWithId for ComponentMod {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -19818,7 +20061,8 @@ impl DatabaseItem for ComponentStats {
 }
 impl DatabaseItemWithId for ComponentStats {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -20074,7 +20318,8 @@ impl DatabaseItem for Device {
 }
 impl DatabaseItemWithId for Device {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -20355,7 +20600,8 @@ impl DatabaseItem for DroneBay {
 }
 impl DatabaseItemWithId for DroneBay {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -20556,7 +20802,8 @@ impl DatabaseItem for Faction {
 }
 impl DatabaseItemWithId for Faction {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -21080,9 +21327,20 @@ impl DatabaseItem for GameObjectPrefab {
         "GameObjectPrefab"
     }
 }
+impl GameObjectPrefab {
+    pub fn inner_type_name(&self) -> &'static str {
+        match self {
+            Self::Undefined(_) => GameObjectPrefabUndefined::type_name(),
+            Self::WormTailSegment(_) => GameObjectPrefabWormTailSegment::type_name(),
+            Self::CircularSpriteObject(_) => GameObjectPrefabCircularSpriteObject::type_name(),
+            Self::CircularOutlineObject(_) => GameObjectPrefabCircularOutlineObject::type_name(),
+        }
+    }
+}
 impl DatabaseItemWithId for GameObjectPrefab {
     fn id(&self) -> DatabaseItemId<Self> {
-        *self.id()
+        let x = self;
+        *x.id()
     }
 }
 
@@ -21173,7 +21431,8 @@ impl DatabaseItem for Character {
 }
 impl DatabaseItemWithId for Character {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -21310,7 +21569,8 @@ impl DatabaseItem for CombatRules {
 }
 impl DatabaseItemWithId for CombatRules {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -21472,7 +21732,8 @@ impl DatabaseItem for Fleet {
 }
 impl DatabaseItemWithId for Fleet {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -21508,7 +21769,8 @@ impl DatabaseItem for Loot {
 }
 impl DatabaseItemWithId for Loot {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -21629,7 +21891,8 @@ impl DatabaseItem for Quest {
 }
 impl DatabaseItemWithId for Quest {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -21708,7 +21971,8 @@ impl DatabaseItem for QuestItem {
 }
 impl DatabaseItemWithId for QuestItem {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -21793,7 +22057,8 @@ impl DatabaseItem for Satellite {
 }
 impl DatabaseItemWithId for Satellite {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -21847,7 +22112,8 @@ impl DatabaseItem for SatelliteBuild {
 }
 impl DatabaseItemWithId for SatelliteBuild {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -22145,7 +22411,8 @@ impl DatabaseItem for Ship {
 }
 impl DatabaseItemWithId for Ship {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -22231,7 +22498,8 @@ impl DatabaseItem for ShipBuild {
 }
 impl DatabaseItemWithId for ShipBuild {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -22400,7 +22668,8 @@ impl DatabaseItem for Skill {
 }
 impl DatabaseItemWithId for Skill {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -22806,9 +23075,19 @@ impl DatabaseItem for Technology {
         "Technology"
     }
 }
+impl Technology {
+    pub fn inner_type_name(&self) -> &'static str {
+        match self {
+            Self::Component(_) => TechnologyComponent::type_name(),
+            Self::Ship(_) => TechnologyShip::type_name(),
+            Self::Satellite(_) => TechnologySatellite::type_name(),
+        }
+    }
+}
 impl DatabaseItemWithId for Technology {
     fn id(&self) -> DatabaseItemId<Self> {
-        *self.id()
+        let x = self;
+        *x.id()
     }
 }
 
@@ -22868,7 +23147,8 @@ impl DatabaseItem for Ammunition {
 }
 impl DatabaseItemWithId for Ammunition {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -23007,7 +23287,8 @@ impl DatabaseItem for BulletPrefab {
 }
 impl DatabaseItemWithId for BulletPrefab {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -23043,7 +23324,8 @@ impl DatabaseItem for VisualEffect {
 }
 impl DatabaseItemWithId for VisualEffect {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -23215,7 +23497,8 @@ impl DatabaseItem for Weapon {
 }
 impl DatabaseItemWithId for Weapon {
     fn id(&self) -> DatabaseItemId<Self> {
-        self.id
+        let x = self;
+        x.id
     }
 }
 
@@ -24073,5 +24356,94 @@ impl DatabaseItem for Item {
     }
     fn type_name() -> &'static str {
         "Item"
+    }
+}
+impl Item {
+    pub fn inner_type_name(&self) -> &'static str {
+        match self {
+            Self::Component(_) => Component::type_name(),
+            Self::Device(_) => Device::type_name(),
+            Self::Weapon(_) => Weapon::type_name(),
+            Self::AmmunitionObsolete(_) => AmmunitionObsolete::type_name(),
+            Self::DroneBay(_) => DroneBay::type_name(),
+            Self::Ship(_) => Ship::type_name(),
+            Self::Satellite(_) => Satellite::type_name(),
+            Self::ShipBuild(_) => ShipBuild::type_name(),
+            Self::SatelliteBuild(_) => SatelliteBuild::type_name(),
+            Self::Technology(_) => Technology::type_name(),
+            Self::ComponentStats(_) => ComponentStats::type_name(),
+            Self::ComponentMod(_) => ComponentMod::type_name(),
+            Self::Skill(_) => Skill::type_name(),
+            Self::Faction(_) => Faction::type_name(),
+            Self::Quest(_) => Quest::type_name(),
+            Self::Loot(_) => Loot::type_name(),
+            Self::Fleet(_) => Fleet::type_name(),
+            Self::Character(_) => Character::type_name(),
+            Self::QuestItem(_) => QuestItem::type_name(),
+            Self::Ammunition(_) => Ammunition::type_name(),
+            Self::VisualEffect(_) => VisualEffect::type_name(),
+            Self::BulletPrefab(_) => BulletPrefab::type_name(),
+            Self::BehaviorTree(_) => BehaviorTree::type_name(),
+            Self::GameObjectPrefab(_) => GameObjectPrefab::type_name(),
+            Self::CombatRules(_) => CombatRules::type_name(),
+            Self::ShipSettings(_) => ShipSettings::type_name(),
+            Self::GalaxySettings(_) => GalaxySettings::type_name(),
+            Self::DatabaseSettings(_) => DatabaseSettings::type_name(),
+            Self::ExplorationSettings(_) => ExplorationSettings::type_name(),
+            Self::FrontierSettings(_) => FrontierSettings::type_name(),
+            Self::ShipModSettings(_) => ShipModSettings::type_name(),
+            Self::SpecialEventSettings(_) => SpecialEventSettings::type_name(),
+            Self::SkillSettings(_) => SkillSettings::type_name(),
+            Self::DebugSettings(_) => DebugSettings::type_name(),
+            Self::CombatSettings(_) => CombatSettings::type_name(),
+            Self::UiSettings(_) => UiSettings::type_name(),
+            Self::FactionsSettings(_) => FactionsSettings::type_name(),
+            Self::MusicPlaylist(_) => MusicPlaylist::type_name(),
+        }
+    }
+}
+impl Item {
+    /// Fetches untyped ID of the inner item, or None if content is a setting
+    pub fn id(&self) -> Option<i32> {
+        match self {
+            Self::Component(x) => Some((x.id).0),
+            Self::Device(x) => Some((x.id).0),
+            Self::Weapon(x) => Some((x.id).0),
+            Self::AmmunitionObsolete(x) => Some((x.id).0),
+            Self::DroneBay(x) => Some((x.id).0),
+            Self::Ship(x) => Some((x.id).0),
+            Self::Satellite(x) => Some((x.id).0),
+            Self::ShipBuild(x) => Some((x.id).0),
+            Self::SatelliteBuild(x) => Some((x.id).0),
+            Self::Technology(x) => Some(x.id().0),
+            Self::ComponentStats(x) => Some((x.id).0),
+            Self::ComponentMod(x) => Some((x.id).0),
+            Self::Skill(x) => Some((x.id).0),
+            Self::Faction(x) => Some((x.id).0),
+            Self::Quest(x) => Some((x.id).0),
+            Self::Loot(x) => Some((x.id).0),
+            Self::Fleet(x) => Some((x.id).0),
+            Self::Character(x) => Some((x.id).0),
+            Self::QuestItem(x) => Some((x.id).0),
+            Self::Ammunition(x) => Some((x.id).0),
+            Self::VisualEffect(x) => Some((x.id).0),
+            Self::BulletPrefab(x) => Some((x.id).0),
+            Self::BehaviorTree(x) => Some((x.id).0),
+            Self::GameObjectPrefab(x) => Some(x.id().0),
+            Self::CombatRules(x) => Some((x.id).0),
+            Self::ShipSettings(_) => None,
+            Self::GalaxySettings(_) => None,
+            Self::DatabaseSettings(_) => None,
+            Self::ExplorationSettings(_) => None,
+            Self::FrontierSettings(_) => None,
+            Self::ShipModSettings(_) => None,
+            Self::SpecialEventSettings(_) => None,
+            Self::SkillSettings(_) => None,
+            Self::DebugSettings(_) => None,
+            Self::CombatSettings(_) => None,
+            Self::UiSettings(_) => None,
+            Self::FactionsSettings(_) => None,
+            Self::MusicPlaylist(_) => None,
+        }
     }
 }

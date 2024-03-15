@@ -110,6 +110,7 @@ impl CodegenState {
         Ok(StructData {
             ident,
             fields: vec![],
+            id_access: None,
             code: switch_code,
             ctor_params: None,
             has_default,
@@ -294,6 +295,20 @@ impl CodegenState {
 
                 fn type_name() -> &'static str {
                     #ident_str
+                }
+            }
+        });
+
+        let type_names = variants.iter().map(|Variant { ident, data }| {
+            let ty = &data.ident;
+            quote!(Self::#ident(_) => #ty::type_name(),)
+        });
+        blocks.push(quote! {
+            impl #switch_struct_ident {
+                pub fn inner_type_name(&self) -> &'static str {
+                    match self {
+                        #(#type_names)*
+                    }
                 }
             }
         });

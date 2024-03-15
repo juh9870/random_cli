@@ -142,6 +142,7 @@ impl Field {
 pub struct StructData {
     pub ident: Ident,
     pub fields: Vec<Field>,
+    pub id_access: Option<TokenStream>,
     pub code: TokenStream,
     pub ctor_params: Option<Vec<Field>>,
     pub has_default: bool,
@@ -233,6 +234,7 @@ impl CodegenState {
             ctor_params: (!contructed.is_empty())
                 .then(|| contructed.into_iter().cloned().collect()),
             fields,
+            id_access: None,
             code,
             has_default: default_impl.is_some(),
         })
