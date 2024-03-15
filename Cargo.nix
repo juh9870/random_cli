@@ -30,7 +30,7 @@ args@{
   ignoreLockHash,
 }:
 let
-  nixifiedLockHash = "74848e7233891469bef10c164dc387a1e6152d25e88966af95a62514b38aadde";
+  nixifiedLockHash = "f5ec8850149565ea4892b31320d1d03714d1265cf598c8e3b08c4db875b362db";
   workspaceSrc = if args.workspaceSrc == null then ./. else args.workspaceSrc;
   currentLockHash = builtins.hashFile "sha256" (workspaceSrc + /Cargo.lock);
   lockHashIgnored = if ignoreLockHash
@@ -571,7 +571,6 @@ in
       clap = (rustPackages."registry+https://github.com/rust-lang/crates.io-index".clap."4.5.3" { inherit profileName; }).out;
       color_backtrace = (rustPackages."registry+https://github.com/rust-lang/crates.io-index".color-backtrace."0.6.1" { inherit profileName; }).out;
       eh_schema = (rustPackages."unknown".eh_schema."0.1.0" { inherit profileName; }).out;
-      erased_serde = (rustPackages."registry+https://github.com/rust-lang/crates.io-index".erased-serde."0.4.4" { inherit profileName; }).out;
       fs_err = (rustPackages."registry+https://github.com/rust-lang/crates.io-index".fs-err."2.11.0" { inherit profileName; }).out;
       serde_json = (rustPackages."registry+https://github.com/rust-lang/crates.io-index".serde_json."1.0.114" { inherit profileName; }).out;
       serde_json5 = (rustPackages."registry+https://github.com/rust-lang/crates.io-index".serde_json5."0.1.0" { inherit profileName; }).out;
@@ -612,21 +611,6 @@ in
       [ "default" ]
       [ "std" ]
     ];
-  });
-  
-  "registry+https://github.com/rust-lang/crates.io-index".erased-serde."0.4.4" = overridableMkRustCrate (profileName: rec {
-    name = "erased-serde";
-    version = "0.4.4";
-    registry = "registry+https://github.com/rust-lang/crates.io-index";
-    src = fetchCratesIo { inherit name version; sha256 = "2b73807008a3c7f171cc40312f37d95ef0396e048b5848d775f54b1a4dd4a0d3"; };
-    features = builtins.concatLists [
-      [ "alloc" ]
-      [ "default" ]
-      [ "std" ]
-    ];
-    dependencies = {
-      serde = (rustPackages."registry+https://github.com/rust-lang/crates.io-index".serde."1.0.197" { inherit profileName; }).out;
-    };
   });
   
   "registry+https://github.com/rust-lang/crates.io-index".errno."0.3.8" = overridableMkRustCrate (profileName: rec {
