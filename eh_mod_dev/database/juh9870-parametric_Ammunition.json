@@ -1,0 +1,39 @@
+{
+  "id": 9870001,
+  "body": {
+    "size": 0.0,
+    "length": 0.0,
+    "velocity": 0.0,
+    "parent_velocity_effect": 1.0,
+    "attached_to_parent": false,
+    "range": 0.0,
+    "lifetime": 5.0,
+    "weight": 0.0,
+    "hit_points": 0,
+    "color": "",
+    "bullet_prefab": 9,
+    "energy_cost": 0.0,
+    "can_be_disarmed": false,
+    "friendly_fire": false,
+    "ai_bullet_behavior": 0,
+    "type": 0
+  },
+  "controller": {
+    "Type": 3,
+    "x": "t * 10",
+    "y": "SIN(t)",
+    "rotation": "0",
+    "size": "1",
+    "length": "1"
+  },
+  "triggers": [],
+  "impact_type": 0,
+  "effects": [
+    {
+      "type": 0,
+      "damage_type": 1,
+      "power": 10.0,
+      "factor": 0.0
+    }
+  ]
+}

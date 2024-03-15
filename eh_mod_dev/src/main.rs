@@ -1,3 +1,4 @@
+use crate::test_mod::build_mod;
 use clap::Parser;
 use std::path::PathBuf;
 use tracing_panic::panic_hook;
@@ -5,6 +6,8 @@ use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::EnvFilter;
 
 pub mod database;
+
+pub mod test_mod;
 
 #[derive(Debug, Parser)]
 pub struct Args {
@@ -24,4 +27,6 @@ fn main() {
         panic_hook(panic_info);
         // prev_hook(panic_info);
     }));
+
+    build_mod()
 }

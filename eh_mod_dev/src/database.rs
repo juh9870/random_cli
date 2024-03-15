@@ -1,12 +1,13 @@
-use bimap::BiMap;
 use eh_schema::schema::{DatabaseItem, DatabaseItemId, DatabaseItemWithId};
 use erased_serde::{Serialize, Serializer};
 use std::any::{Any, TypeId};
 use std::cell::{Ref, RefCell, RefMut};
 use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet};
+
 use std::ops::{Deref, Range};
 use std::path::{Path, PathBuf};
+
 use tracing::error_span;
 
 pub trait ErasedDbItem: Serialize + Any {
@@ -47,7 +48,8 @@ const MAPPINGS_BACKUP_NAME: &str = "id_mappings.json5.backup";
 
 pub struct Database {
     pub path: PathBuf,
-    ids: RefCell<HashMap<String, BiMap<String, i32>>>,
+    ids: RefCell<HashMap<String, HashMap<String, i32>>>,
+    used_ids: RefCell<HashMap<String, HashSet<i32>>>,
     available_ids: RefCell<HashMap<TypeId, Vec<Range<i32>>>>,
     default_ids: Vec<Range<i32>>,
     items: HashMap<TypeId, (&'static str, HashMap<i32, RefCell<Box<dyn ErasedDbItem>>>)>,
@@ -81,7 +83,7 @@ impl Database {
         }
 
         let mappings_path = output_path.join(MAPPINGS_NAME);
-        let mappings = mappings_path
+        let mappings: RefCell<HashMap<String, HashMap<String, i32>>> = mappings_path
             .exists()
             .then(|| {
                 let data = fs_err::read_to_string(output_path.join(MAPPINGS_NAME))
@@ -92,8 +94,17 @@ impl Database {
 
         check_no_backup(&output_path.join(MAPPINGS_BACKUP_NAME));
 
+        let used_ids = RefCell::new(
+            mappings
+                .borrow()
+                .iter()
+                .map(|(k, v)| ((k.clone(), v.values().copied().collect::<HashSet<i32>>())))
+                .collect(),
+        );
+
         Self {
             path: output_path.to_path_buf(),
+            used_ids,
             ids: mappings,
             available_ids: Default::default(),
             default_ids: Default::default(),
@@ -142,7 +153,7 @@ impl Database {
         let mut ids_borrow = self.ids.borrow_mut();
         let mapping = ids_borrow.entry(type_name.to_string()).or_default();
 
-        match mapping.get_by_left(&id_str) {
+        match mapping.get(&id_str) {
             None => {
                 drop(ids_borrow);
                 let id = self.next_id_raw::<T>();
@@ -155,6 +166,26 @@ impl Database {
             }
             Some(id) => (*id).into(),
         }
+    }
+
+    /// Forcefully assigns numeric ID to a string
+    pub fn set_id<T: 'static + DatabaseItem>(
+        &self,
+        string_id: impl Into<String>,
+        numeric_id: i32,
+    ) -> DatabaseItemId<T> {
+        let type_name = T::type_name();
+        let mut ids_borrow = self.ids.borrow_mut();
+        let mut used_ids_borrow = self.used_ids.borrow_mut();
+        ids_borrow
+            .entry(type_name.to_string())
+            .or_default()
+            .insert(string_id.into(), numeric_id);
+        used_ids_borrow
+            .entry(type_name.to_string())
+            .or_default()
+            .insert(numeric_id);
+        DatabaseItemId::new(numeric_id)
     }
 
     /// Gets the immutable reference to the item that was previously recorded in database
@@ -218,7 +249,10 @@ impl Database {
     ///
     /// # Panics
     /// All items are stored behind a [RefCell], so regular runtime borrowing rules apply
-    pub fn add_item<T: 'static + DatabaseItemWithId + Any>(&mut self, item: T) -> RefMut<T> {
+    pub fn add_item<T: 'static + DatabaseItemWithId + Any>(
+        &mut self,
+        item: T,
+    ) -> DbInsertionResponse<T> {
         self.add_item_manual(item.id(), item)
     }
 
@@ -232,7 +266,7 @@ impl Database {
         &mut self,
         id: impl DatabaseIdLike<T>,
         item: T,
-    ) -> RefMut<T> {
+    ) -> DbInsertionResponse<T> {
         let id = id.into_id(self);
         let _guard = error_span!("Inserting item", id = id.0, ty = T::type_name()).entered();
 
@@ -242,18 +276,14 @@ impl Database {
             .entry(type_id)
             .or_insert_with(|| (T::type_name(), Default::default()));
 
-        let boxed = match mapping.1.entry(id.0) {
+        match mapping.1.entry(id.0) {
             Entry::Occupied(_) => {
                 panic!("Item with this ID and type is already added");
             }
             Entry::Vacant(entry) => entry.insert(RefCell::new(Box::new(item))),
         };
 
-        RefMut::map(boxed.borrow_mut(), |r| {
-            r.as_any_mut()
-                .downcast_mut::<T>()
-                .expect("Only item of the valid type should be stored in the map")
-        })
+        DbInsertionResponse { id }
     }
 
     /// Saves database to the file system, overriding old files
@@ -293,11 +323,13 @@ impl Database {
 
         for (_, (type_name, files)) in self.items {
             let id_name = self.ids.get_mut().entry(type_name.to_string()).or_default();
+            let inverse: HashMap<_, _> = id_name.iter().map(|(k, v)| (*v, k.clone())).collect();
             for (id, file) in files {
-                let id = id_name
-                    .get_by_right(&id)
+                let id = inverse
+                    .get(&id)
                     .cloned()
-                    .unwrap_or_else(|| format!("auto_{}", id));
+                    .unwrap_or_else(|| format!("auto_{}", id))
+                    .replace(':', "-");
 
                 let file_name = format!("{id}_{type_name}.json");
 
@@ -357,13 +389,14 @@ impl Database {
             .entry(type_id)
             .or_insert_with(|| self.default_ids.clone());
 
-        let mut ids_borrow = self.ids.borrow_mut();
+        let mut ids_borrow = self.used_ids.borrow_mut();
 
         let mappings = ids_borrow.entry(type_name.to_string()).or_default();
 
         while let Some(id) = ids.iter_mut().find_map(|range| range.next()) {
             // Check that ID is not already in use
-            if !mappings.contains_right(&id) {
+            if !mappings.contains(&id) {
+                mappings.insert(id);
                 return id;
             }
         }
@@ -408,5 +441,28 @@ impl<T: 'static + DatabaseItem> DatabaseIdLike<T> for &str {
 impl<T: 'static + DatabaseItem> DatabaseIdLike<T> for String {
     fn into_id(self, database: &Database) -> DatabaseItemId<T> {
         database.id(self)
+    }
+}
+
+pub struct DbInsertionResponse<T: 'static + DatabaseItem> {
+    id: DatabaseItemId<T>,
+}
+
+impl<T: 'static + DatabaseItem> DbInsertionResponse<T> {
+    pub fn item(self, db: &Database) -> Ref<T> {
+        db.get_item::<T>(self.id).unwrap()
+    }
+    pub fn item_mut(self, db: &Database) -> RefMut<T> {
+        db.get_item_mut::<T>(self.id).unwrap()
+    }
+
+    pub fn id(self) -> DatabaseItemId<T> {
+        self.id
+    }
+}
+
+impl<T: 'static + DatabaseItem> DatabaseIdLike<T> for DbInsertionResponse<T> {
+    fn into_id(self, _database: &Database) -> DatabaseItemId<T> {
+        self.id
     }
 }
