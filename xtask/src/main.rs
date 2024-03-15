@@ -29,6 +29,7 @@ fn main() -> anyhow::Result<()> {
             .run()?;
             cmd!(sh, "cargo sort -w").run()?;
             cmd!(sh, "cargo-machete --fix --skip-target-dir").run()?;
+            cmd!(sh, "cargo2nix -o").run()?;
         }
         XtaskCmd::Nix(_) => {
             cmd!(sh, "cargo2nix -o").run()?;
