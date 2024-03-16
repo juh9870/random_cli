@@ -1,5 +1,8 @@
 use crate::database::{database, Database, DatabaseIdLike, DbItem};
-use eh_schema::schema::{ActivationType, BulletBody, BulletController, BulletPrefab, BulletPrefabId, ComponentStats, DamageType, ImpactEffect, ImpactEffectType, Weapon, WeaponClass};
+use eh_schema::schema::{
+    ActivationType, BulletBody, BulletController, BulletPrefab, BulletPrefabId, ComponentStats,
+    DamageType, ImpactEffect, ImpactEffectType, Weapon, WeaponClass,
+};
 
 pub fn build_mod() {
     let db = database("./eh_mod_dev/database");
@@ -17,7 +20,7 @@ fn parametric_ammo(db: Database) {
     let ammo = db.ammunition("juh9870:parametric").edit(|ammo| {
         ammo.body = simple_body(db.id("eh:mine"), 5.0);
 
-        ammo.controller = BulletController::bullet_controller_parametric()
+        ammo.controller = BulletController::parametric()
             .with_x("t * 10")
             .with_y("SIN(t)")
             .into();

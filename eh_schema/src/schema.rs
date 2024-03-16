@@ -1625,7 +1625,7 @@ impl BehaviorNodeRequirementEmpty {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_empty() -> BehaviorNodeRequirementEmpty {
+    pub fn empty() -> BehaviorNodeRequirementEmpty {
         BehaviorNodeRequirementEmpty::new()
     }
 }
@@ -1677,7 +1677,7 @@ impl BehaviorNodeRequirementAny {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_any() -> BehaviorNodeRequirementAny {
+    pub fn any() -> BehaviorNodeRequirementAny {
         BehaviorNodeRequirementAny::new()
     }
 }
@@ -1729,7 +1729,7 @@ impl BehaviorNodeRequirementAll {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_all() -> BehaviorNodeRequirementAll {
+    pub fn all() -> BehaviorNodeRequirementAll {
         BehaviorNodeRequirementAll::new()
     }
 }
@@ -1781,7 +1781,7 @@ impl BehaviorNodeRequirementNone {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_none() -> BehaviorNodeRequirementNone {
+    pub fn none() -> BehaviorNodeRequirementNone {
         BehaviorNodeRequirementNone::new()
     }
 }
@@ -1834,7 +1834,7 @@ impl BehaviorNodeRequirementAiLevel {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_ai_level() -> BehaviorNodeRequirementAiLevel {
+    pub fn ai_level() -> BehaviorNodeRequirementAiLevel {
         BehaviorNodeRequirementAiLevel::new()
     }
 }
@@ -1887,7 +1887,7 @@ impl BehaviorNodeRequirementMinAiLevel {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_min_ai_level() -> BehaviorNodeRequirementMinAiLevel {
+    pub fn min_ai_level() -> BehaviorNodeRequirementMinAiLevel {
         BehaviorNodeRequirementMinAiLevel::new()
     }
 }
@@ -1933,7 +1933,7 @@ impl BehaviorNodeRequirementSizeClass {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_size_class() -> BehaviorNodeRequirementSizeClass {
+    pub fn size_class() -> BehaviorNodeRequirementSizeClass {
         BehaviorNodeRequirementSizeClass::new()
     }
 }
@@ -1979,7 +1979,7 @@ impl BehaviorNodeRequirementHasDevice {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_has_device() -> BehaviorNodeRequirementHasDevice {
+    pub fn has_device() -> BehaviorNodeRequirementHasDevice {
         BehaviorNodeRequirementHasDevice::new()
     }
 }
@@ -2013,7 +2013,7 @@ impl BehaviorNodeRequirementHasDrones {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_has_drones() -> BehaviorNodeRequirementHasDrones {
+    pub fn has_drones() -> BehaviorNodeRequirementHasDrones {
         BehaviorNodeRequirementHasDrones::new()
     }
 }
@@ -2047,7 +2047,7 @@ impl BehaviorNodeRequirementHasAnyWeapon {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_has_any_weapon() -> BehaviorNodeRequirementHasAnyWeapon {
+    pub fn has_any_weapon() -> BehaviorNodeRequirementHasAnyWeapon {
         BehaviorNodeRequirementHasAnyWeapon::new()
     }
 }
@@ -2081,7 +2081,7 @@ impl BehaviorNodeRequirementCanRepairAllies {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_can_repair_allies() -> BehaviorNodeRequirementCanRepairAllies {
+    pub fn can_repair_allies() -> BehaviorNodeRequirementCanRepairAllies {
         BehaviorNodeRequirementCanRepairAllies::new()
     }
 }
@@ -2115,8 +2115,7 @@ impl BehaviorNodeRequirementHasHighRecoilWeapon {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_has_high_recoil_weapon(
-    ) -> BehaviorNodeRequirementHasHighRecoilWeapon {
+    pub fn has_high_recoil_weapon() -> BehaviorNodeRequirementHasHighRecoilWeapon {
         BehaviorNodeRequirementHasHighRecoilWeapon::new()
     }
 }
@@ -2150,8 +2149,7 @@ impl BehaviorNodeRequirementHasChargeableWeapon {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_has_chargeable_weapon(
-    ) -> BehaviorNodeRequirementHasChargeableWeapon {
+    pub fn has_chargeable_weapon() -> BehaviorNodeRequirementHasChargeableWeapon {
         BehaviorNodeRequirementHasChargeableWeapon::new()
     }
 }
@@ -2185,8 +2183,7 @@ impl BehaviorNodeRequirementHasRemotelyControlledWeapon {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_has_remotely_controlled_weapon(
-    ) -> BehaviorNodeRequirementHasRemotelyControlledWeapon {
+    pub fn has_remotely_controlled_weapon() -> BehaviorNodeRequirementHasRemotelyControlledWeapon {
         BehaviorNodeRequirementHasRemotelyControlledWeapon::new()
     }
 }
@@ -2242,8 +2239,7 @@ impl BehaviorNodeRequirementHasLongRangeWeapon {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_has_long_range_weapon(
-    ) -> BehaviorNodeRequirementHasLongRangeWeapon {
+    pub fn has_long_range_weapon() -> BehaviorNodeRequirementHasLongRangeWeapon {
         BehaviorNodeRequirementHasLongRangeWeapon::new()
     }
 }
@@ -2277,7 +2273,7 @@ impl BehaviorNodeRequirementHasEngine {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_has_engine() -> BehaviorNodeRequirementHasEngine {
+    pub fn has_engine() -> BehaviorNodeRequirementHasEngine {
         BehaviorNodeRequirementHasEngine::new()
     }
 }
@@ -2311,7 +2307,7 @@ impl BehaviorNodeRequirementIsDrone {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_is_drone() -> BehaviorNodeRequirementIsDrone {
+    pub fn is_drone() -> BehaviorNodeRequirementIsDrone {
         BehaviorNodeRequirementIsDrone::new()
     }
 }
@@ -2365,8 +2361,7 @@ impl BehaviorNodeRequirementHasKineticResistance {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_has_kinetic_resistance(
-    ) -> BehaviorNodeRequirementHasKineticResistance {
+    pub fn has_kinetic_resistance() -> BehaviorNodeRequirementHasKineticResistance {
         BehaviorNodeRequirementHasKineticResistance::new()
     }
 }
@@ -2420,8 +2415,7 @@ impl BehaviorNodeRequirementHasHighManeuverability {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_has_high_maneuverability(
-    ) -> BehaviorNodeRequirementHasHighManeuverability {
+    pub fn has_high_maneuverability() -> BehaviorNodeRequirementHasHighManeuverability {
         BehaviorNodeRequirementHasHighManeuverability::new()
     }
 }
@@ -2477,8 +2471,7 @@ impl BehaviorNodeRequirementHasHighRammingDamage {
     }
 }
 impl BehaviorNodeRequirement {
-    pub fn behavior_node_requirement_has_high_ramming_damage(
-    ) -> BehaviorNodeRequirementHasHighRammingDamage {
+    pub fn has_high_ramming_damage() -> BehaviorNodeRequirementHasHighRammingDamage {
         BehaviorNodeRequirementHasHighRammingDamage::new()
     }
 }
@@ -2797,7 +2790,7 @@ impl BehaviorTreeNodeSuccess {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_success() -> BehaviorTreeNodeSuccess {
+    pub fn success() -> BehaviorTreeNodeSuccess {
         BehaviorTreeNodeSuccess::new()
     }
 }
@@ -2847,7 +2840,7 @@ impl BehaviorTreeNodeFailure {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_failure() -> BehaviorTreeNodeFailure {
+    pub fn failure() -> BehaviorTreeNodeFailure {
         BehaviorTreeNodeFailure::new()
     }
 }
@@ -2907,7 +2900,7 @@ impl BehaviorTreeNodeSubTree {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_sub_tree() -> BehaviorTreeNodeSubTree {
+    pub fn sub_tree() -> BehaviorTreeNodeSubTree {
         BehaviorTreeNodeSubTree::new()
     }
 }
@@ -2967,7 +2960,7 @@ impl BehaviorTreeNodeSelector {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_selector() -> BehaviorTreeNodeSelector {
+    pub fn selector() -> BehaviorTreeNodeSelector {
         BehaviorTreeNodeSelector::new()
     }
 }
@@ -3027,7 +3020,7 @@ impl BehaviorTreeNodeSequence {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_sequence() -> BehaviorTreeNodeSequence {
+    pub fn sequence() -> BehaviorTreeNodeSequence {
         BehaviorTreeNodeSequence::new()
     }
 }
@@ -3087,7 +3080,7 @@ impl BehaviorTreeNodeParallel {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_parallel() -> BehaviorTreeNodeParallel {
+    pub fn parallel() -> BehaviorTreeNodeParallel {
         BehaviorTreeNodeParallel::new()
     }
 }
@@ -3167,7 +3160,7 @@ impl BehaviorTreeNodeRandomSelector {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_random_selector() -> BehaviorTreeNodeRandomSelector {
+    pub fn random_selector() -> BehaviorTreeNodeRandomSelector {
         BehaviorTreeNodeRandomSelector::new()
     }
 }
@@ -3227,7 +3220,7 @@ impl BehaviorTreeNodeInvertor {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_invertor() -> BehaviorTreeNodeInvertor {
+    pub fn invertor() -> BehaviorTreeNodeInvertor {
         BehaviorTreeNodeInvertor::new()
     }
 }
@@ -3330,7 +3323,7 @@ impl BehaviorTreeNodeCooldown {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_cooldown() -> BehaviorTreeNodeCooldown {
+    pub fn cooldown() -> BehaviorTreeNodeCooldown {
         BehaviorTreeNodeCooldown::new()
     }
 }
@@ -3413,7 +3406,7 @@ impl BehaviorTreeNodeExecute {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_execute() -> BehaviorTreeNodeExecute {
+    pub fn execute() -> BehaviorTreeNodeExecute {
         BehaviorTreeNodeExecute::new()
     }
 }
@@ -3473,7 +3466,7 @@ impl BehaviorTreeNodeParallelSequence {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_parallel_sequence() -> BehaviorTreeNodeParallelSequence {
+    pub fn parallel_sequence() -> BehaviorTreeNodeParallelSequence {
         BehaviorTreeNodeParallelSequence::new()
     }
 }
@@ -3533,7 +3526,7 @@ impl BehaviorTreeNodePreserveTarget {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_preserve_target() -> BehaviorTreeNodePreserveTarget {
+    pub fn preserve_target() -> BehaviorTreeNodePreserveTarget {
         BehaviorTreeNodePreserveTarget::new()
     }
 }
@@ -3593,7 +3586,7 @@ impl BehaviorTreeNodeIfThenElse {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_if_then_else() -> BehaviorTreeNodeIfThenElse {
+    pub fn if_then_else() -> BehaviorTreeNodeIfThenElse {
         BehaviorTreeNodeIfThenElse::new()
     }
 }
@@ -3672,7 +3665,7 @@ impl BehaviorTreeNodeHasEnoughEnergy {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_has_enough_energy() -> BehaviorTreeNodeHasEnoughEnergy {
+    pub fn has_enough_energy() -> BehaviorTreeNodeHasEnoughEnergy {
         BehaviorTreeNodeHasEnoughEnergy::new()
     }
 }
@@ -3751,7 +3744,7 @@ impl BehaviorTreeNodeIsLowOnHp {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_is_low_on_hp() -> BehaviorTreeNodeIsLowOnHp {
+    pub fn is_low_on_hp() -> BehaviorTreeNodeIsLowOnHp {
         BehaviorTreeNodeIsLowOnHp::new()
     }
 }
@@ -3801,7 +3794,7 @@ impl BehaviorTreeNodeIsControledByPlayer {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_is_controled_by_player() -> BehaviorTreeNodeIsControledByPlayer {
+    pub fn is_controled_by_player() -> BehaviorTreeNodeIsControledByPlayer {
         BehaviorTreeNodeIsControledByPlayer::new()
     }
 }
@@ -3871,7 +3864,7 @@ impl BehaviorTreeNodeHasIncomingThreat {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_has_incoming_threat() -> BehaviorTreeNodeHasIncomingThreat {
+    pub fn has_incoming_threat() -> BehaviorTreeNodeHasIncomingThreat {
         BehaviorTreeNodeHasIncomingThreat::new()
     }
 }
@@ -3921,7 +3914,7 @@ impl BehaviorTreeNodeHasAdditionalTargets {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_has_additional_targets() -> BehaviorTreeNodeHasAdditionalTargets {
+    pub fn has_additional_targets() -> BehaviorTreeNodeHasAdditionalTargets {
         BehaviorTreeNodeHasAdditionalTargets::new()
     }
 }
@@ -4000,7 +3993,7 @@ impl BehaviorTreeNodeIsFasterThanTarget {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_is_faster_than_target() -> BehaviorTreeNodeIsFasterThanTarget {
+    pub fn is_faster_than_target() -> BehaviorTreeNodeIsFasterThanTarget {
         BehaviorTreeNodeIsFasterThanTarget::new()
     }
 }
@@ -4050,7 +4043,7 @@ impl BehaviorTreeNodeHasMainTarget {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_has_main_target() -> BehaviorTreeNodeHasMainTarget {
+    pub fn has_main_target() -> BehaviorTreeNodeHasMainTarget {
         BehaviorTreeNodeHasMainTarget::new()
     }
 }
@@ -4100,7 +4093,7 @@ impl BehaviorTreeNodeMainTargetIsAlly {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_main_target_is_ally() -> BehaviorTreeNodeMainTargetIsAlly {
+    pub fn main_target_is_ally() -> BehaviorTreeNodeMainTargetIsAlly {
         BehaviorTreeNodeMainTargetIsAlly::new()
     }
 }
@@ -4150,7 +4143,7 @@ impl BehaviorTreeNodeMainTargetIsEnemy {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_main_target_is_enemy() -> BehaviorTreeNodeMainTargetIsEnemy {
+    pub fn main_target_is_enemy() -> BehaviorTreeNodeMainTargetIsEnemy {
         BehaviorTreeNodeMainTargetIsEnemy::new()
     }
 }
@@ -4229,7 +4222,7 @@ impl BehaviorTreeNodeMainTargetLowHp {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_main_target_low_hp() -> BehaviorTreeNodeMainTargetLowHp {
+    pub fn main_target_low_hp() -> BehaviorTreeNodeMainTargetLowHp {
         BehaviorTreeNodeMainTargetLowHp::new()
     }
 }
@@ -4309,8 +4302,7 @@ impl BehaviorTreeNodeMainTargetWithinAttackRange {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_main_target_within_attack_range(
-    ) -> BehaviorTreeNodeMainTargetWithinAttackRange {
+    pub fn main_target_within_attack_range() -> BehaviorTreeNodeMainTargetWithinAttackRange {
         BehaviorTreeNodeMainTargetWithinAttackRange::new()
     }
 }
@@ -4360,7 +4352,7 @@ impl BehaviorTreeNodeHasMothership {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_has_mothership() -> BehaviorTreeNodeHasMothership {
+    pub fn has_mothership() -> BehaviorTreeNodeHasMothership {
         BehaviorTreeNodeHasMothership::new()
     }
 }
@@ -4431,7 +4423,7 @@ impl BehaviorTreeNodeTargetDistance {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_target_distance() -> BehaviorTreeNodeTargetDistance {
+    pub fn target_distance() -> BehaviorTreeNodeTargetDistance {
         BehaviorTreeNodeTargetDistance::new()
     }
 }
@@ -4510,7 +4502,7 @@ impl BehaviorTreeNodeHasLongerAttackRange {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_has_longer_attack_range() -> BehaviorTreeNodeHasLongerAttackRange {
+    pub fn has_longer_attack_range() -> BehaviorTreeNodeHasLongerAttackRange {
         BehaviorTreeNodeHasLongerAttackRange::new()
     }
 }
@@ -4619,7 +4611,7 @@ impl BehaviorTreeNodeFindEnemy {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_find_enemy() -> BehaviorTreeNodeFindEnemy {
+    pub fn find_enemy() -> BehaviorTreeNodeFindEnemy {
         BehaviorTreeNodeFindEnemy::new()
     }
 }
@@ -4727,7 +4719,7 @@ impl BehaviorTreeNodeMoveToAttackRange {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_move_to_attack_range() -> BehaviorTreeNodeMoveToAttackRange {
+    pub fn move_to_attack_range() -> BehaviorTreeNodeMoveToAttackRange {
         BehaviorTreeNodeMoveToAttackRange::new()
     }
 }
@@ -4787,7 +4779,7 @@ impl BehaviorTreeNodeAttackMainTarget {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_attack_main_target() -> BehaviorTreeNodeAttackMainTarget {
+    pub fn attack_main_target() -> BehaviorTreeNodeAttackMainTarget {
         BehaviorTreeNodeAttackMainTarget::new()
     }
 }
@@ -4847,7 +4839,7 @@ impl BehaviorTreeNodeSelectWeapon {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_select_weapon() -> BehaviorTreeNodeSelectWeapon {
+    pub fn select_weapon() -> BehaviorTreeNodeSelectWeapon {
         BehaviorTreeNodeSelectWeapon::new()
     }
 }
@@ -4897,7 +4889,7 @@ impl BehaviorTreeNodeSpawnDrones {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_spawn_drones() -> BehaviorTreeNodeSpawnDrones {
+    pub fn spawn_drones() -> BehaviorTreeNodeSpawnDrones {
         BehaviorTreeNodeSpawnDrones::new()
     }
 }
@@ -4957,7 +4949,7 @@ impl BehaviorTreeNodeRam {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_ram() -> BehaviorTreeNodeRam {
+    pub fn ram() -> BehaviorTreeNodeRam {
         BehaviorTreeNodeRam::new()
     }
 }
@@ -5017,7 +5009,7 @@ impl BehaviorTreeNodeDetonateShip {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_detonate_ship() -> BehaviorTreeNodeDetonateShip {
+    pub fn detonate_ship() -> BehaviorTreeNodeDetonateShip {
         BehaviorTreeNodeDetonateShip::new()
     }
 }
@@ -5067,7 +5059,7 @@ impl BehaviorTreeNodeVanish {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_vanish() -> BehaviorTreeNodeVanish {
+    pub fn vanish() -> BehaviorTreeNodeVanish {
         BehaviorTreeNodeVanish::new()
     }
 }
@@ -5176,7 +5168,7 @@ impl BehaviorTreeNodeMaintainAttackRange {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_maintain_attack_range() -> BehaviorTreeNodeMaintainAttackRange {
+    pub fn maintain_attack_range() -> BehaviorTreeNodeMaintainAttackRange {
         BehaviorTreeNodeMaintainAttackRange::new()
     }
 }
@@ -5256,7 +5248,7 @@ impl BehaviorTreeNodeWait {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_wait() -> BehaviorTreeNodeWait {
+    pub fn wait() -> BehaviorTreeNodeWait {
         BehaviorTreeNodeWait::new()
     }
 }
@@ -5306,7 +5298,7 @@ impl BehaviorTreeNodeLookAtTarget {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_look_at_target() -> BehaviorTreeNodeLookAtTarget {
+    pub fn look_at_target() -> BehaviorTreeNodeLookAtTarget {
         BehaviorTreeNodeLookAtTarget::new()
     }
 }
@@ -5376,8 +5368,7 @@ impl BehaviorTreeNodeLookForAdditionalTargets {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_look_for_additional_targets(
-    ) -> BehaviorTreeNodeLookForAdditionalTargets {
+    pub fn look_for_additional_targets() -> BehaviorTreeNodeLookForAdditionalTargets {
         BehaviorTreeNodeLookForAdditionalTargets::new()
     }
 }
@@ -5447,7 +5438,7 @@ impl BehaviorTreeNodeLookForThreats {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_look_for_threats() -> BehaviorTreeNodeLookForThreats {
+    pub fn look_for_threats() -> BehaviorTreeNodeLookForThreats {
         BehaviorTreeNodeLookForThreats::new()
     }
 }
@@ -5527,8 +5518,7 @@ impl BehaviorTreeNodeMatchVelocityWithTarget {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_match_velocity_with_target() -> BehaviorTreeNodeMatchVelocityWithTarget
-    {
+    pub fn match_velocity_with_target() -> BehaviorTreeNodeMatchVelocityWithTarget {
         BehaviorTreeNodeMatchVelocityWithTarget::new()
     }
 }
@@ -5588,7 +5578,7 @@ impl BehaviorTreeNodeActivateDevice {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_activate_device() -> BehaviorTreeNodeActivateDevice {
+    pub fn activate_device() -> BehaviorTreeNodeActivateDevice {
         BehaviorTreeNodeActivateDevice::new()
     }
 }
@@ -5695,7 +5685,7 @@ impl BehaviorTreeNodeRechargeEnergy {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_recharge_energy() -> BehaviorTreeNodeRechargeEnergy {
+    pub fn recharge_energy() -> BehaviorTreeNodeRechargeEnergy {
         BehaviorTreeNodeRechargeEnergy::new()
     }
 }
@@ -5745,7 +5735,7 @@ impl BehaviorTreeNodeSustainAim {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_sustain_aim() -> BehaviorTreeNodeSustainAim {
+    pub fn sustain_aim() -> BehaviorTreeNodeSustainAim {
         BehaviorTreeNodeSustainAim::new()
     }
 }
@@ -5795,7 +5785,7 @@ impl BehaviorTreeNodeChargeWeapons {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_charge_weapons() -> BehaviorTreeNodeChargeWeapons {
+    pub fn charge_weapons() -> BehaviorTreeNodeChargeWeapons {
         BehaviorTreeNodeChargeWeapons::new()
     }
 }
@@ -5845,7 +5835,7 @@ impl BehaviorTreeNodeChase {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_chase() -> BehaviorTreeNodeChase {
+    pub fn chase() -> BehaviorTreeNodeChase {
         BehaviorTreeNodeChase::new()
     }
 }
@@ -5895,7 +5885,7 @@ impl BehaviorTreeNodeAvoidThreats {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_avoid_threats() -> BehaviorTreeNodeAvoidThreats {
+    pub fn avoid_threats() -> BehaviorTreeNodeAvoidThreats {
         BehaviorTreeNodeAvoidThreats::new()
     }
 }
@@ -5975,7 +5965,7 @@ impl BehaviorTreeNodeSlowDown {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_slow_down() -> BehaviorTreeNodeSlowDown {
+    pub fn slow_down() -> BehaviorTreeNodeSlowDown {
         BehaviorTreeNodeSlowDown::new()
     }
 }
@@ -6025,7 +6015,7 @@ impl BehaviorTreeNodeUseRecoil {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_use_recoil() -> BehaviorTreeNodeUseRecoil {
+    pub fn use_recoil() -> BehaviorTreeNodeUseRecoil {
         BehaviorTreeNodeUseRecoil::new()
     }
 }
@@ -6075,8 +6065,7 @@ impl BehaviorTreeNodeDefendWithFronalShield {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_defend_with_fronal_shield() -> BehaviorTreeNodeDefendWithFronalShield
-    {
+    pub fn defend_with_fronal_shield() -> BehaviorTreeNodeDefendWithFronalShield {
         BehaviorTreeNodeDefendWithFronalShield::new()
     }
 }
@@ -6126,7 +6115,7 @@ impl BehaviorTreeNodeTrackControllableAmmo {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_track_controllable_ammo() -> BehaviorTreeNodeTrackControllableAmmo {
+    pub fn track_controllable_ammo() -> BehaviorTreeNodeTrackControllableAmmo {
         BehaviorTreeNodeTrackControllableAmmo::new()
     }
 }
@@ -6233,7 +6222,7 @@ impl BehaviorTreeNodeKeepDistance {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_keep_distance() -> BehaviorTreeNodeKeepDistance {
+    pub fn keep_distance() -> BehaviorTreeNodeKeepDistance {
         BehaviorTreeNodeKeepDistance::new()
     }
 }
@@ -6283,7 +6272,7 @@ impl BehaviorTreeNodeForgetMainTarget {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_forget_main_target() -> BehaviorTreeNodeForgetMainTarget {
+    pub fn forget_main_target() -> BehaviorTreeNodeForgetMainTarget {
         BehaviorTreeNodeForgetMainTarget::new()
     }
 }
@@ -6333,8 +6322,7 @@ impl BehaviorTreeNodeEscapeTargetAttackRadius {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_escape_target_attack_radius(
-    ) -> BehaviorTreeNodeEscapeTargetAttackRadius {
+    pub fn escape_target_attack_radius() -> BehaviorTreeNodeEscapeTargetAttackRadius {
         BehaviorTreeNodeEscapeTargetAttackRadius::new()
     }
 }
@@ -6394,8 +6382,7 @@ impl BehaviorTreeNodeAttackAdditionalTargets {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_attack_additional_targets() -> BehaviorTreeNodeAttackAdditionalTargets
-    {
+    pub fn attack_additional_targets() -> BehaviorTreeNodeAttackAdditionalTargets {
         BehaviorTreeNodeAttackAdditionalTargets::new()
     }
 }
@@ -6445,7 +6432,7 @@ impl BehaviorTreeNodeTargetAllyStarbase {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_target_ally_starbase() -> BehaviorTreeNodeTargetAllyStarbase {
+    pub fn target_ally_starbase() -> BehaviorTreeNodeTargetAllyStarbase {
         BehaviorTreeNodeTargetAllyStarbase::new()
     }
 }
@@ -6495,7 +6482,7 @@ impl BehaviorTreeNodeTargetEnemyStarbase {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_target_enemy_starbase() -> BehaviorTreeNodeTargetEnemyStarbase {
+    pub fn target_enemy_starbase() -> BehaviorTreeNodeTargetEnemyStarbase {
         BehaviorTreeNodeTargetEnemyStarbase::new()
     }
 }
@@ -6545,7 +6532,7 @@ impl BehaviorTreeNodeBypassObstacles {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_bypass_obstacles() -> BehaviorTreeNodeBypassObstacles {
+    pub fn bypass_obstacles() -> BehaviorTreeNodeBypassObstacles {
         BehaviorTreeNodeBypassObstacles::new()
     }
 }
@@ -6595,7 +6582,7 @@ impl BehaviorTreeNodeAttackTurretTargets {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_attack_turret_targets() -> BehaviorTreeNodeAttackTurretTargets {
+    pub fn attack_turret_targets() -> BehaviorTreeNodeAttackTurretTargets {
         BehaviorTreeNodeAttackTurretTargets::new()
     }
 }
@@ -6674,7 +6661,7 @@ impl BehaviorTreeNodeEnginePropulsionForce {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_engine_propulsion_force() -> BehaviorTreeNodeEnginePropulsionForce {
+    pub fn engine_propulsion_force() -> BehaviorTreeNodeEnginePropulsionForce {
         BehaviorTreeNodeEnginePropulsionForce::new()
     }
 }
@@ -6724,7 +6711,7 @@ impl BehaviorTreeNodeMotherShipRetreated {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_mother_ship_retreated() -> BehaviorTreeNodeMotherShipRetreated {
+    pub fn mother_ship_retreated() -> BehaviorTreeNodeMotherShipRetreated {
         BehaviorTreeNodeMotherShipRetreated::new()
     }
 }
@@ -6774,7 +6761,7 @@ impl BehaviorTreeNodeMotherShipDestroyed {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_mother_ship_destroyed() -> BehaviorTreeNodeMotherShipDestroyed {
+    pub fn mother_ship_destroyed() -> BehaviorTreeNodeMotherShipDestroyed {
         BehaviorTreeNodeMotherShipDestroyed::new()
     }
 }
@@ -6881,7 +6868,7 @@ impl BehaviorTreeNodeFlyAroundMothership {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_fly_around_mothership() -> BehaviorTreeNodeFlyAroundMothership {
+    pub fn fly_around_mothership() -> BehaviorTreeNodeFlyAroundMothership {
         BehaviorTreeNodeFlyAroundMothership::new()
     }
 }
@@ -6931,7 +6918,7 @@ impl BehaviorTreeNodeGoBerserk {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_go_berserk() -> BehaviorTreeNodeGoBerserk {
+    pub fn go_berserk() -> BehaviorTreeNodeGoBerserk {
         BehaviorTreeNodeGoBerserk::new()
     }
 }
@@ -6981,7 +6968,7 @@ impl BehaviorTreeNodeTargetMothership {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_target_mothership() -> BehaviorTreeNodeTargetMothership {
+    pub fn target_mothership() -> BehaviorTreeNodeTargetMothership {
         BehaviorTreeNodeTargetMothership::new()
     }
 }
@@ -7060,7 +7047,7 @@ impl BehaviorTreeNodeMothershipLowHp {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_mothership_low_hp() -> BehaviorTreeNodeMothershipLowHp {
+    pub fn mothership_low_hp() -> BehaviorTreeNodeMothershipLowHp {
         BehaviorTreeNodeMothershipLowHp::new()
     }
 }
@@ -7131,8 +7118,7 @@ impl BehaviorTreeNodeMothershipDistanceExceeded {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_mothership_distance_exceeded(
-    ) -> BehaviorTreeNodeMothershipDistanceExceeded {
+    pub fn mothership_distance_exceeded() -> BehaviorTreeNodeMothershipDistanceExceeded {
         BehaviorTreeNodeMothershipDistanceExceeded::new()
     }
 }
@@ -7182,7 +7168,7 @@ impl BehaviorTreeNodeMakeTargetMothership {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_make_target_mothership() -> BehaviorTreeNodeMakeTargetMothership {
+    pub fn make_target_mothership() -> BehaviorTreeNodeMakeTargetMothership {
         BehaviorTreeNodeMakeTargetMothership::new()
     }
 }
@@ -7252,7 +7238,7 @@ impl BehaviorTreeNodeShowMessage {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_show_message() -> BehaviorTreeNodeShowMessage {
+    pub fn show_message() -> BehaviorTreeNodeShowMessage {
         BehaviorTreeNodeShowMessage::new()
     }
 }
@@ -7312,7 +7298,7 @@ impl BehaviorTreeNodeDebugLog {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_debug_log() -> BehaviorTreeNodeDebugLog {
+    pub fn debug_log() -> BehaviorTreeNodeDebugLog {
         BehaviorTreeNodeDebugLog::new()
     }
 }
@@ -7382,7 +7368,7 @@ impl BehaviorTreeNodeSetValue {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_set_value() -> BehaviorTreeNodeSetValue {
+    pub fn set_value() -> BehaviorTreeNodeSetValue {
         BehaviorTreeNodeSetValue::new()
     }
 }
@@ -7442,7 +7428,7 @@ impl BehaviorTreeNodeGetValue {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_get_value() -> BehaviorTreeNodeGetValue {
+    pub fn get_value() -> BehaviorTreeNodeGetValue {
         BehaviorTreeNodeGetValue::new()
     }
 }
@@ -7502,7 +7488,7 @@ impl BehaviorTreeNodeSendMessage {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_send_message() -> BehaviorTreeNodeSendMessage {
+    pub fn send_message() -> BehaviorTreeNodeSendMessage {
         BehaviorTreeNodeSendMessage::new()
     }
 }
@@ -7562,7 +7548,7 @@ impl BehaviorTreeNodeMessageReceived {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_message_received() -> BehaviorTreeNodeMessageReceived {
+    pub fn message_received() -> BehaviorTreeNodeMessageReceived {
         BehaviorTreeNodeMessageReceived::new()
     }
 }
@@ -7612,7 +7598,7 @@ impl BehaviorTreeNodeTargetMessageSender {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_target_message_sender() -> BehaviorTreeNodeTargetMessageSender {
+    pub fn target_message_sender() -> BehaviorTreeNodeTargetMessageSender {
         BehaviorTreeNodeTargetMessageSender::new()
     }
 }
@@ -7672,7 +7658,7 @@ impl BehaviorTreeNodeSaveTarget {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_save_target() -> BehaviorTreeNodeSaveTarget {
+    pub fn save_target() -> BehaviorTreeNodeSaveTarget {
         BehaviorTreeNodeSaveTarget::new()
     }
 }
@@ -7732,7 +7718,7 @@ impl BehaviorTreeNodeLoadTarget {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_load_target() -> BehaviorTreeNodeLoadTarget {
+    pub fn load_target() -> BehaviorTreeNodeLoadTarget {
         BehaviorTreeNodeLoadTarget::new()
     }
 }
@@ -7792,7 +7778,7 @@ impl BehaviorTreeNodeHasSavedTarget {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_has_saved_target() -> BehaviorTreeNodeHasSavedTarget {
+    pub fn has_saved_target() -> BehaviorTreeNodeHasSavedTarget {
         BehaviorTreeNodeHasSavedTarget::new()
     }
 }
@@ -7852,7 +7838,7 @@ impl BehaviorTreeNodeForgetSavedTarget {
     }
 }
 impl BehaviorTreeNode {
-    pub fn behavior_tree_node_forget_saved_target() -> BehaviorTreeNodeForgetSavedTarget {
+    pub fn forget_saved_target() -> BehaviorTreeNodeForgetSavedTarget {
         BehaviorTreeNodeForgetSavedTarget::new()
     }
 }
@@ -9290,7 +9276,7 @@ impl LootContentNone {
     }
 }
 impl LootContent {
-    pub fn loot_content_none() -> LootContentNone {
+    pub fn none() -> LootContentNone {
         LootContentNone::new()
     }
 }
@@ -9355,7 +9341,7 @@ impl LootContentSomeMoney {
     }
 }
 impl LootContent {
-    pub fn loot_content_some_money() -> LootContentSomeMoney {
+    pub fn some_money() -> LootContentSomeMoney {
         LootContentSomeMoney::new()
     }
 }
@@ -9448,7 +9434,7 @@ impl LootContentFuel {
     }
 }
 impl LootContent {
-    pub fn loot_content_fuel() -> LootContentFuel {
+    pub fn fuel() -> LootContentFuel {
         LootContentFuel::new()
     }
 }
@@ -9541,7 +9527,7 @@ impl LootContentMoney {
     }
 }
 impl LootContent {
-    pub fn loot_content_money() -> LootContentMoney {
+    pub fn money() -> LootContentMoney {
         LootContentMoney::new()
     }
 }
@@ -9634,7 +9620,7 @@ impl LootContentStars {
     }
 }
 impl LootContent {
-    pub fn loot_content_stars() -> LootContentStars {
+    pub fn stars() -> LootContentStars {
         LootContentStars::new()
     }
 }
@@ -9668,7 +9654,7 @@ impl LootContentStarMap {
     }
 }
 impl LootContent {
-    pub fn loot_content_star_map() -> LootContentStarMap {
+    pub fn star_map() -> LootContentStarMap {
         LootContentStarMap::new()
     }
 }
@@ -9799,7 +9785,7 @@ impl LootContentRandomComponents {
     }
 }
 impl LootContent {
-    pub fn loot_content_random_components() -> LootContentRandomComponents {
+    pub fn random_components() -> LootContentRandomComponents {
         LootContentRandomComponents::new()
     }
 }
@@ -9902,7 +9888,7 @@ impl LootContentRandomItems {
     }
 }
 impl LootContent {
-    pub fn loot_content_random_items() -> LootContentRandomItems {
+    pub fn random_items() -> LootContentRandomItems {
         LootContentRandomItems::new()
     }
 }
@@ -9948,7 +9934,7 @@ impl LootContentAllItems {
     }
 }
 impl LootContent {
-    pub fn loot_content_all_items() -> LootContentAllItems {
+    pub fn all_items() -> LootContentAllItems {
         LootContentAllItems::new()
     }
 }
@@ -9994,7 +9980,7 @@ impl LootContentItemsWithChance {
     }
 }
 impl LootContent {
-    pub fn loot_content_items_with_chance() -> LootContentItemsWithChance {
+    pub fn items_with_chance() -> LootContentItemsWithChance {
         LootContentItemsWithChance::new()
     }
 }
@@ -10092,7 +10078,7 @@ impl LootContentQuestItem {
     }
 }
 impl LootContent {
-    pub fn loot_content_quest_item(r#item_id: QuestItemId) -> LootContentQuestItem {
+    pub fn quest_item(r#item_id: QuestItemId) -> LootContentQuestItem {
         LootContentQuestItem::new(r#item_id)
     }
 }
@@ -10131,7 +10117,7 @@ impl LootContentShip {
     }
 }
 impl LootContent {
-    pub fn loot_content_ship(r#item_id: ShipBuildId) -> LootContentShip {
+    pub fn ship(r#item_id: ShipBuildId) -> LootContentShip {
         LootContentShip::new(r#item_id)
     }
 }
@@ -10170,7 +10156,7 @@ impl LootContentEmptyShip {
     }
 }
 impl LootContent {
-    pub fn loot_content_empty_ship(r#item_id: ShipId) -> LootContentEmptyShip {
+    pub fn empty_ship(r#item_id: ShipId) -> LootContentEmptyShip {
         LootContentEmptyShip::new(r#item_id)
     }
 }
@@ -10268,7 +10254,7 @@ impl LootContentComponent {
     }
 }
 impl LootContent {
-    pub fn loot_content_component(r#item_id: ComponentId) -> LootContentComponent {
+    pub fn component(r#item_id: ComponentId) -> LootContentComponent {
         LootContentComponent::new(r#item_id)
     }
 }
@@ -10307,7 +10293,7 @@ impl LootContentBlueprint {
     }
 }
 impl LootContent {
-    pub fn loot_content_blueprint(r#item_id: TechnologyId) -> LootContentBlueprint {
+    pub fn blueprint(r#item_id: TechnologyId) -> LootContentBlueprint {
         LootContentBlueprint::new(r#item_id)
     }
 }
@@ -10410,7 +10396,7 @@ impl LootContentResearchPoints {
     }
 }
 impl LootContent {
-    pub fn loot_content_research_points() -> LootContentResearchPoints {
+    pub fn research_points() -> LootContentResearchPoints {
         LootContentResearchPoints::new()
     }
 }
@@ -10508,7 +10494,7 @@ impl LootContentSatellite {
     }
 }
 impl LootContent {
-    pub fn loot_content_satellite(r#item_id: SatelliteId) -> LootContentSatellite {
+    pub fn satellite(r#item_id: SatelliteId) -> LootContentSatellite {
         LootContentSatellite::new(r#item_id)
     }
 }
@@ -10807,7 +10793,7 @@ impl NodeUndefined {
     }
 }
 impl Node {
-    pub fn node_undefined() -> NodeUndefined {
+    pub fn undefined() -> NodeUndefined {
         NodeUndefined::new()
     }
 }
@@ -10872,7 +10858,7 @@ impl NodeComingSoon {
     }
 }
 impl Node {
-    pub fn node_coming_soon() -> NodeComingSoon {
+    pub fn coming_soon() -> NodeComingSoon {
         NodeComingSoon::new()
     }
 }
@@ -10997,7 +10983,7 @@ impl NodeShowDialog {
     }
 }
 impl Node {
-    pub fn node_show_dialog() -> NodeShowDialog {
+    pub fn show_dialog() -> NodeShowDialog {
         NodeShowDialog::new()
     }
 }
@@ -11128,7 +11114,7 @@ impl NodeOpenShipyard {
     }
 }
 impl Node {
-    pub fn node_open_shipyard() -> NodeOpenShipyard {
+    pub fn open_shipyard() -> NodeOpenShipyard {
         NodeOpenShipyard::new()
     }
 }
@@ -11259,7 +11245,7 @@ impl NodeOpenWorkshop {
     }
 }
 impl Node {
-    pub fn node_open_workshop() -> NodeOpenWorkshop {
+    pub fn open_workshop() -> NodeOpenWorkshop {
         NodeOpenWorkshop::new()
     }
 }
@@ -11372,7 +11358,7 @@ impl NodeSwitch {
     }
 }
 impl Node {
-    pub fn node_switch() -> NodeSwitch {
+    pub fn switch() -> NodeSwitch {
         NodeSwitch::new()
     }
 }
@@ -11485,7 +11471,7 @@ impl NodeRandom {
     }
 }
 impl Node {
-    pub fn node_random() -> NodeRandom {
+    pub fn random() -> NodeRandom {
         NodeRandom::new()
     }
 }
@@ -11570,7 +11556,7 @@ impl NodeCondition {
     }
 }
 impl Node {
-    pub fn node_condition() -> NodeCondition {
+    pub fn condition() -> NodeCondition {
         NodeCondition::new()
     }
 }
@@ -11711,7 +11697,7 @@ impl NodeAttackFleet {
     }
 }
 impl Node {
-    pub fn node_attack_fleet() -> NodeAttackFleet {
+    pub fn attack_fleet() -> NodeAttackFleet {
         NodeAttackFleet::new()
     }
 }
@@ -11832,7 +11818,7 @@ impl NodeAttackOccupants {
     }
 }
 impl Node {
-    pub fn node_attack_occupants() -> NodeAttackOccupants {
+    pub fn attack_occupants() -> NodeAttackOccupants {
         NodeAttackOccupants::new()
     }
 }
@@ -11953,7 +11939,7 @@ impl NodeAttackStarbase {
     }
 }
 impl Node {
-    pub fn node_attack_starbase() -> NodeAttackStarbase {
+    pub fn attack_starbase() -> NodeAttackStarbase {
         NodeAttackStarbase::new()
     }
 }
@@ -12046,7 +12032,7 @@ impl NodeDestroyOccupants {
     }
 }
 impl Node {
-    pub fn node_destroy_occupants() -> NodeDestroyOccupants {
+    pub fn destroy_occupants() -> NodeDestroyOccupants {
         NodeDestroyOccupants::new()
     }
 }
@@ -12139,7 +12125,7 @@ impl NodeSuppressOccupants {
     }
 }
 impl Node {
-    pub fn node_suppress_occupants() -> NodeSuppressOccupants {
+    pub fn suppress_occupants() -> NodeSuppressOccupants {
         NodeSuppressOccupants::new()
     }
 }
@@ -12232,7 +12218,7 @@ impl NodeRetreat {
     }
 }
 impl Node {
-    pub fn node_retreat() -> NodeRetreat {
+    pub fn retreat() -> NodeRetreat {
         NodeRetreat::new()
     }
 }
@@ -12335,7 +12321,7 @@ impl NodeReceiveItem {
     }
 }
 impl Node {
-    pub fn node_receive_item() -> NodeReceiveItem {
+    pub fn receive_item() -> NodeReceiveItem {
         NodeReceiveItem::new()
     }
 }
@@ -12438,7 +12424,7 @@ impl NodeRemoveItem {
     }
 }
 impl Node {
-    pub fn node_remove_item() -> NodeRemoveItem {
+    pub fn remove_item() -> NodeRemoveItem {
         NodeRemoveItem::new()
     }
 }
@@ -12541,7 +12527,7 @@ impl NodeTrade {
     }
 }
 impl Node {
-    pub fn node_trade() -> NodeTrade {
+    pub fn trade() -> NodeTrade {
         NodeTrade::new()
     }
 }
@@ -12606,7 +12592,7 @@ impl NodeCompleteQuest {
     }
 }
 impl Node {
-    pub fn node_complete_quest() -> NodeCompleteQuest {
+    pub fn complete_quest() -> NodeCompleteQuest {
         NodeCompleteQuest::new()
     }
 }
@@ -12671,7 +12657,7 @@ impl NodeFailQuest {
     }
 }
 impl Node {
-    pub fn node_fail_quest() -> NodeFailQuest {
+    pub fn fail_quest() -> NodeFailQuest {
         NodeFailQuest::new()
     }
 }
@@ -12736,7 +12722,7 @@ impl NodeCancelQuest {
     }
 }
 impl Node {
-    pub fn node_cancel_quest() -> NodeCancelQuest {
+    pub fn cancel_quest() -> NodeCancelQuest {
         NodeCancelQuest::new()
     }
 }
@@ -12839,7 +12825,7 @@ impl NodeStartQuest {
     }
 }
 impl Node {
-    pub fn node_start_quest() -> NodeStartQuest {
+    pub fn start_quest() -> NodeStartQuest {
         NodeStartQuest::new()
     }
 }
@@ -12970,7 +12956,7 @@ impl NodeSetCharacterRelations {
     }
 }
 impl Node {
-    pub fn node_set_character_relations() -> NodeSetCharacterRelations {
+    pub fn set_character_relations() -> NodeSetCharacterRelations {
         NodeSetCharacterRelations::new()
     }
 }
@@ -13091,7 +13077,7 @@ impl NodeSetFactionRelations {
     }
 }
 impl Node {
-    pub fn node_set_faction_relations() -> NodeSetFactionRelations {
+    pub fn set_faction_relations() -> NodeSetFactionRelations {
         NodeSetFactionRelations::new()
     }
 }
@@ -13213,7 +13199,7 @@ impl NodeSetFactionStarbasePower {
     }
 }
 impl Node {
-    pub fn node_set_faction_starbase_power() -> NodeSetFactionStarbasePower {
+    pub fn set_faction_starbase_power() -> NodeSetFactionStarbasePower {
         NodeSetFactionStarbasePower::new()
     }
 }
@@ -13344,7 +13330,7 @@ impl NodeChangeCharacterRelations {
     }
 }
 impl Node {
-    pub fn node_change_character_relations() -> NodeChangeCharacterRelations {
+    pub fn change_character_relations() -> NodeChangeCharacterRelations {
         NodeChangeCharacterRelations::new()
     }
 }
@@ -13465,7 +13451,7 @@ impl NodeChangeFactionRelations {
     }
 }
 impl Node {
-    pub fn node_change_faction_relations() -> NodeChangeFactionRelations {
+    pub fn change_faction_relations() -> NodeChangeFactionRelations {
         NodeChangeFactionRelations::new()
     }
 }
@@ -13587,7 +13573,7 @@ impl NodeChangeFactionStarbasePower {
     }
 }
 impl Node {
-    pub fn node_change_faction_starbase_power() -> NodeChangeFactionStarbasePower {
+    pub fn change_faction_starbase_power() -> NodeChangeFactionStarbasePower {
         NodeChangeFactionStarbasePower::new()
     }
 }
@@ -13680,7 +13666,7 @@ impl NodeCaptureStarBase {
     }
 }
 impl Node {
-    pub fn node_capture_star_base() -> NodeCaptureStarBase {
+    pub fn capture_star_base() -> NodeCaptureStarBase {
         NodeCaptureStarBase::new()
     }
 }
@@ -13773,7 +13759,7 @@ impl NodeLiberateStarBase {
     }
 }
 impl Node {
-    pub fn node_liberate_star_base() -> NodeLiberateStarBase {
+    pub fn liberate_star_base() -> NodeLiberateStarBase {
         NodeLiberateStarBase::new()
     }
 }
@@ -13876,7 +13862,7 @@ impl NodeChangeFaction {
     }
 }
 impl Node {
-    pub fn node_change_faction() -> NodeChangeFaction {
+    pub fn change_faction() -> NodeChangeFaction {
         NodeChangeFaction::new()
     }
 }
@@ -14571,7 +14557,7 @@ impl RequirementEmpty {
     }
 }
 impl Requirement {
-    pub fn requirement_empty() -> RequirementEmpty {
+    pub fn empty() -> RequirementEmpty {
         RequirementEmpty::new()
     }
 }
@@ -14617,7 +14603,7 @@ impl RequirementAny {
     }
 }
 impl Requirement {
-    pub fn requirement_any() -> RequirementAny {
+    pub fn any() -> RequirementAny {
         RequirementAny::new()
     }
 }
@@ -14663,7 +14649,7 @@ impl RequirementAll {
     }
 }
 impl Requirement {
-    pub fn requirement_all() -> RequirementAll {
+    pub fn all() -> RequirementAll {
         RequirementAll::new()
     }
 }
@@ -14709,7 +14695,7 @@ impl RequirementNone {
     }
 }
 impl Requirement {
-    pub fn requirement_none() -> RequirementNone {
+    pub fn none() -> RequirementNone {
         RequirementNone::new()
     }
 }
@@ -14812,7 +14798,7 @@ impl RequirementPlayerPosition {
     }
 }
 impl Requirement {
-    pub fn requirement_player_position() -> RequirementPlayerPosition {
+    pub fn player_position() -> RequirementPlayerPosition {
         RequirementPlayerPosition::new()
     }
 }
@@ -14915,7 +14901,7 @@ impl RequirementRandomStarSystem {
     }
 }
 impl Requirement {
-    pub fn requirement_random_star_system() -> RequirementRandomStarSystem {
+    pub fn random_star_system() -> RequirementRandomStarSystem {
         RequirementRandomStarSystem::new()
     }
 }
@@ -14949,7 +14935,7 @@ impl RequirementAggressiveOccupants {
     }
 }
 impl Requirement {
-    pub fn requirement_aggressive_occupants() -> RequirementAggressiveOccupants {
+    pub fn aggressive_occupants() -> RequirementAggressiveOccupants {
         RequirementAggressiveOccupants::new()
     }
 }
@@ -14995,7 +14981,7 @@ impl RequirementQuestCompleted {
     }
 }
 impl Requirement {
-    pub fn requirement_quest_completed() -> RequirementQuestCompleted {
+    pub fn quest_completed() -> RequirementQuestCompleted {
         RequirementQuestCompleted::new()
     }
 }
@@ -15041,7 +15027,7 @@ impl RequirementQuestActive {
     }
 }
 impl Requirement {
-    pub fn requirement_quest_active() -> RequirementQuestActive {
+    pub fn quest_active() -> RequirementQuestActive {
         RequirementQuestActive::new()
     }
 }
@@ -15144,7 +15130,7 @@ impl RequirementCharacterRelations {
     }
 }
 impl Requirement {
-    pub fn requirement_character_relations() -> RequirementCharacterRelations {
+    pub fn character_relations() -> RequirementCharacterRelations {
         RequirementCharacterRelations::new()
     }
 }
@@ -15237,7 +15223,7 @@ impl RequirementFactionRelations {
     }
 }
 impl Requirement {
-    pub fn requirement_faction_relations() -> RequirementFactionRelations {
+    pub fn faction_relations() -> RequirementFactionRelations {
         RequirementFactionRelations::new()
     }
 }
@@ -15271,7 +15257,7 @@ impl RequirementStarbaseCaptured {
     }
 }
 impl Requirement {
-    pub fn requirement_starbase_captured() -> RequirementStarbaseCaptured {
+    pub fn starbase_captured() -> RequirementStarbaseCaptured {
         RequirementStarbaseCaptured::new()
     }
 }
@@ -15366,7 +15352,7 @@ impl RequirementFactionStarbasePower {
     }
 }
 impl Requirement {
-    pub fn requirement_faction_starbase_power() -> RequirementFactionStarbasePower {
+    pub fn faction_starbase_power() -> RequirementFactionStarbasePower {
         RequirementFactionStarbasePower::new()
     }
 }
@@ -15400,7 +15386,7 @@ impl RequirementIsHostileFaction {
     }
 }
 impl Requirement {
-    pub fn requirement_is_hostile_faction() -> RequirementIsHostileFaction {
+    pub fn is_hostile_faction() -> RequirementIsHostileFaction {
         RequirementIsHostileFaction::new()
     }
 }
@@ -15446,7 +15432,7 @@ impl RequirementFaction {
     }
 }
 impl Requirement {
-    pub fn requirement_faction() -> RequirementFaction {
+    pub fn faction() -> RequirementFaction {
         RequirementFaction::new()
     }
 }
@@ -15521,7 +15507,7 @@ impl RequirementHaveQuestItem {
     }
 }
 impl Requirement {
-    pub fn requirement_have_quest_item() -> RequirementHaveQuestItem {
+    pub fn have_quest_item() -> RequirementHaveQuestItem {
         RequirementHaveQuestItem::new()
     }
 }
@@ -15567,7 +15553,7 @@ impl RequirementHaveItem {
     }
 }
 impl Requirement {
-    pub fn requirement_have_item() -> RequirementHaveItem {
+    pub fn have_item() -> RequirementHaveItem {
         RequirementHaveItem::new()
     }
 }
@@ -15613,7 +15599,7 @@ impl RequirementHaveItemById {
     }
 }
 impl Requirement {
-    pub fn requirement_have_item_by_id() -> RequirementHaveItemById {
+    pub fn have_item_by_id() -> RequirementHaveItemById {
         RequirementHaveItemById::new()
     }
 }
@@ -15659,7 +15645,7 @@ impl RequirementComeToOrigin {
     }
 }
 impl Requirement {
-    pub fn requirement_come_to_origin() -> RequirementComeToOrigin {
+    pub fn come_to_origin() -> RequirementComeToOrigin {
         RequirementComeToOrigin::new()
     }
 }
@@ -15752,7 +15738,7 @@ impl RequirementTimeSinceQuestStart {
     }
 }
 impl Requirement {
-    pub fn requirement_time_since_quest_start() -> RequirementTimeSinceQuestStart {
+    pub fn time_since_quest_start() -> RequirementTimeSinceQuestStart {
         RequirementTimeSinceQuestStart::new()
     }
 }
@@ -15845,7 +15831,7 @@ impl RequirementTimeSinceLastCompletion {
     }
 }
 impl Requirement {
-    pub fn requirement_time_since_last_completion() -> RequirementTimeSinceLastCompletion {
+    pub fn time_since_last_completion() -> RequirementTimeSinceLastCompletion {
         RequirementTimeSinceLastCompletion::new()
     }
 }
@@ -17014,7 +17000,7 @@ impl BulletControllerProjectile {
     }
 }
 impl BulletController {
-    pub fn bullet_controller_projectile() -> BulletControllerProjectile {
+    pub fn projectile() -> BulletControllerProjectile {
         BulletControllerProjectile::new()
     }
 }
@@ -17105,7 +17091,7 @@ impl BulletControllerHoming {
     }
 }
 impl BulletController {
-    pub fn bullet_controller_homing() -> BulletControllerHoming {
+    pub fn homing() -> BulletControllerHoming {
         BulletControllerHoming::new()
     }
 }
@@ -17139,7 +17125,7 @@ impl BulletControllerBeam {
     }
 }
 impl BulletController {
-    pub fn bullet_controller_beam() -> BulletControllerBeam {
+    pub fn beam() -> BulletControllerBeam {
         BulletControllerBeam::new()
     }
 }
@@ -17225,7 +17211,7 @@ impl BulletControllerParametric {
     }
 }
 impl BulletController {
-    pub fn bullet_controller_parametric() -> BulletControllerParametric {
+    pub fn parametric() -> BulletControllerParametric {
         BulletControllerParametric::new()
     }
 }
@@ -17376,7 +17362,7 @@ impl BulletTriggerNone {
     }
 }
 impl BulletTrigger {
-    pub fn bullet_trigger_none() -> BulletTriggerNone {
+    pub fn none() -> BulletTriggerNone {
         BulletTriggerNone::new()
     }
 }
@@ -17553,7 +17539,7 @@ impl BulletTriggerPlaySfx {
     }
 }
 impl BulletTrigger {
-    pub fn bullet_trigger_play_sfx() -> BulletTriggerPlaySfx {
+    pub fn play_sfx() -> BulletTriggerPlaySfx {
         BulletTriggerPlaySfx::new()
     }
 }
@@ -17829,7 +17815,7 @@ impl BulletTriggerSpawnBullet {
     }
 }
 impl BulletTrigger {
-    pub fn bullet_trigger_spawn_bullet() -> BulletTriggerSpawnBullet {
+    pub fn spawn_bullet() -> BulletTriggerSpawnBullet {
         BulletTriggerSpawnBullet::new()
     }
 }
@@ -17904,7 +17890,7 @@ impl BulletTriggerDetonate {
     }
 }
 impl BulletTrigger {
-    pub fn bullet_trigger_detonate() -> BulletTriggerDetonate {
+    pub fn detonate() -> BulletTriggerDetonate {
         BulletTriggerDetonate::new()
     }
 }
@@ -18081,7 +18067,7 @@ impl BulletTriggerSpawnStaticSfx {
     }
 }
 impl BulletTrigger {
-    pub fn bullet_trigger_spawn_static_sfx() -> BulletTriggerSpawnStaticSfx {
+    pub fn spawn_static_sfx() -> BulletTriggerSpawnStaticSfx {
         BulletTriggerSpawnStaticSfx::new()
     }
 }
@@ -18203,7 +18189,7 @@ impl BulletTriggerGravityField {
     }
 }
 impl BulletTrigger {
-    pub fn bullet_trigger_gravity_field() -> BulletTriggerGravityField {
+    pub fn gravity_field() -> BulletTriggerGravityField {
         BulletTriggerGravityField::new()
     }
 }
@@ -24458,7 +24444,7 @@ impl GameObjectPrefabUndefined {
     }
 }
 impl GameObjectPrefab {
-    pub fn game_object_prefab_undefined(r#id: GameObjectPrefabId) -> GameObjectPrefabUndefined {
+    pub fn undefined(r#id: GameObjectPrefabId) -> GameObjectPrefabUndefined {
         GameObjectPrefabUndefined::new(r#id)
     }
 }
@@ -24716,9 +24702,7 @@ impl GameObjectPrefabWormTailSegment {
     }
 }
 impl GameObjectPrefab {
-    pub fn game_object_prefab_worm_tail_segment(
-        r#id: GameObjectPrefabId,
-    ) -> GameObjectPrefabWormTailSegment {
+    pub fn worm_tail_segment(r#id: GameObjectPrefabId) -> GameObjectPrefabWormTailSegment {
         GameObjectPrefabWormTailSegment::new(r#id)
     }
 }
@@ -24798,7 +24782,7 @@ impl GameObjectPrefabCircularSpriteObject {
     }
 }
 impl GameObjectPrefab {
-    pub fn game_object_prefab_circular_sprite_object(
+    pub fn circular_sprite_object(
         r#id: GameObjectPrefabId,
     ) -> GameObjectPrefabCircularSpriteObject {
         GameObjectPrefabCircularSpriteObject::new(r#id)
@@ -24936,7 +24920,7 @@ impl GameObjectPrefabCircularOutlineObject {
     }
 }
 impl GameObjectPrefab {
-    pub fn game_object_prefab_circular_outline_object(
+    pub fn circular_outline_object(
         r#id: GameObjectPrefabId,
     ) -> GameObjectPrefabCircularOutlineObject {
         GameObjectPrefabCircularOutlineObject::new(r#id)
@@ -26982,7 +26966,7 @@ impl TechnologyComponent {
     }
 }
 impl Technology {
-    pub fn technology_component(r#id: TechnologyId, r#item_id: ComponentId) -> TechnologyComponent {
+    pub fn component(r#id: TechnologyId, r#item_id: ComponentId) -> TechnologyComponent {
         TechnologyComponent::new(r#id, r#item_id)
     }
 }
@@ -27092,7 +27076,7 @@ impl TechnologyShip {
     }
 }
 impl Technology {
-    pub fn technology_ship(r#id: TechnologyId, r#item_id: ShipId) -> TechnologyShip {
+    pub fn ship(r#id: TechnologyId, r#item_id: ShipId) -> TechnologyShip {
         TechnologyShip::new(r#id, r#item_id)
     }
 }
@@ -27212,7 +27196,7 @@ impl TechnologySatellite {
     }
 }
 impl Technology {
-    pub fn technology_satellite(r#id: TechnologyId, r#item_id: SatelliteId) -> TechnologySatellite {
+    pub fn satellite(r#id: TechnologyId, r#item_id: SatelliteId) -> TechnologySatellite {
         TechnologySatellite::new(r#id, r#item_id)
     }
 }

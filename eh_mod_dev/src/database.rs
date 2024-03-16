@@ -401,6 +401,8 @@ impl<T: Into<Item>> DerefMut for DbItem<T> {
 
 impl<T: Into<Item>> Drop for DbItem<T> {
     fn drop(&mut self) {
-        if let Some(i) = std::mem::take(&mut self.item) { self.db.consume_item(i) }
+        if let Some(i) = std::mem::take(&mut self.item) {
+            self.db.consume_item(i)
+        }
     }
 }

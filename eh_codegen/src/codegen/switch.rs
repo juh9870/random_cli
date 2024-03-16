@@ -189,7 +189,7 @@ impl CodegenState {
 
             let builder_name = format_ident!(
                 "{}",
-                content
+                ident
                     .to_string()
                     .from_case(Case::Pascal)
                     .to_case(Case::Snake)
