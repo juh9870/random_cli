@@ -1647,6 +1647,13 @@ impl BehaviorNodeRequirementAny {
         self.r#requirements = r#requirements.into();
         self
     }
+    pub fn set_requirements(
+        &mut self,
+        r#requirements: impl Into<Vec<BehaviorNodeRequirement>>,
+    ) -> &mut Self {
+        self.r#requirements = r#requirements.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorNodeRequirementAny {
     fn validate(&mut self) {}
@@ -1692,6 +1699,13 @@ impl BehaviorNodeRequirementAll {
         self.r#requirements = r#requirements.into();
         self
     }
+    pub fn set_requirements(
+        &mut self,
+        r#requirements: impl Into<Vec<BehaviorNodeRequirement>>,
+    ) -> &mut Self {
+        self.r#requirements = r#requirements.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorNodeRequirementAll {
     fn validate(&mut self) {}
@@ -1734,6 +1748,13 @@ impl BehaviorNodeRequirementNone {
         mut self,
         r#requirements: impl Into<Vec<BehaviorNodeRequirement>>,
     ) -> Self {
+        self.r#requirements = r#requirements.into();
+        self
+    }
+    pub fn set_requirements(
+        &mut self,
+        r#requirements: impl Into<Vec<BehaviorNodeRequirement>>,
+    ) -> &mut Self {
         self.r#requirements = r#requirements.into();
         self
     }
@@ -1783,6 +1804,13 @@ impl BehaviorNodeRequirementAiLevel {
         self.r#difficulty_level = r#difficulty_level.into();
         self
     }
+    pub fn set_difficulty_level(
+        &mut self,
+        r#difficulty_level: impl Into<AiDifficultyLevel>,
+    ) -> &mut Self {
+        self.r#difficulty_level = r#difficulty_level.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorNodeRequirementAiLevel {
     fn validate(&mut self) {}
@@ -1829,6 +1857,13 @@ impl BehaviorNodeRequirementMinAiLevel {
         self.r#difficulty_level = r#difficulty_level.into();
         self
     }
+    pub fn set_difficulty_level(
+        &mut self,
+        r#difficulty_level: impl Into<AiDifficultyLevel>,
+    ) -> &mut Self {
+        self.r#difficulty_level = r#difficulty_level.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorNodeRequirementMinAiLevel {
     fn validate(&mut self) {}
@@ -1871,6 +1906,10 @@ impl BehaviorNodeRequirementSizeClass {
         self.r#size_class = r#size_class.into();
         self
     }
+    pub fn set_size_class(&mut self, r#size_class: impl Into<SizeClass>) -> &mut Self {
+        self.r#size_class = r#size_class.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorNodeRequirementSizeClass {
     fn validate(&mut self) {}
@@ -1910,6 +1949,10 @@ impl BehaviorNodeRequirementHasDevice {
         }
     }
     pub fn with_device_class(mut self, r#device_class: impl Into<DeviceClass>) -> Self {
+        self.r#device_class = r#device_class.into();
+        self
+    }
+    pub fn set_device_class(&mut self, r#device_class: impl Into<DeviceClass>) -> &mut Self {
         self.r#device_class = r#device_class.into();
         self
     }
@@ -2162,6 +2205,10 @@ impl BehaviorNodeRequirementHasLongRangeWeapon {
         self.r#value = r#value.into();
         self
     }
+    pub fn set_value(&mut self, r#value: impl Into<f32>) -> &mut Self {
+        self.r#value = r#value.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorNodeRequirementHasLongRangeWeapon {
     fn validate(&mut self) {
@@ -2281,6 +2328,10 @@ impl BehaviorNodeRequirementHasKineticResistance {
         self.r#value = r#value.into();
         self
     }
+    pub fn set_value(&mut self, r#value: impl Into<f32>) -> &mut Self {
+        self.r#value = r#value.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorNodeRequirementHasKineticResistance {
     fn validate(&mut self) {
@@ -2329,6 +2380,10 @@ impl BehaviorNodeRequirementHasHighManeuverability {
         Self { r#value: 1f32 }
     }
     pub fn with_value(mut self, r#value: impl Into<f32>) -> Self {
+        self.r#value = r#value.into();
+        self
+    }
+    pub fn set_value(&mut self, r#value: impl Into<f32>) -> &mut Self {
         self.r#value = r#value.into();
         self
     }
@@ -2382,6 +2437,10 @@ impl BehaviorNodeRequirementHasHighRammingDamage {
         }
     }
     pub fn with_value(mut self, r#value: impl Into<f32>) -> Self {
+        self.r#value = r#value.into();
+        self
+    }
+    pub fn set_value(&mut self, r#value: impl Into<f32>) -> &mut Self {
         self.r#value = r#value.into();
         self
     }
@@ -2708,6 +2767,13 @@ impl BehaviorTreeNodeSuccess {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorTreeNodeSuccess {
     fn validate(&mut self) {}
@@ -2748,6 +2814,13 @@ impl BehaviorTreeNodeFailure {
         }
     }
     pub fn with_requirement(mut self, r#requirement: impl Into<BehaviorNodeRequirement>) -> Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
         self.r#requirement = r#requirement.into();
         self
     }
@@ -2796,7 +2869,18 @@ impl BehaviorTreeNodeSubTree {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_item_id(mut self, r#item_id: impl Into<Option<BehaviorTreeId>>) -> Self {
+        self.r#item_id = r#item_id.into();
+        self
+    }
+    pub fn set_item_id(&mut self, r#item_id: impl Into<Option<BehaviorTreeId>>) -> &mut Self {
         self.r#item_id = r#item_id.into();
         self
     }
@@ -2845,7 +2929,18 @@ impl BehaviorTreeNodeSelector {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_nodes(mut self, r#nodes: impl Into<Vec<BehaviorTreeNode>>) -> Self {
+        self.r#nodes = r#nodes.into();
+        self
+    }
+    pub fn set_nodes(&mut self, r#nodes: impl Into<Vec<BehaviorTreeNode>>) -> &mut Self {
         self.r#nodes = r#nodes.into();
         self
     }
@@ -2894,7 +2989,18 @@ impl BehaviorTreeNodeSequence {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_nodes(mut self, r#nodes: impl Into<Vec<BehaviorTreeNode>>) -> Self {
+        self.r#nodes = r#nodes.into();
+        self
+    }
+    pub fn set_nodes(&mut self, r#nodes: impl Into<Vec<BehaviorTreeNode>>) -> &mut Self {
         self.r#nodes = r#nodes.into();
         self
     }
@@ -2943,7 +3049,18 @@ impl BehaviorTreeNodeParallel {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_nodes(mut self, r#nodes: impl Into<Vec<BehaviorTreeNode>>) -> Self {
+        self.r#nodes = r#nodes.into();
+        self
+    }
+    pub fn set_nodes(&mut self, r#nodes: impl Into<Vec<BehaviorTreeNode>>) -> &mut Self {
         self.r#nodes = r#nodes.into();
         self
     }
@@ -2994,11 +3111,26 @@ impl BehaviorTreeNodeRandomSelector {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_nodes(mut self, r#nodes: impl Into<Vec<BehaviorTreeNode>>) -> Self {
         self.r#nodes = r#nodes.into();
         self
     }
+    pub fn set_nodes(&mut self, r#nodes: impl Into<Vec<BehaviorTreeNode>>) -> &mut Self {
+        self.r#nodes = r#nodes.into();
+        self
+    }
     pub fn with_cooldown(mut self, r#cooldown: impl Into<f32>) -> Self {
+        self.r#cooldown = r#cooldown.into();
+        self
+    }
+    pub fn set_cooldown(&mut self, r#cooldown: impl Into<f32>) -> &mut Self {
         self.r#cooldown = r#cooldown.into();
         self
     }
@@ -3057,7 +3189,18 @@ impl BehaviorTreeNodeInvertor {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_node(mut self, r#node: impl Into<Box<BehaviorTreeNode>>) -> Self {
+        self.r#node = r#node.into();
+        self
+    }
+    pub fn set_node(&mut self, r#node: impl Into<Box<BehaviorTreeNode>>) -> &mut Self {
         self.r#node = r#node.into();
         self
     }
@@ -3112,7 +3255,18 @@ impl BehaviorTreeNodeCooldown {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_node(mut self, r#node: impl Into<Box<BehaviorTreeNode>>) -> Self {
+        self.r#node = r#node.into();
+        self
+    }
+    pub fn set_node(&mut self, r#node: impl Into<Box<BehaviorTreeNode>>) -> &mut Self {
         self.r#node = r#node.into();
         self
     }
@@ -3120,11 +3274,26 @@ impl BehaviorTreeNodeCooldown {
         self.r#execution_mode = r#execution_mode.into();
         self
     }
+    pub fn set_execution_mode(
+        &mut self,
+        r#execution_mode: impl Into<NodeExecutionMode>,
+    ) -> &mut Self {
+        self.r#execution_mode = r#execution_mode.into();
+        self
+    }
     pub fn with_result(mut self, r#result: impl Into<bool>) -> Self {
         self.r#result = r#result.into();
         self
     }
+    pub fn set_result(&mut self, r#result: impl Into<bool>) -> &mut Self {
+        self.r#result = r#result.into();
+        self
+    }
     pub fn with_cooldown(mut self, r#cooldown: impl Into<f32>) -> Self {
+        self.r#cooldown = r#cooldown.into();
+        self
+    }
+    pub fn set_cooldown(&mut self, r#cooldown: impl Into<f32>) -> &mut Self {
         self.r#cooldown = r#cooldown.into();
         self
     }
@@ -3187,7 +3356,18 @@ impl BehaviorTreeNodeExecute {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_node(mut self, r#node: impl Into<Box<BehaviorTreeNode>>) -> Self {
+        self.r#node = r#node.into();
+        self
+    }
+    pub fn set_node(&mut self, r#node: impl Into<Box<BehaviorTreeNode>>) -> &mut Self {
         self.r#node = r#node.into();
         self
     }
@@ -3195,7 +3375,18 @@ impl BehaviorTreeNodeExecute {
         self.r#execution_mode = r#execution_mode.into();
         self
     }
+    pub fn set_execution_mode(
+        &mut self,
+        r#execution_mode: impl Into<NodeExecutionMode>,
+    ) -> &mut Self {
+        self.r#execution_mode = r#execution_mode.into();
+        self
+    }
     pub fn with_result(mut self, r#result: impl Into<bool>) -> Self {
+        self.r#result = r#result.into();
+        self
+    }
+    pub fn set_result(&mut self, r#result: impl Into<bool>) -> &mut Self {
         self.r#result = r#result.into();
         self
     }
@@ -3244,7 +3435,18 @@ impl BehaviorTreeNodeParallelSequence {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_nodes(mut self, r#nodes: impl Into<Vec<BehaviorTreeNode>>) -> Self {
+        self.r#nodes = r#nodes.into();
+        self
+    }
+    pub fn set_nodes(&mut self, r#nodes: impl Into<Vec<BehaviorTreeNode>>) -> &mut Self {
         self.r#nodes = r#nodes.into();
         self
     }
@@ -3293,7 +3495,18 @@ impl BehaviorTreeNodePreserveTarget {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_node(mut self, r#node: impl Into<Box<BehaviorTreeNode>>) -> Self {
+        self.r#node = r#node.into();
+        self
+    }
+    pub fn set_node(&mut self, r#node: impl Into<Box<BehaviorTreeNode>>) -> &mut Self {
         self.r#node = r#node.into();
         self
     }
@@ -3342,7 +3555,18 @@ impl BehaviorTreeNodeIfThenElse {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_nodes(mut self, r#nodes: impl Into<Vec<BehaviorTreeNode>>) -> Self {
+        self.r#nodes = r#nodes.into();
+        self
+    }
+    pub fn set_nodes(&mut self, r#nodes: impl Into<Vec<BehaviorTreeNode>>) -> &mut Self {
         self.r#nodes = r#nodes.into();
         self
     }
@@ -3391,7 +3615,18 @@ impl BehaviorTreeNodeHasEnoughEnergy {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_min_value(mut self, r#min_value: impl Into<f32>) -> Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<f32>) -> &mut Self {
         self.r#min_value = r#min_value.into();
         self
     }
@@ -3459,7 +3694,18 @@ impl BehaviorTreeNodeIsLowOnHp {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_min_value(mut self, r#min_value: impl Into<f32>) -> Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<f32>) -> &mut Self {
         self.r#min_value = r#min_value.into();
         self
     }
@@ -3525,6 +3771,13 @@ impl BehaviorTreeNodeIsControledByPlayer {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorTreeNodeIsControledByPlayer {
     fn validate(&mut self) {}
@@ -3570,7 +3823,18 @@ impl BehaviorTreeNodeHasIncomingThreat {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_cooldown(mut self, r#cooldown: impl Into<f32>) -> Self {
+        self.r#cooldown = r#cooldown.into();
+        self
+    }
+    pub fn set_cooldown(&mut self, r#cooldown: impl Into<f32>) -> &mut Self {
         self.r#cooldown = r#cooldown.into();
         self
     }
@@ -3627,6 +3891,13 @@ impl BehaviorTreeNodeHasAdditionalTargets {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorTreeNodeHasAdditionalTargets {
     fn validate(&mut self) {}
@@ -3672,7 +3943,18 @@ impl BehaviorTreeNodeIsFasterThanTarget {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_min_value(mut self, r#min_value: impl Into<f32>) -> Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<f32>) -> &mut Self {
         self.r#min_value = r#min_value.into();
         self
     }
@@ -3738,6 +4020,13 @@ impl BehaviorTreeNodeHasMainTarget {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorTreeNodeHasMainTarget {
     fn validate(&mut self) {}
@@ -3781,6 +4070,13 @@ impl BehaviorTreeNodeMainTargetIsAlly {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorTreeNodeMainTargetIsAlly {
     fn validate(&mut self) {}
@@ -3821,6 +4117,13 @@ impl BehaviorTreeNodeMainTargetIsEnemy {
         }
     }
     pub fn with_requirement(mut self, r#requirement: impl Into<BehaviorNodeRequirement>) -> Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
         self.r#requirement = r#requirement.into();
         self
     }
@@ -3869,7 +4172,18 @@ impl BehaviorTreeNodeMainTargetLowHp {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_min_value(mut self, r#min_value: impl Into<f32>) -> Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<f32>) -> &mut Self {
         self.r#min_value = r#min_value.into();
         self
     }
@@ -3938,7 +4252,18 @@ impl BehaviorTreeNodeMainTargetWithinAttackRange {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_min_value(mut self, r#min_value: impl Into<f32>) -> Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<f32>) -> &mut Self {
         self.r#min_value = r#min_value.into();
         self
     }
@@ -4005,6 +4330,13 @@ impl BehaviorTreeNodeHasMothership {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorTreeNodeHasMothership {
     fn validate(&mut self) {}
@@ -4051,7 +4383,18 @@ impl BehaviorTreeNodeTargetDistance {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_max_value(mut self, r#max_value: impl Into<f32>) -> Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<f32>) -> &mut Self {
         self.r#max_value = r#max_value.into();
         self
     }
@@ -4110,7 +4453,18 @@ impl BehaviorTreeNodeHasLongerAttackRange {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_min_value(mut self, r#min_value: impl Into<f32>) -> Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<f32>) -> &mut Self {
         self.r#min_value = r#min_value.into();
         self
     }
@@ -4184,7 +4538,18 @@ impl BehaviorTreeNodeFindEnemy {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_min_value(mut self, r#min_value: impl Into<f32>) -> Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<f32>) -> &mut Self {
         self.r#min_value = r#min_value.into();
         self
     }
@@ -4192,11 +4557,23 @@ impl BehaviorTreeNodeFindEnemy {
         self.r#max_value = r#max_value.into();
         self
     }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<f32>) -> &mut Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
     pub fn with_in_range(mut self, r#in_range: impl Into<bool>) -> Self {
         self.r#in_range = r#in_range.into();
         self
     }
+    pub fn set_in_range(&mut self, r#in_range: impl Into<bool>) -> &mut Self {
+        self.r#in_range = r#in_range.into();
+        self
+    }
     pub fn with_no_drones(mut self, r#no_drones: impl Into<bool>) -> Self {
+        self.r#no_drones = r#no_drones.into();
+        self
+    }
+    pub fn set_no_drones(&mut self, r#no_drones: impl Into<bool>) -> &mut Self {
         self.r#no_drones = r#no_drones.into();
         self
     }
@@ -4267,11 +4644,26 @@ impl BehaviorTreeNodeMoveToAttackRange {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_min_value(mut self, r#min_value: impl Into<f32>) -> Self {
         self.r#min_value = r#min_value.into();
         self
     }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<f32>) -> &mut Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
     pub fn with_max_value(mut self, r#max_value: impl Into<f32>) -> Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<f32>) -> &mut Self {
         self.r#max_value = r#max_value.into();
         self
     }
@@ -4357,7 +4749,18 @@ impl BehaviorTreeNodeAttackMainTarget {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_in_range(mut self, r#in_range: impl Into<bool>) -> Self {
+        self.r#in_range = r#in_range.into();
+        self
+    }
+    pub fn set_in_range(&mut self, r#in_range: impl Into<bool>) -> &mut Self {
         self.r#in_range = r#in_range.into();
         self
     }
@@ -4406,7 +4809,18 @@ impl BehaviorTreeNodeSelectWeapon {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_weapon_type(mut self, r#weapon_type: impl Into<AiWeaponCategory>) -> Self {
+        self.r#weapon_type = r#weapon_type.into();
+        self
+    }
+    pub fn set_weapon_type(&mut self, r#weapon_type: impl Into<AiWeaponCategory>) -> &mut Self {
         self.r#weapon_type = r#weapon_type.into();
         self
     }
@@ -4450,6 +4864,13 @@ impl BehaviorTreeNodeSpawnDrones {
         }
     }
     pub fn with_requirement(mut self, r#requirement: impl Into<BehaviorNodeRequirement>) -> Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
         self.r#requirement = r#requirement.into();
         self
     }
@@ -4498,7 +4919,18 @@ impl BehaviorTreeNodeRam {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_use_systems(mut self, r#use_systems: impl Into<bool>) -> Self {
+        self.r#use_systems = r#use_systems.into();
+        self
+    }
+    pub fn set_use_systems(&mut self, r#use_systems: impl Into<bool>) -> &mut Self {
         self.r#use_systems = r#use_systems.into();
         self
     }
@@ -4547,7 +4979,18 @@ impl BehaviorTreeNodeDetonateShip {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_in_range(mut self, r#in_range: impl Into<bool>) -> Self {
+        self.r#in_range = r#in_range.into();
+        self
+    }
+    pub fn set_in_range(&mut self, r#in_range: impl Into<bool>) -> &mut Self {
         self.r#in_range = r#in_range.into();
         self
     }
@@ -4591,6 +5034,13 @@ impl BehaviorTreeNodeVanish {
         }
     }
     pub fn with_requirement(mut self, r#requirement: impl Into<BehaviorNodeRequirement>) -> Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
         self.r#requirement = r#requirement.into();
         self
     }
@@ -4643,11 +5093,26 @@ impl BehaviorTreeNodeMaintainAttackRange {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_min_value(mut self, r#min_value: impl Into<f32>) -> Self {
         self.r#min_value = r#min_value.into();
         self
     }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<f32>) -> &mut Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
     pub fn with_max_value(mut self, r#max_value: impl Into<f32>) -> Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<f32>) -> &mut Self {
         self.r#max_value = r#max_value.into();
         self
     }
@@ -4735,11 +5200,26 @@ impl BehaviorTreeNodeWait {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_cooldown(mut self, r#cooldown: impl Into<f32>) -> Self {
         self.r#cooldown = r#cooldown.into();
         self
     }
+    pub fn set_cooldown(&mut self, r#cooldown: impl Into<f32>) -> &mut Self {
+        self.r#cooldown = r#cooldown.into();
+        self
+    }
     pub fn with_in_range(mut self, r#in_range: impl Into<bool>) -> Self {
+        self.r#in_range = r#in_range.into();
+        self
+    }
+    pub fn set_in_range(&mut self, r#in_range: impl Into<bool>) -> &mut Self {
         self.r#in_range = r#in_range.into();
         self
     }
@@ -4796,6 +5276,13 @@ impl BehaviorTreeNodeLookAtTarget {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorTreeNodeLookAtTarget {
     fn validate(&mut self) {}
@@ -4841,7 +5328,18 @@ impl BehaviorTreeNodeLookForAdditionalTargets {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_cooldown(mut self, r#cooldown: impl Into<f32>) -> Self {
+        self.r#cooldown = r#cooldown.into();
+        self
+    }
+    pub fn set_cooldown(&mut self, r#cooldown: impl Into<f32>) -> &mut Self {
         self.r#cooldown = r#cooldown.into();
         self
     }
@@ -4901,7 +5399,18 @@ impl BehaviorTreeNodeLookForThreats {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_cooldown(mut self, r#cooldown: impl Into<f32>) -> Self {
+        self.r#cooldown = r#cooldown.into();
+        self
+    }
+    pub fn set_cooldown(&mut self, r#cooldown: impl Into<f32>) -> &mut Self {
         self.r#cooldown = r#cooldown.into();
         self
     }
@@ -4961,7 +5470,18 @@ impl BehaviorTreeNodeMatchVelocityWithTarget {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_max_value(mut self, r#max_value: impl Into<f32>) -> Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<f32>) -> &mut Self {
         self.r#max_value = r#max_value.into();
         self
     }
@@ -5030,7 +5550,18 @@ impl BehaviorTreeNodeActivateDevice {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_device_class(mut self, r#device_class: impl Into<DeviceClass>) -> Self {
+        self.r#device_class = r#device_class.into();
+        self
+    }
+    pub fn set_device_class(&mut self, r#device_class: impl Into<DeviceClass>) -> &mut Self {
         self.r#device_class = r#device_class.into();
         self
     }
@@ -5081,11 +5612,26 @@ impl BehaviorTreeNodeRechargeEnergy {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_min_value(mut self, r#min_value: impl Into<f32>) -> Self {
         self.r#min_value = r#min_value.into();
         self
     }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<f32>) -> &mut Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
     pub fn with_max_value(mut self, r#max_value: impl Into<f32>) -> Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<f32>) -> &mut Self {
         self.r#max_value = r#max_value.into();
         self
     }
@@ -5169,6 +5715,13 @@ impl BehaviorTreeNodeSustainAim {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorTreeNodeSustainAim {
     fn validate(&mut self) {}
@@ -5209,6 +5762,13 @@ impl BehaviorTreeNodeChargeWeapons {
         }
     }
     pub fn with_requirement(mut self, r#requirement: impl Into<BehaviorNodeRequirement>) -> Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
         self.r#requirement = r#requirement.into();
         self
     }
@@ -5255,6 +5815,13 @@ impl BehaviorTreeNodeChase {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorTreeNodeChase {
     fn validate(&mut self) {}
@@ -5295,6 +5862,13 @@ impl BehaviorTreeNodeAvoidThreats {
         }
     }
     pub fn with_requirement(mut self, r#requirement: impl Into<BehaviorNodeRequirement>) -> Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
         self.r#requirement = r#requirement.into();
         self
     }
@@ -5344,7 +5918,18 @@ impl BehaviorTreeNodeSlowDown {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_max_value(mut self, r#max_value: impl Into<f32>) -> Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<f32>) -> &mut Self {
         self.r#max_value = r#max_value.into();
         self
     }
@@ -5410,6 +5995,13 @@ impl BehaviorTreeNodeUseRecoil {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorTreeNodeUseRecoil {
     fn validate(&mut self) {}
@@ -5450,6 +6042,13 @@ impl BehaviorTreeNodeDefendWithFronalShield {
         }
     }
     pub fn with_requirement(mut self, r#requirement: impl Into<BehaviorNodeRequirement>) -> Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
         self.r#requirement = r#requirement.into();
         self
     }
@@ -5494,6 +6093,13 @@ impl BehaviorTreeNodeTrackControllableAmmo {
         }
     }
     pub fn with_requirement(mut self, r#requirement: impl Into<BehaviorNodeRequirement>) -> Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
         self.r#requirement = r#requirement.into();
         self
     }
@@ -5544,11 +6150,26 @@ impl BehaviorTreeNodeKeepDistance {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_min_value(mut self, r#min_value: impl Into<f32>) -> Self {
         self.r#min_value = r#min_value.into();
         self
     }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<f32>) -> &mut Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
     pub fn with_max_value(mut self, r#max_value: impl Into<f32>) -> Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<f32>) -> &mut Self {
         self.r#max_value = r#max_value.into();
         self
     }
@@ -5632,6 +6253,13 @@ impl BehaviorTreeNodeForgetMainTarget {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorTreeNodeForgetMainTarget {
     fn validate(&mut self) {}
@@ -5672,6 +6300,13 @@ impl BehaviorTreeNodeEscapeTargetAttackRadius {
         }
     }
     pub fn with_requirement(mut self, r#requirement: impl Into<BehaviorNodeRequirement>) -> Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
         self.r#requirement = r#requirement.into();
         self
     }
@@ -5721,7 +6356,18 @@ impl BehaviorTreeNodeAttackAdditionalTargets {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_in_range(mut self, r#in_range: impl Into<bool>) -> Self {
+        self.r#in_range = r#in_range.into();
+        self
+    }
+    pub fn set_in_range(&mut self, r#in_range: impl Into<bool>) -> &mut Self {
         self.r#in_range = r#in_range.into();
         self
     }
@@ -5769,6 +6415,13 @@ impl BehaviorTreeNodeTargetAllyStarbase {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorTreeNodeTargetAllyStarbase {
     fn validate(&mut self) {}
@@ -5809,6 +6462,13 @@ impl BehaviorTreeNodeTargetEnemyStarbase {
         }
     }
     pub fn with_requirement(mut self, r#requirement: impl Into<BehaviorNodeRequirement>) -> Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
         self.r#requirement = r#requirement.into();
         self
     }
@@ -5855,6 +6515,13 @@ impl BehaviorTreeNodeBypassObstacles {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorTreeNodeBypassObstacles {
     fn validate(&mut self) {}
@@ -5895,6 +6562,13 @@ impl BehaviorTreeNodeAttackTurretTargets {
         }
     }
     pub fn with_requirement(mut self, r#requirement: impl Into<BehaviorNodeRequirement>) -> Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
         self.r#requirement = r#requirement.into();
         self
     }
@@ -5943,7 +6617,18 @@ impl BehaviorTreeNodeEnginePropulsionForce {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_min_value(mut self, r#min_value: impl Into<f32>) -> Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<f32>) -> &mut Self {
         self.r#min_value = r#min_value.into();
         self
     }
@@ -6009,6 +6694,13 @@ impl BehaviorTreeNodeMotherShipRetreated {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorTreeNodeMotherShipRetreated {
     fn validate(&mut self) {}
@@ -6049,6 +6741,13 @@ impl BehaviorTreeNodeMotherShipDestroyed {
         }
     }
     pub fn with_requirement(mut self, r#requirement: impl Into<BehaviorNodeRequirement>) -> Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
         self.r#requirement = r#requirement.into();
         self
     }
@@ -6099,11 +6798,26 @@ impl BehaviorTreeNodeFlyAroundMothership {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_min_value(mut self, r#min_value: impl Into<f32>) -> Self {
         self.r#min_value = r#min_value.into();
         self
     }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<f32>) -> &mut Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
     pub fn with_max_value(mut self, r#max_value: impl Into<f32>) -> Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<f32>) -> &mut Self {
         self.r#max_value = r#max_value.into();
         self
     }
@@ -6187,6 +6901,13 @@ impl BehaviorTreeNodeGoBerserk {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorTreeNodeGoBerserk {
     fn validate(&mut self) {}
@@ -6227,6 +6948,13 @@ impl BehaviorTreeNodeTargetMothership {
         }
     }
     pub fn with_requirement(mut self, r#requirement: impl Into<BehaviorNodeRequirement>) -> Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
         self.r#requirement = r#requirement.into();
         self
     }
@@ -6275,7 +7003,18 @@ impl BehaviorTreeNodeMothershipLowHp {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_min_value(mut self, r#min_value: impl Into<f32>) -> Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<f32>) -> &mut Self {
         self.r#min_value = r#min_value.into();
         self
     }
@@ -6344,7 +7083,18 @@ impl BehaviorTreeNodeMothershipDistanceExceeded {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_max_value(mut self, r#max_value: impl Into<f32>) -> Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<f32>) -> &mut Self {
         self.r#max_value = r#max_value.into();
         self
     }
@@ -6402,6 +7152,13 @@ impl BehaviorTreeNodeMakeTargetMothership {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
 }
 impl DatabaseItem for BehaviorTreeNodeMakeTargetMothership {
     fn validate(&mut self) {}
@@ -6449,11 +7206,26 @@ impl BehaviorTreeNodeShowMessage {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_text(mut self, r#text: impl Into<String>) -> Self {
         self.r#text = r#text.into();
         self
     }
+    pub fn set_text(&mut self, r#text: impl Into<String>) -> &mut Self {
+        self.r#text = r#text.into();
+        self
+    }
     pub fn with_color(mut self, r#color: impl Into<String>) -> Self {
+        self.r#color = r#color.into();
+        self
+    }
+    pub fn set_color(&mut self, r#color: impl Into<String>) -> &mut Self {
         self.r#color = r#color.into();
         self
     }
@@ -6502,7 +7274,18 @@ impl BehaviorTreeNodeDebugLog {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_text(mut self, r#text: impl Into<String>) -> Self {
+        self.r#text = r#text.into();
+        self
+    }
+    pub fn set_text(&mut self, r#text: impl Into<String>) -> &mut Self {
         self.r#text = r#text.into();
         self
     }
@@ -6553,11 +7336,26 @@ impl BehaviorTreeNodeSetValue {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_result(mut self, r#result: impl Into<bool>) -> Self {
         self.r#result = r#result.into();
         self
     }
+    pub fn set_result(&mut self, r#result: impl Into<bool>) -> &mut Self {
+        self.r#result = r#result.into();
+        self
+    }
     pub fn with_text(mut self, r#text: impl Into<String>) -> Self {
+        self.r#text = r#text.into();
+        self
+    }
+    pub fn set_text(&mut self, r#text: impl Into<String>) -> &mut Self {
         self.r#text = r#text.into();
         self
     }
@@ -6606,7 +7404,18 @@ impl BehaviorTreeNodeGetValue {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_text(mut self, r#text: impl Into<String>) -> Self {
+        self.r#text = r#text.into();
+        self
+    }
+    pub fn set_text(&mut self, r#text: impl Into<String>) -> &mut Self {
         self.r#text = r#text.into();
         self
     }
@@ -6655,7 +7464,18 @@ impl BehaviorTreeNodeSendMessage {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_text(mut self, r#text: impl Into<String>) -> Self {
+        self.r#text = r#text.into();
+        self
+    }
+    pub fn set_text(&mut self, r#text: impl Into<String>) -> &mut Self {
         self.r#text = r#text.into();
         self
     }
@@ -6704,7 +7524,18 @@ impl BehaviorTreeNodeMessageReceived {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_text(mut self, r#text: impl Into<String>) -> Self {
+        self.r#text = r#text.into();
+        self
+    }
+    pub fn set_text(&mut self, r#text: impl Into<String>) -> &mut Self {
         self.r#text = r#text.into();
         self
     }
@@ -6748,6 +7579,13 @@ impl BehaviorTreeNodeTargetMessageSender {
         }
     }
     pub fn with_requirement(mut self, r#requirement: impl Into<BehaviorNodeRequirement>) -> Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
         self.r#requirement = r#requirement.into();
         self
     }
@@ -6796,7 +7634,18 @@ impl BehaviorTreeNodeSaveTarget {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_text(mut self, r#text: impl Into<String>) -> Self {
+        self.r#text = r#text.into();
+        self
+    }
+    pub fn set_text(&mut self, r#text: impl Into<String>) -> &mut Self {
         self.r#text = r#text.into();
         self
     }
@@ -6845,7 +7694,18 @@ impl BehaviorTreeNodeLoadTarget {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_text(mut self, r#text: impl Into<String>) -> Self {
+        self.r#text = r#text.into();
+        self
+    }
+    pub fn set_text(&mut self, r#text: impl Into<String>) -> &mut Self {
         self.r#text = r#text.into();
         self
     }
@@ -6894,7 +7754,18 @@ impl BehaviorTreeNodeHasSavedTarget {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_text(mut self, r#text: impl Into<String>) -> Self {
+        self.r#text = r#text.into();
+        self
+    }
+    pub fn set_text(&mut self, r#text: impl Into<String>) -> &mut Self {
         self.r#text = r#text.into();
         self
     }
@@ -6943,7 +7814,18 @@ impl BehaviorTreeNodeForgetSavedTarget {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(
+        &mut self,
+        r#requirement: impl Into<BehaviorNodeRequirement>,
+    ) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_text(mut self, r#text: impl Into<String>) -> Self {
+        self.r#text = r#text.into();
+        self
+    }
+    pub fn set_text(&mut self, r#text: impl Into<String>) -> &mut Self {
         self.r#text = r#text.into();
         self
     }
@@ -7772,7 +8654,15 @@ impl Barrel {
         self.r#position = r#position.into();
         self
     }
+    pub fn set_position(&mut self, r#position: impl Into<glam::f32::Vec2>) -> &mut Self {
+        self.r#position = r#position.into();
+        self
+    }
     pub fn with_rotation(mut self, r#rotation: impl Into<f32>) -> Self {
+        self.r#rotation = r#rotation.into();
+        self
+    }
+    pub fn set_rotation(&mut self, r#rotation: impl Into<f32>) -> &mut Self {
         self.r#rotation = r#rotation.into();
         self
     }
@@ -7780,7 +8670,15 @@ impl Barrel {
         self.r#offset = r#offset.into();
         self
     }
+    pub fn set_offset(&mut self, r#offset: impl Into<f32>) -> &mut Self {
+        self.r#offset = r#offset.into();
+        self
+    }
     pub fn with_platform_type(mut self, r#platform_type: impl Into<i32>) -> Self {
+        self.r#platform_type = r#platform_type.into();
+        self
+    }
+    pub fn set_platform_type(&mut self, r#platform_type: impl Into<i32>) -> &mut Self {
         self.r#platform_type = r#platform_type.into();
         self
     }
@@ -7788,7 +8686,15 @@ impl Barrel {
         self.r#auto_aiming_arc = r#auto_aiming_arc.into();
         self
     }
+    pub fn set_auto_aiming_arc(&mut self, r#auto_aiming_arc: impl Into<f32>) -> &mut Self {
+        self.r#auto_aiming_arc = r#auto_aiming_arc.into();
+        self
+    }
     pub fn with_rotation_speed(mut self, r#rotation_speed: impl Into<f32>) -> Self {
+        self.r#rotation_speed = r#rotation_speed.into();
+        self
+    }
+    pub fn set_rotation_speed(&mut self, r#rotation_speed: impl Into<f32>) -> &mut Self {
         self.r#rotation_speed = r#rotation_speed.into();
         self
     }
@@ -7796,11 +8702,23 @@ impl Barrel {
         self.r#weapon_class = r#weapon_class.into();
         self
     }
+    pub fn set_weapon_class(&mut self, r#weapon_class: impl Into<String>) -> &mut Self {
+        self.r#weapon_class = r#weapon_class.into();
+        self
+    }
     pub fn with_image(mut self, r#image: impl Into<String>) -> Self {
         self.r#image = r#image.into();
         self
     }
+    pub fn set_image(&mut self, r#image: impl Into<String>) -> &mut Self {
+        self.r#image = r#image.into();
+        self
+    }
     pub fn with_size(mut self, r#size: impl Into<f32>) -> Self {
+        self.r#size = r#size.into();
+        self
+    }
+    pub fn set_size(&mut self, r#size: impl Into<f32>) -> &mut Self {
         self.r#size = r#size.into();
         self
     }
@@ -7942,7 +8860,21 @@ impl ComponentRestrictions {
         self.r#ship_sizes = r#ship_sizes.into();
         self
     }
+    pub fn set_ship_sizes(
+        &mut self,
+        r#ship_sizes: impl Into<std::collections::HashSet<SizeClass>>,
+    ) -> &mut Self {
+        self.r#ship_sizes = r#ship_sizes.into();
+        self
+    }
     pub fn with_not_for_organic_ships(mut self, r#not_for_organic_ships: impl Into<bool>) -> Self {
+        self.r#not_for_organic_ships = r#not_for_organic_ships.into();
+        self
+    }
+    pub fn set_not_for_organic_ships(
+        &mut self,
+        r#not_for_organic_ships: impl Into<bool>,
+    ) -> &mut Self {
         self.r#not_for_organic_ships = r#not_for_organic_ships.into();
         self
     }
@@ -7953,11 +8885,32 @@ impl ComponentRestrictions {
         self.r#not_for_mechanic_ships = r#not_for_mechanic_ships.into();
         self
     }
+    pub fn set_not_for_mechanic_ships(
+        &mut self,
+        r#not_for_mechanic_ships: impl Into<bool>,
+    ) -> &mut Self {
+        self.r#not_for_mechanic_ships = r#not_for_mechanic_ships.into();
+        self
+    }
     pub fn with_unique_component_tag(mut self, r#unique_component_tag: impl Into<String>) -> Self {
         self.r#unique_component_tag = r#unique_component_tag.into();
         self
     }
+    pub fn set_unique_component_tag(
+        &mut self,
+        r#unique_component_tag: impl Into<String>,
+    ) -> &mut Self {
+        self.r#unique_component_tag = r#unique_component_tag.into();
+        self
+    }
     pub fn with_max_component_amount(mut self, r#max_component_amount: impl Into<i32>) -> Self {
+        self.r#max_component_amount = r#max_component_amount.into();
+        self
+    }
+    pub fn set_max_component_amount(
+        &mut self,
+        r#max_component_amount: impl Into<i32>,
+    ) -> &mut Self {
         self.r#max_component_amount = r#max_component_amount.into();
         self
     }
@@ -8002,7 +8955,15 @@ impl Engine {
         self.r#position = r#position.into();
         self
     }
+    pub fn set_position(&mut self, r#position: impl Into<glam::f32::Vec2>) -> &mut Self {
+        self.r#position = r#position.into();
+        self
+    }
     pub fn with_size(mut self, r#size: impl Into<f32>) -> Self {
+        self.r#size = r#size.into();
+        self
+    }
+    pub fn set_size(&mut self, r#size: impl Into<f32>) -> &mut Self {
         self.r#size = r#size.into();
         self
     }
@@ -8068,7 +9029,18 @@ impl InstalledComponent {
         self.r#component_id = r#component_id.into();
         self
     }
+    pub fn set_component_id(&mut self, r#component_id: impl Into<ComponentId>) -> &mut Self {
+        self.r#component_id = r#component_id.into();
+        self
+    }
     pub fn with_modification(mut self, r#modification: impl Into<Option<ComponentModId>>) -> Self {
+        self.r#modification = r#modification.into();
+        self
+    }
+    pub fn set_modification(
+        &mut self,
+        r#modification: impl Into<Option<ComponentModId>>,
+    ) -> &mut Self {
         self.r#modification = r#modification.into();
         self
     }
@@ -8076,7 +9048,15 @@ impl InstalledComponent {
         self.r#quality = r#quality.into();
         self
     }
+    pub fn set_quality(&mut self, r#quality: impl Into<ModificationQuality>) -> &mut Self {
+        self.r#quality = r#quality.into();
+        self
+    }
     pub fn with_x(mut self, r#x: impl Into<i32>) -> Self {
+        self.r#x = r#x.into();
+        self
+    }
+    pub fn set_x(&mut self, r#x: impl Into<i32>) -> &mut Self {
         self.r#x = r#x.into();
         self
     }
@@ -8084,7 +9064,15 @@ impl InstalledComponent {
         self.r#y = r#y.into();
         self
     }
+    pub fn set_y(&mut self, r#y: impl Into<i32>) -> &mut Self {
+        self.r#y = r#y.into();
+        self
+    }
     pub fn with_barrel_id(mut self, r#barrel_id: impl Into<i32>) -> Self {
+        self.r#barrel_id = r#barrel_id.into();
+        self
+    }
+    pub fn set_barrel_id(&mut self, r#barrel_id: impl Into<i32>) -> &mut Self {
         self.r#barrel_id = r#barrel_id.into();
         self
     }
@@ -8092,7 +9080,15 @@ impl InstalledComponent {
         self.r#behaviour = r#behaviour.into();
         self
     }
+    pub fn set_behaviour(&mut self, r#behaviour: impl Into<i32>) -> &mut Self {
+        self.r#behaviour = r#behaviour.into();
+        self
+    }
     pub fn with_key_binding(mut self, r#key_binding: impl Into<i32>) -> Self {
+        self.r#key_binding = r#key_binding.into();
+        self
+    }
+    pub fn set_key_binding(&mut self, r#key_binding: impl Into<i32>) -> &mut Self {
         self.r#key_binding = r#key_binding.into();
         self
     }
@@ -8213,7 +9209,15 @@ impl FactionFilter {
         self.r#type = r#type.into();
         self
     }
+    pub fn set_type(&mut self, r#type: impl Into<FactionFilterType>) -> &mut Self {
+        self.r#type = r#type.into();
+        self
+    }
     pub fn with_list(mut self, r#list: impl Into<Vec<FactionId>>) -> Self {
+        self.r#list = r#list.into();
+        self
+    }
+    pub fn set_list(&mut self, r#list: impl Into<Vec<FactionId>>) -> &mut Self {
         self.r#list = r#list.into();
         self
     }
@@ -8305,6 +9309,10 @@ impl LootContentSomeMoney {
         self.r#value_ratio = r#value_ratio.into();
         self
     }
+    pub fn set_value_ratio(&mut self, r#value_ratio: impl Into<f32>) -> &mut Self {
+        self.r#value_ratio = r#value_ratio.into();
+        self
+    }
 }
 impl DatabaseItem for LootContentSomeMoney {
     fn validate(&mut self) {
@@ -8368,7 +9376,15 @@ impl LootContentFuel {
         self.r#min_amount = r#min_amount.into();
         self
     }
+    pub fn set_min_amount(&mut self, r#min_amount: impl Into<i32>) -> &mut Self {
+        self.r#min_amount = r#min_amount.into();
+        self
+    }
     pub fn with_max_amount(mut self, r#max_amount: impl Into<i32>) -> Self {
+        self.r#max_amount = r#max_amount.into();
+        self
+    }
+    pub fn set_max_amount(&mut self, r#max_amount: impl Into<i32>) -> &mut Self {
         self.r#max_amount = r#max_amount.into();
         self
     }
@@ -8453,7 +9469,15 @@ impl LootContentMoney {
         self.r#min_amount = r#min_amount.into();
         self
     }
+    pub fn set_min_amount(&mut self, r#min_amount: impl Into<i32>) -> &mut Self {
+        self.r#min_amount = r#min_amount.into();
+        self
+    }
     pub fn with_max_amount(mut self, r#max_amount: impl Into<i32>) -> Self {
+        self.r#max_amount = r#max_amount.into();
+        self
+    }
+    pub fn set_max_amount(&mut self, r#max_amount: impl Into<i32>) -> &mut Self {
         self.r#max_amount = r#max_amount.into();
         self
     }
@@ -8538,7 +9562,15 @@ impl LootContentStars {
         self.r#min_amount = r#min_amount.into();
         self
     }
+    pub fn set_min_amount(&mut self, r#min_amount: impl Into<i32>) -> &mut Self {
+        self.r#min_amount = r#min_amount.into();
+        self
+    }
     pub fn with_max_amount(mut self, r#max_amount: impl Into<i32>) -> Self {
+        self.r#max_amount = r#max_amount.into();
+        self
+    }
+    pub fn set_max_amount(&mut self, r#max_amount: impl Into<i32>) -> &mut Self {
         self.r#max_amount = r#max_amount.into();
         self
     }
@@ -8661,7 +9693,15 @@ impl LootContentRandomComponents {
         self.r#min_amount = r#min_amount.into();
         self
     }
+    pub fn set_min_amount(&mut self, r#min_amount: impl Into<i32>) -> &mut Self {
+        self.r#min_amount = r#min_amount.into();
+        self
+    }
     pub fn with_max_amount(mut self, r#max_amount: impl Into<i32>) -> Self {
+        self.r#max_amount = r#max_amount.into();
+        self
+    }
+    pub fn set_max_amount(&mut self, r#max_amount: impl Into<i32>) -> &mut Self {
         self.r#max_amount = r#max_amount.into();
         self
     }
@@ -8669,7 +9709,15 @@ impl LootContentRandomComponents {
         self.r#value_ratio = r#value_ratio.into();
         self
     }
+    pub fn set_value_ratio(&mut self, r#value_ratio: impl Into<f32>) -> &mut Self {
+        self.r#value_ratio = r#value_ratio.into();
+        self
+    }
     pub fn with_factions(mut self, r#factions: impl Into<FactionFilter>) -> Self {
+        self.r#factions = r#factions.into();
+        self
+    }
+    pub fn set_factions(&mut self, r#factions: impl Into<FactionFilter>) -> &mut Self {
         self.r#factions = r#factions.into();
         self
     }
@@ -8774,11 +9822,23 @@ impl LootContentRandomItems {
         self.r#min_amount = r#min_amount.into();
         self
     }
+    pub fn set_min_amount(&mut self, r#min_amount: impl Into<i32>) -> &mut Self {
+        self.r#min_amount = r#min_amount.into();
+        self
+    }
     pub fn with_max_amount(mut self, r#max_amount: impl Into<i32>) -> Self {
         self.r#max_amount = r#max_amount.into();
         self
     }
+    pub fn set_max_amount(&mut self, r#max_amount: impl Into<i32>) -> &mut Self {
+        self.r#max_amount = r#max_amount.into();
+        self
+    }
     pub fn with_items(mut self, r#items: impl Into<Vec<LootItem>>) -> Self {
+        self.r#items = r#items.into();
+        self
+    }
+    pub fn set_items(&mut self, r#items: impl Into<Vec<LootItem>>) -> &mut Self {
         self.r#items = r#items.into();
         self
     }
@@ -8861,6 +9921,10 @@ impl LootContentAllItems {
         self.r#items = r#items.into();
         self
     }
+    pub fn set_items(&mut self, r#items: impl Into<Vec<LootItem>>) -> &mut Self {
+        self.r#items = r#items.into();
+        self
+    }
 }
 impl DatabaseItem for LootContentAllItems {
     fn validate(&mut self) {}
@@ -8900,6 +9964,10 @@ impl LootContentItemsWithChance {
         }
     }
     pub fn with_items(mut self, r#items: impl Into<Vec<LootItem>>) -> Self {
+        self.r#items = r#items.into();
+        self
+    }
+    pub fn set_items(&mut self, r#items: impl Into<Vec<LootItem>>) -> &mut Self {
         self.r#items = r#items.into();
         self
     }
@@ -8949,11 +10017,23 @@ impl LootContentQuestItem {
         self.r#item_id = r#item_id.into();
         self
     }
+    pub fn set_item_id(&mut self, r#item_id: impl Into<QuestItemId>) -> &mut Self {
+        self.r#item_id = r#item_id.into();
+        self
+    }
     pub fn with_min_amount(mut self, r#min_amount: impl Into<i32>) -> Self {
         self.r#min_amount = r#min_amount.into();
         self
     }
+    pub fn set_min_amount(&mut self, r#min_amount: impl Into<i32>) -> &mut Self {
+        self.r#min_amount = r#min_amount.into();
+        self
+    }
     pub fn with_max_amount(mut self, r#max_amount: impl Into<i32>) -> Self {
+        self.r#max_amount = r#max_amount.into();
+        self
+    }
+    pub fn set_max_amount(&mut self, r#max_amount: impl Into<i32>) -> &mut Self {
         self.r#max_amount = r#max_amount.into();
         self
     }
@@ -9029,6 +10109,10 @@ impl LootContentShip {
         self.r#item_id = r#item_id.into();
         self
     }
+    pub fn set_item_id(&mut self, r#item_id: impl Into<ShipBuildId>) -> &mut Self {
+        self.r#item_id = r#item_id.into();
+        self
+    }
 }
 impl DatabaseItem for LootContentShip {
     fn validate(&mut self) {}
@@ -9061,6 +10145,10 @@ impl LootContentEmptyShip {
         Self { r#item_id }
     }
     pub fn with_item_id(mut self, r#item_id: impl Into<ShipId>) -> Self {
+        self.r#item_id = r#item_id.into();
+        self
+    }
+    pub fn set_item_id(&mut self, r#item_id: impl Into<ShipId>) -> &mut Self {
         self.r#item_id = r#item_id.into();
         self
     }
@@ -9105,11 +10193,23 @@ impl LootContentComponent {
         self.r#item_id = r#item_id.into();
         self
     }
+    pub fn set_item_id(&mut self, r#item_id: impl Into<ComponentId>) -> &mut Self {
+        self.r#item_id = r#item_id.into();
+        self
+    }
     pub fn with_min_amount(mut self, r#min_amount: impl Into<i32>) -> Self {
         self.r#min_amount = r#min_amount.into();
         self
     }
+    pub fn set_min_amount(&mut self, r#min_amount: impl Into<i32>) -> &mut Self {
+        self.r#min_amount = r#min_amount.into();
+        self
+    }
     pub fn with_max_amount(mut self, r#max_amount: impl Into<i32>) -> Self {
+        self.r#max_amount = r#max_amount.into();
+        self
+    }
+    pub fn set_max_amount(&mut self, r#max_amount: impl Into<i32>) -> &mut Self {
         self.r#max_amount = r#max_amount.into();
         self
     }
@@ -9185,6 +10285,10 @@ impl LootContentBlueprint {
         self.r#item_id = r#item_id.into();
         self
     }
+    pub fn set_item_id(&mut self, r#item_id: impl Into<TechnologyId>) -> &mut Self {
+        self.r#item_id = r#item_id.into();
+        self
+    }
 }
 impl DatabaseItem for LootContentBlueprint {
     fn validate(&mut self) {}
@@ -9226,11 +10330,23 @@ impl LootContentResearchPoints {
         self.r#min_amount = r#min_amount.into();
         self
     }
+    pub fn set_min_amount(&mut self, r#min_amount: impl Into<i32>) -> &mut Self {
+        self.r#min_amount = r#min_amount.into();
+        self
+    }
     pub fn with_max_amount(mut self, r#max_amount: impl Into<i32>) -> Self {
         self.r#max_amount = r#max_amount.into();
         self
     }
+    pub fn set_max_amount(&mut self, r#max_amount: impl Into<i32>) -> &mut Self {
+        self.r#max_amount = r#max_amount.into();
+        self
+    }
     pub fn with_factions(mut self, r#factions: impl Into<FactionFilter>) -> Self {
+        self.r#factions = r#factions.into();
+        self
+    }
+    pub fn set_factions(&mut self, r#factions: impl Into<FactionFilter>) -> &mut Self {
         self.r#factions = r#factions.into();
         self
     }
@@ -9317,11 +10433,23 @@ impl LootContentSatellite {
         self.r#item_id = r#item_id.into();
         self
     }
+    pub fn set_item_id(&mut self, r#item_id: impl Into<SatelliteId>) -> &mut Self {
+        self.r#item_id = r#item_id.into();
+        self
+    }
     pub fn with_min_amount(mut self, r#min_amount: impl Into<i32>) -> Self {
         self.r#min_amount = r#min_amount.into();
         self
     }
+    pub fn set_min_amount(&mut self, r#min_amount: impl Into<i32>) -> &mut Self {
+        self.r#min_amount = r#min_amount.into();
+        self
+    }
     pub fn with_max_amount(mut self, r#max_amount: impl Into<i32>) -> Self {
+        self.r#max_amount = r#max_amount.into();
+        self
+    }
+    pub fn set_max_amount(&mut self, r#max_amount: impl Into<i32>) -> &mut Self {
         self.r#max_amount = r#max_amount.into();
         self
     }
@@ -9554,7 +10682,15 @@ impl LootItem {
         self.r#weight = r#weight.into();
         self
     }
+    pub fn set_weight(&mut self, r#weight: impl Into<f32>) -> &mut Self {
+        self.r#weight = r#weight.into();
+        self
+    }
     pub fn with_loot(mut self, r#loot: impl Into<LootContent>) -> Self {
+        self.r#loot = r#loot.into();
+        self
+    }
+    pub fn set_loot(&mut self, r#loot: impl Into<LootContent>) -> &mut Self {
         self.r#loot = r#loot.into();
         self
     }
@@ -9625,6 +10761,10 @@ impl NodeUndefined {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
 }
 impl DatabaseItem for NodeUndefined {
     fn validate(&mut self) {
@@ -9683,6 +10823,10 @@ impl NodeComingSoon {
         }
     }
     pub fn with_id(mut self, r#id: impl Into<i32>) -> Self {
+        self.r#id = r#id.into();
+        self
+    }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
         self.r#id = r#id.into();
         self
     }
@@ -9759,7 +10903,15 @@ impl NodeShowDialog {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_required_view(mut self, r#required_view: impl Into<RequiredViewMode>) -> Self {
+        self.r#required_view = r#required_view.into();
+        self
+    }
+    pub fn set_required_view(&mut self, r#required_view: impl Into<RequiredViewMode>) -> &mut Self {
         self.r#required_view = r#required_view.into();
         self
     }
@@ -9767,7 +10919,15 @@ impl NodeShowDialog {
         self.r#message = r#message.into();
         self
     }
+    pub fn set_message(&mut self, r#message: impl Into<String>) -> &mut Self {
+        self.r#message = r#message.into();
+        self
+    }
     pub fn with_enemy(mut self, r#enemy: impl Into<Option<FleetId>>) -> Self {
+        self.r#enemy = r#enemy.into();
+        self
+    }
+    pub fn set_enemy(&mut self, r#enemy: impl Into<Option<FleetId>>) -> &mut Self {
         self.r#enemy = r#enemy.into();
         self
     }
@@ -9775,11 +10935,23 @@ impl NodeShowDialog {
         self.r#loot = r#loot.into();
         self
     }
+    pub fn set_loot(&mut self, r#loot: impl Into<Option<LootId>>) -> &mut Self {
+        self.r#loot = r#loot.into();
+        self
+    }
     pub fn with_character(mut self, r#character: impl Into<Option<CharacterId>>) -> Self {
         self.r#character = r#character.into();
         self
     }
+    pub fn set_character(&mut self, r#character: impl Into<Option<CharacterId>>) -> &mut Self {
+        self.r#character = r#character.into();
+        self
+    }
     pub fn with_actions(mut self, r#actions: impl Into<Vec<NodeAction>>) -> Self {
+        self.r#actions = r#actions.into();
+        self
+    }
+    pub fn set_actions(&mut self, r#actions: impl Into<Vec<NodeAction>>) -> &mut Self {
         self.r#actions = r#actions.into();
         self
     }
@@ -9850,7 +11022,15 @@ impl NodeOpenShipyard {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
@@ -9858,7 +11038,15 @@ impl NodeOpenShipyard {
         self.r#faction = r#faction.into();
         self
     }
+    pub fn set_faction(&mut self, r#faction: impl Into<Option<FactionId>>) -> &mut Self {
+        self.r#faction = r#faction.into();
+        self
+    }
     pub fn with_value(mut self, r#value: impl Into<i32>) -> Self {
+        self.r#value = r#value.into();
+        self
+    }
+    pub fn set_value(&mut self, r#value: impl Into<i32>) -> &mut Self {
         self.r#value = r#value.into();
         self
     }
@@ -9965,7 +11153,15 @@ impl NodeOpenWorkshop {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
@@ -9973,7 +11169,15 @@ impl NodeOpenWorkshop {
         self.r#faction = r#faction.into();
         self
     }
+    pub fn set_faction(&mut self, r#faction: impl Into<Option<FactionId>>) -> &mut Self {
+        self.r#faction = r#faction.into();
+        self
+    }
     pub fn with_value(mut self, r#value: impl Into<i32>) -> Self {
+        self.r#value = r#value.into();
+        self
+    }
+    pub fn set_value(&mut self, r#value: impl Into<i32>) -> &mut Self {
         self.r#value = r#value.into();
         self
     }
@@ -10080,7 +11284,15 @@ impl NodeSwitch {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_message(mut self, r#message: impl Into<String>) -> Self {
+        self.r#message = r#message.into();
+        self
+    }
+    pub fn set_message(&mut self, r#message: impl Into<String>) -> &mut Self {
         self.r#message = r#message.into();
         self
     }
@@ -10088,7 +11300,15 @@ impl NodeSwitch {
         self.r#default_transition = r#default_transition.into();
         self
     }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
     pub fn with_transitions(mut self, r#transitions: impl Into<Vec<NodeTransition>>) -> Self {
+        self.r#transitions = r#transitions.into();
+        self
+    }
+    pub fn set_transitions(&mut self, r#transitions: impl Into<Vec<NodeTransition>>) -> &mut Self {
         self.r#transitions = r#transitions.into();
         self
     }
@@ -10177,7 +11397,15 @@ impl NodeRandom {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_message(mut self, r#message: impl Into<String>) -> Self {
+        self.r#message = r#message.into();
+        self
+    }
+    pub fn set_message(&mut self, r#message: impl Into<String>) -> &mut Self {
         self.r#message = r#message.into();
         self
     }
@@ -10185,7 +11413,15 @@ impl NodeRandom {
         self.r#default_transition = r#default_transition.into();
         self
     }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
     pub fn with_transitions(mut self, r#transitions: impl Into<Vec<NodeTransition>>) -> Self {
+        self.r#transitions = r#transitions.into();
+        self
+    }
+    pub fn set_transitions(&mut self, r#transitions: impl Into<Vec<NodeTransition>>) -> &mut Self {
         self.r#transitions = r#transitions.into();
         self
     }
@@ -10272,11 +11508,23 @@ impl NodeCondition {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_message(mut self, r#message: impl Into<String>) -> Self {
         self.r#message = r#message.into();
         self
     }
+    pub fn set_message(&mut self, r#message: impl Into<String>) -> &mut Self {
+        self.r#message = r#message.into();
+        self
+    }
     pub fn with_transitions(mut self, r#transitions: impl Into<Vec<NodeTransition>>) -> Self {
+        self.r#transitions = r#transitions.into();
+        self
+    }
+    pub fn set_transitions(&mut self, r#transitions: impl Into<Vec<NodeTransition>>) -> &mut Self {
         self.r#transitions = r#transitions.into();
         self
     }
@@ -10349,7 +11597,15 @@ impl NodeAttackFleet {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
@@ -10357,11 +11613,23 @@ impl NodeAttackFleet {
         self.r#failure_transition = r#failure_transition.into();
         self
     }
+    pub fn set_failure_transition(&mut self, r#failure_transition: impl Into<i32>) -> &mut Self {
+        self.r#failure_transition = r#failure_transition.into();
+        self
+    }
     pub fn with_enemy(mut self, r#enemy: impl Into<Option<FleetId>>) -> Self {
         self.r#enemy = r#enemy.into();
         self
     }
+    pub fn set_enemy(&mut self, r#enemy: impl Into<Option<FleetId>>) -> &mut Self {
+        self.r#enemy = r#enemy.into();
+        self
+    }
     pub fn with_loot(mut self, r#loot: impl Into<Option<LootId>>) -> Self {
+        self.r#loot = r#loot.into();
+        self
+    }
+    pub fn set_loot(&mut self, r#loot: impl Into<Option<LootId>>) -> &mut Self {
         self.r#loot = r#loot.into();
         self
     }
@@ -10466,11 +11734,23 @@ impl NodeAttackOccupants {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
     pub fn with_failure_transition(mut self, r#failure_transition: impl Into<i32>) -> Self {
+        self.r#failure_transition = r#failure_transition.into();
+        self
+    }
+    pub fn set_failure_transition(&mut self, r#failure_transition: impl Into<i32>) -> &mut Self {
         self.r#failure_transition = r#failure_transition.into();
         self
     }
@@ -10575,11 +11855,23 @@ impl NodeAttackStarbase {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
     pub fn with_failure_transition(mut self, r#failure_transition: impl Into<i32>) -> Self {
+        self.r#failure_transition = r#failure_transition.into();
+        self
+    }
+    pub fn set_failure_transition(&mut self, r#failure_transition: impl Into<i32>) -> &mut Self {
         self.r#failure_transition = r#failure_transition.into();
         self
     }
@@ -10682,7 +11974,15 @@ impl NodeDestroyOccupants {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
@@ -10767,7 +12067,15 @@ impl NodeSuppressOccupants {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
@@ -10852,7 +12160,15 @@ impl NodeRetreat {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
@@ -10939,11 +12255,23 @@ impl NodeReceiveItem {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
     pub fn with_loot(mut self, r#loot: impl Into<Option<LootId>>) -> Self {
+        self.r#loot = r#loot.into();
+        self
+    }
+    pub fn set_loot(&mut self, r#loot: impl Into<Option<LootId>>) -> &mut Self {
         self.r#loot = r#loot.into();
         self
     }
@@ -11030,11 +12358,23 @@ impl NodeRemoveItem {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
     pub fn with_loot(mut self, r#loot: impl Into<Option<LootId>>) -> Self {
+        self.r#loot = r#loot.into();
+        self
+    }
+    pub fn set_loot(&mut self, r#loot: impl Into<Option<LootId>>) -> &mut Self {
         self.r#loot = r#loot.into();
         self
     }
@@ -11121,11 +12461,23 @@ impl NodeTrade {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
     pub fn with_loot(mut self, r#loot: impl Into<Option<LootId>>) -> Self {
+        self.r#loot = r#loot.into();
+        self
+    }
+    pub fn set_loot(&mut self, r#loot: impl Into<Option<LootId>>) -> &mut Self {
         self.r#loot = r#loot.into();
         self
     }
@@ -11208,6 +12560,10 @@ impl NodeCompleteQuest {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
 }
 impl DatabaseItem for NodeCompleteQuest {
     fn validate(&mut self) {
@@ -11269,6 +12625,10 @@ impl NodeFailQuest {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
 }
 impl DatabaseItem for NodeFailQuest {
     fn validate(&mut self) {
@@ -11327,6 +12687,10 @@ impl NodeCancelQuest {
         }
     }
     pub fn with_id(mut self, r#id: impl Into<i32>) -> Self {
+        self.r#id = r#id.into();
+        self
+    }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
         self.r#id = r#id.into();
         self
     }
@@ -11395,11 +12759,23 @@ impl NodeStartQuest {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
     pub fn with_quest(mut self, r#quest: impl Into<Option<QuestId>>) -> Self {
+        self.r#quest = r#quest.into();
+        self
+    }
+    pub fn set_quest(&mut self, r#quest: impl Into<Option<QuestId>>) -> &mut Self {
         self.r#quest = r#quest.into();
         self
     }
@@ -11488,7 +12864,15 @@ impl NodeSetCharacterRelations {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
@@ -11496,7 +12880,15 @@ impl NodeSetCharacterRelations {
         self.r#character = r#character.into();
         self
     }
+    pub fn set_character(&mut self, r#character: impl Into<Option<CharacterId>>) -> &mut Self {
+        self.r#character = r#character.into();
+        self
+    }
     pub fn with_value(mut self, r#value: impl Into<i32>) -> Self {
+        self.r#value = r#value.into();
+        self
+    }
+    pub fn set_value(&mut self, r#value: impl Into<i32>) -> &mut Self {
         self.r#value = r#value.into();
         self
     }
@@ -11601,11 +12993,23 @@ impl NodeSetFactionRelations {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
     pub fn with_value(mut self, r#value: impl Into<i32>) -> Self {
+        self.r#value = r#value.into();
+        self
+    }
+    pub fn set_value(&mut self, r#value: impl Into<i32>) -> &mut Self {
         self.r#value = r#value.into();
         self
     }
@@ -11711,11 +13115,23 @@ impl NodeSetFactionStarbasePower {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
     pub fn with_value(mut self, r#value: impl Into<i32>) -> Self {
+        self.r#value = r#value.into();
+        self
+    }
+    pub fn set_value(&mut self, r#value: impl Into<i32>) -> &mut Self {
         self.r#value = r#value.into();
         self
     }
@@ -11822,7 +13238,15 @@ impl NodeChangeCharacterRelations {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
@@ -11830,7 +13254,15 @@ impl NodeChangeCharacterRelations {
         self.r#character = r#character.into();
         self
     }
+    pub fn set_character(&mut self, r#character: impl Into<Option<CharacterId>>) -> &mut Self {
+        self.r#character = r#character.into();
+        self
+    }
     pub fn with_value(mut self, r#value: impl Into<i32>) -> Self {
+        self.r#value = r#value.into();
+        self
+    }
+    pub fn set_value(&mut self, r#value: impl Into<i32>) -> &mut Self {
         self.r#value = r#value.into();
         self
     }
@@ -11935,11 +13367,23 @@ impl NodeChangeFactionRelations {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
     pub fn with_value(mut self, r#value: impl Into<i32>) -> Self {
+        self.r#value = r#value.into();
+        self
+    }
+    pub fn set_value(&mut self, r#value: impl Into<i32>) -> &mut Self {
         self.r#value = r#value.into();
         self
     }
@@ -12045,11 +13489,23 @@ impl NodeChangeFactionStarbasePower {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
     pub fn with_value(mut self, r#value: impl Into<i32>) -> Self {
+        self.r#value = r#value.into();
+        self
+    }
+    pub fn set_value(&mut self, r#value: impl Into<i32>) -> &mut Self {
         self.r#value = r#value.into();
         self
     }
@@ -12152,7 +13608,15 @@ impl NodeCaptureStarBase {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
@@ -12237,7 +13701,15 @@ impl NodeLiberateStarBase {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
@@ -12324,11 +13796,23 @@ impl NodeChangeFaction {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<i32>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_default_transition(mut self, r#default_transition: impl Into<i32>) -> Self {
         self.r#default_transition = r#default_transition.into();
         self
     }
+    pub fn set_default_transition(&mut self, r#default_transition: impl Into<i32>) -> &mut Self {
+        self.r#default_transition = r#default_transition.into();
+        self
+    }
     pub fn with_faction(mut self, r#faction: impl Into<Option<FactionId>>) -> Self {
+        self.r#faction = r#faction.into();
+        self
+    }
+    pub fn set_faction(&mut self, r#faction: impl Into<Option<FactionId>>) -> &mut Self {
         self.r#faction = r#faction.into();
         self
     }
@@ -12729,11 +14213,23 @@ impl NodeAction {
         self.r#target_node = r#target_node.into();
         self
     }
+    pub fn set_target_node(&mut self, r#target_node: impl Into<i32>) -> &mut Self {
+        self.r#target_node = r#target_node.into();
+        self
+    }
     pub fn with_requirement(mut self, r#requirement: impl Into<Requirement>) -> Self {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(&mut self, r#requirement: impl Into<Requirement>) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_button_text(mut self, r#button_text: impl Into<String>) -> Self {
+        self.r#button_text = r#button_text.into();
+        self
+    }
+    pub fn set_button_text(&mut self, r#button_text: impl Into<String>) -> &mut Self {
         self.r#button_text = r#button_text.into();
         self
     }
@@ -12789,11 +14285,23 @@ impl NodeTransition {
         self.r#target_node = r#target_node.into();
         self
     }
+    pub fn set_target_node(&mut self, r#target_node: impl Into<i32>) -> &mut Self {
+        self.r#target_node = r#target_node.into();
+        self
+    }
     pub fn with_requirement(mut self, r#requirement: impl Into<Requirement>) -> Self {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(&mut self, r#requirement: impl Into<Requirement>) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_weight(mut self, r#weight: impl Into<f32>) -> Self {
+        self.r#weight = r#weight.into();
+        self
+    }
+    pub fn set_weight(&mut self, r#weight: impl Into<f32>) -> &mut Self {
         self.r#weight = r#weight.into();
         self
     }
@@ -12873,7 +14381,15 @@ impl QuestOrigin {
         self.r#type = r#type.into();
         self
     }
+    pub fn set_type(&mut self, r#type: impl Into<QuestOriginType>) -> &mut Self {
+        self.r#type = r#type.into();
+        self
+    }
     pub fn with_factions(mut self, r#factions: impl Into<FactionFilter>) -> Self {
+        self.r#factions = r#factions.into();
+        self
+    }
+    pub fn set_factions(&mut self, r#factions: impl Into<FactionFilter>) -> &mut Self {
         self.r#factions = r#factions.into();
         self
     }
@@ -12881,7 +14397,15 @@ impl QuestOrigin {
         self.r#min_distance = r#min_distance.into();
         self
     }
+    pub fn set_min_distance(&mut self, r#min_distance: impl Into<i32>) -> &mut Self {
+        self.r#min_distance = r#min_distance.into();
+        self
+    }
     pub fn with_max_distance(mut self, r#max_distance: impl Into<i32>) -> Self {
+        self.r#max_distance = r#max_distance.into();
+        self
+    }
+    pub fn set_max_distance(&mut self, r#max_distance: impl Into<i32>) -> &mut Self {
         self.r#max_distance = r#max_distance.into();
         self
     }
@@ -12889,7 +14413,15 @@ impl QuestOrigin {
         self.r#min_relations = r#min_relations.into();
         self
     }
+    pub fn set_min_relations(&mut self, r#min_relations: impl Into<i32>) -> &mut Self {
+        self.r#min_relations = r#min_relations.into();
+        self
+    }
     pub fn with_max_relations(mut self, r#max_relations: impl Into<i32>) -> Self {
+        self.r#max_relations = r#max_relations.into();
+        self
+    }
+    pub fn set_max_relations(&mut self, r#max_relations: impl Into<i32>) -> &mut Self {
         self.r#max_relations = r#max_relations.into();
         self
     }
@@ -13058,6 +14590,10 @@ impl RequirementAny {
         self.r#requirements = r#requirements.into();
         self
     }
+    pub fn set_requirements(&mut self, r#requirements: impl Into<Vec<Requirement>>) -> &mut Self {
+        self.r#requirements = r#requirements.into();
+        self
+    }
 }
 impl DatabaseItem for RequirementAny {
     fn validate(&mut self) {}
@@ -13100,6 +14636,10 @@ impl RequirementAll {
         self.r#requirements = r#requirements.into();
         self
     }
+    pub fn set_requirements(&mut self, r#requirements: impl Into<Vec<Requirement>>) -> &mut Self {
+        self.r#requirements = r#requirements.into();
+        self
+    }
 }
 impl DatabaseItem for RequirementAll {
     fn validate(&mut self) {}
@@ -13139,6 +14679,10 @@ impl RequirementNone {
         }
     }
     pub fn with_requirements(mut self, r#requirements: impl Into<Vec<Requirement>>) -> Self {
+        self.r#requirements = r#requirements.into();
+        self
+    }
+    pub fn set_requirements(&mut self, r#requirements: impl Into<Vec<Requirement>>) -> &mut Self {
         self.r#requirements = r#requirements.into();
         self
     }
@@ -13188,11 +14732,23 @@ impl RequirementPlayerPosition {
         self.r#min_value = r#min_value.into();
         self
     }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<i32>) -> &mut Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
     pub fn with_max_value(mut self, r#max_value: impl Into<i32>) -> Self {
         self.r#max_value = r#max_value.into();
         self
     }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<i32>) -> &mut Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
     pub fn with_bool_value(mut self, r#bool_value: impl Into<bool>) -> Self {
+        self.r#bool_value = r#bool_value.into();
+        self
+    }
+    pub fn set_bool_value(&mut self, r#bool_value: impl Into<bool>) -> &mut Self {
         self.r#bool_value = r#bool_value.into();
         self
     }
@@ -13279,11 +14835,23 @@ impl RequirementRandomStarSystem {
         self.r#min_value = r#min_value.into();
         self
     }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<i32>) -> &mut Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
     pub fn with_max_value(mut self, r#max_value: impl Into<i32>) -> Self {
         self.r#max_value = r#max_value.into();
         self
     }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<i32>) -> &mut Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
     pub fn with_bool_value(mut self, r#bool_value: impl Into<bool>) -> Self {
+        self.r#bool_value = r#bool_value.into();
+        self
+    }
+    pub fn set_bool_value(&mut self, r#bool_value: impl Into<bool>) -> &mut Self {
         self.r#bool_value = r#bool_value.into();
         self
     }
@@ -13400,6 +14968,10 @@ impl RequirementQuestCompleted {
         self.r#item_id = r#item_id.into();
         self
     }
+    pub fn set_item_id(&mut self, r#item_id: impl Into<Option<QuestId>>) -> &mut Self {
+        self.r#item_id = r#item_id.into();
+        self
+    }
 }
 impl DatabaseItem for RequirementQuestCompleted {
     fn validate(&mut self) {}
@@ -13439,6 +15011,10 @@ impl RequirementQuestActive {
         }
     }
     pub fn with_item_id(mut self, r#item_id: impl Into<Option<QuestId>>) -> Self {
+        self.r#item_id = r#item_id.into();
+        self
+    }
+    pub fn set_item_id(&mut self, r#item_id: impl Into<Option<QuestId>>) -> &mut Self {
         self.r#item_id = r#item_id.into();
         self
     }
@@ -13488,11 +15064,23 @@ impl RequirementCharacterRelations {
         self.r#min_value = r#min_value.into();
         self
     }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<i32>) -> &mut Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
     pub fn with_max_value(mut self, r#max_value: impl Into<i32>) -> Self {
         self.r#max_value = r#max_value.into();
         self
     }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<i32>) -> &mut Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
     pub fn with_character(mut self, r#character: impl Into<Option<CharacterId>>) -> Self {
+        self.r#character = r#character.into();
+        self
+    }
+    pub fn set_character(&mut self, r#character: impl Into<Option<CharacterId>>) -> &mut Self {
         self.r#character = r#character.into();
         self
     }
@@ -13577,7 +15165,15 @@ impl RequirementFactionRelations {
         self.r#min_value = r#min_value.into();
         self
     }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<i32>) -> &mut Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
     pub fn with_max_value(mut self, r#max_value: impl Into<i32>) -> Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<i32>) -> &mut Self {
         self.r#max_value = r#max_value.into();
         self
     }
@@ -13698,7 +15294,15 @@ impl RequirementFactionStarbasePower {
         self.r#min_value = r#min_value.into();
         self
     }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<i32>) -> &mut Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
     pub fn with_max_value(mut self, r#max_value: impl Into<i32>) -> Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<i32>) -> &mut Self {
         self.r#max_value = r#max_value.into();
         self
     }
@@ -13815,6 +15419,10 @@ impl RequirementFaction {
         self.r#faction = r#faction.into();
         self
     }
+    pub fn set_faction(&mut self, r#faction: impl Into<Option<FactionId>>) -> &mut Self {
+        self.r#faction = r#faction.into();
+        self
+    }
 }
 impl DatabaseItem for RequirementFaction {
     fn validate(&mut self) {}
@@ -13859,7 +15467,15 @@ impl RequirementHaveQuestItem {
         self.r#item_id = r#item_id.into();
         self
     }
+    pub fn set_item_id(&mut self, r#item_id: impl Into<Option<QuestItemId>>) -> &mut Self {
+        self.r#item_id = r#item_id.into();
+        self
+    }
     pub fn with_min_value(mut self, r#min_value: impl Into<i32>) -> Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<i32>) -> &mut Self {
         self.r#min_value = r#min_value.into();
         self
     }
@@ -13924,6 +15540,10 @@ impl RequirementHaveItem {
         self.r#loot = r#loot.into();
         self
     }
+    pub fn set_loot(&mut self, r#loot: impl Into<LootContent>) -> &mut Self {
+        self.r#loot = r#loot.into();
+        self
+    }
 }
 impl DatabaseItem for RequirementHaveItem {
     fn validate(&mut self) {}
@@ -13966,6 +15586,10 @@ impl RequirementHaveItemById {
         self.r#item_id = r#item_id.into();
         self
     }
+    pub fn set_item_id(&mut self, r#item_id: impl Into<Option<LootId>>) -> &mut Self {
+        self.r#item_id = r#item_id.into();
+        self
+    }
 }
 impl DatabaseItem for RequirementHaveItemById {
     fn validate(&mut self) {}
@@ -14005,6 +15629,10 @@ impl RequirementComeToOrigin {
         }
     }
     pub fn with_bool_value(mut self, r#bool_value: impl Into<bool>) -> Self {
+        self.r#bool_value = r#bool_value.into();
+        self
+    }
+    pub fn set_bool_value(&mut self, r#bool_value: impl Into<bool>) -> &mut Self {
         self.r#bool_value = r#bool_value.into();
         self
     }
@@ -14052,7 +15680,15 @@ impl RequirementTimeSinceQuestStart {
         self.r#min_value = r#min_value.into();
         self
     }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<i32>) -> &mut Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
     pub fn with_max_value(mut self, r#max_value: impl Into<i32>) -> Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<i32>) -> &mut Self {
         self.r#max_value = r#max_value.into();
         self
     }
@@ -14137,7 +15773,15 @@ impl RequirementTimeSinceLastCompletion {
         self.r#min_value = r#min_value.into();
         self
     }
+    pub fn set_min_value(&mut self, r#min_value: impl Into<i32>) -> &mut Self {
+        self.r#min_value = r#min_value.into();
+        self
+    }
     pub fn with_max_value(mut self, r#max_value: impl Into<i32>) -> Self {
+        self.r#max_value = r#max_value.into();
+        self
+    }
+    pub fn set_max_value(&mut self, r#max_value: impl Into<i32>) -> &mut Self {
         self.r#max_value = r#max_value.into();
         self
     }
@@ -14403,7 +16047,15 @@ impl DebugCode {
         self.r#code = r#code.into();
         self
     }
+    pub fn set_code(&mut self, r#code: impl Into<i32>) -> &mut Self {
+        self.r#code = r#code.into();
+        self
+    }
     pub fn with_loot(mut self, r#loot: impl Into<LootContent>) -> Self {
+        self.r#loot = r#loot.into();
+        self
+    }
+    pub fn set_loot(&mut self, r#loot: impl Into<LootContent>) -> &mut Self {
         self.r#loot = r#loot.into();
         self
     }
@@ -14457,7 +16109,15 @@ impl ShipToValue {
         self.r#ship = r#ship.into();
         self
     }
+    pub fn set_ship(&mut self, r#ship: impl Into<Option<ShipId>>) -> &mut Self {
+        self.r#ship = r#ship.into();
+        self
+    }
     pub fn with_value(mut self, r#value: impl Into<i32>) -> Self {
+        self.r#value = r#value.into();
+        self
+    }
+    pub fn set_value(&mut self, r#value: impl Into<i32>) -> &mut Self {
         self.r#value = r#value.into();
         self
     }
@@ -14497,6 +16157,10 @@ impl SoundTrack {
         }
     }
     pub fn with_audio(mut self, r#audio: impl Into<String>) -> Self {
+        self.r#audio = r#audio.into();
+        self
+    }
+    pub fn set_audio(&mut self, r#audio: impl Into<String>) -> &mut Self {
         self.r#audio = r#audio.into();
         self
     }
@@ -14551,7 +16215,15 @@ impl ShipFeatures {
         self.r#energy_resistance = r#energy_resistance.into();
         self
     }
+    pub fn set_energy_resistance(&mut self, r#energy_resistance: impl Into<f32>) -> &mut Self {
+        self.r#energy_resistance = r#energy_resistance.into();
+        self
+    }
     pub fn with_kinetic_resistance(mut self, r#kinetic_resistance: impl Into<f32>) -> Self {
+        self.r#kinetic_resistance = r#kinetic_resistance.into();
+        self
+    }
+    pub fn set_kinetic_resistance(&mut self, r#kinetic_resistance: impl Into<f32>) -> &mut Self {
         self.r#kinetic_resistance = r#kinetic_resistance.into();
         self
     }
@@ -14559,7 +16231,15 @@ impl ShipFeatures {
         self.r#heat_resistance = r#heat_resistance.into();
         self
     }
+    pub fn set_heat_resistance(&mut self, r#heat_resistance: impl Into<f32>) -> &mut Self {
+        self.r#heat_resistance = r#heat_resistance.into();
+        self
+    }
     pub fn with_ship_weight_bonus(mut self, r#ship_weight_bonus: impl Into<f32>) -> Self {
+        self.r#ship_weight_bonus = r#ship_weight_bonus.into();
+        self
+    }
+    pub fn set_ship_weight_bonus(&mut self, r#ship_weight_bonus: impl Into<f32>) -> &mut Self {
         self.r#ship_weight_bonus = r#ship_weight_bonus.into();
         self
     }
@@ -14567,7 +16247,18 @@ impl ShipFeatures {
         self.r#equipment_weight_bonus = r#equipment_weight_bonus.into();
         self
     }
+    pub fn set_equipment_weight_bonus(
+        &mut self,
+        r#equipment_weight_bonus: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#equipment_weight_bonus = r#equipment_weight_bonus.into();
+        self
+    }
     pub fn with_velocity_bonus(mut self, r#velocity_bonus: impl Into<f32>) -> Self {
+        self.r#velocity_bonus = r#velocity_bonus.into();
+        self
+    }
+    pub fn set_velocity_bonus(&mut self, r#velocity_bonus: impl Into<f32>) -> &mut Self {
         self.r#velocity_bonus = r#velocity_bonus.into();
         self
     }
@@ -14575,7 +16266,15 @@ impl ShipFeatures {
         self.r#turn_rate_bonus = r#turn_rate_bonus.into();
         self
     }
+    pub fn set_turn_rate_bonus(&mut self, r#turn_rate_bonus: impl Into<f32>) -> &mut Self {
+        self.r#turn_rate_bonus = r#turn_rate_bonus.into();
+        self
+    }
     pub fn with_armor_bonus(mut self, r#armor_bonus: impl Into<f32>) -> Self {
+        self.r#armor_bonus = r#armor_bonus.into();
+        self
+    }
+    pub fn set_armor_bonus(&mut self, r#armor_bonus: impl Into<f32>) -> &mut Self {
         self.r#armor_bonus = r#armor_bonus.into();
         self
     }
@@ -14583,7 +16282,15 @@ impl ShipFeatures {
         self.r#shield_bonus = r#shield_bonus.into();
         self
     }
+    pub fn set_shield_bonus(&mut self, r#shield_bonus: impl Into<f32>) -> &mut Self {
+        self.r#shield_bonus = r#shield_bonus.into();
+        self
+    }
     pub fn with_energy_bonus(mut self, r#energy_bonus: impl Into<f32>) -> Self {
+        self.r#energy_bonus = r#energy_bonus.into();
+        self
+    }
+    pub fn set_energy_bonus(&mut self, r#energy_bonus: impl Into<f32>) -> &mut Self {
         self.r#energy_bonus = r#energy_bonus.into();
         self
     }
@@ -14591,7 +16298,18 @@ impl ShipFeatures {
         self.r#regeneration = r#regeneration.into();
         self
     }
+    pub fn set_regeneration(&mut self, r#regeneration: impl Into<bool>) -> &mut Self {
+        self.r#regeneration = r#regeneration.into();
+        self
+    }
     pub fn with_builtin_devices(mut self, r#builtin_devices: impl Into<Vec<DeviceId>>) -> Self {
+        self.r#builtin_devices = r#builtin_devices.into();
+        self
+    }
+    pub fn set_builtin_devices(
+        &mut self,
+        r#builtin_devices: impl Into<Vec<DeviceId>>,
+    ) -> &mut Self {
         self.r#builtin_devices = r#builtin_devices.into();
         self
     }
@@ -14817,7 +16535,15 @@ impl StatModification {
         self.r#type = r#type.into();
         self
     }
+    pub fn set_type(&mut self, r#type: impl Into<StatModificationType>) -> &mut Self {
+        self.r#type = r#type.into();
+        self
+    }
     pub fn with_gray_3(mut self, r#gray_3: impl Into<f32>) -> Self {
+        self.r#gray_3 = r#gray_3.into();
+        self
+    }
+    pub fn set_gray_3(&mut self, r#gray_3: impl Into<f32>) -> &mut Self {
         self.r#gray_3 = r#gray_3.into();
         self
     }
@@ -14825,7 +16551,15 @@ impl StatModification {
         self.r#gray_2 = r#gray_2.into();
         self
     }
+    pub fn set_gray_2(&mut self, r#gray_2: impl Into<f32>) -> &mut Self {
+        self.r#gray_2 = r#gray_2.into();
+        self
+    }
     pub fn with_gray_1(mut self, r#gray_1: impl Into<f32>) -> Self {
+        self.r#gray_1 = r#gray_1.into();
+        self
+    }
+    pub fn set_gray_1(&mut self, r#gray_1: impl Into<f32>) -> &mut Self {
         self.r#gray_1 = r#gray_1.into();
         self
     }
@@ -14833,11 +16567,23 @@ impl StatModification {
         self.r#green = r#green.into();
         self
     }
+    pub fn set_green(&mut self, r#green: impl Into<f32>) -> &mut Self {
+        self.r#green = r#green.into();
+        self
+    }
     pub fn with_purple(mut self, r#purple: impl Into<f32>) -> Self {
         self.r#purple = r#purple.into();
         self
     }
+    pub fn set_purple(&mut self, r#purple: impl Into<f32>) -> &mut Self {
+        self.r#purple = r#purple.into();
+        self
+    }
     pub fn with_gold(mut self, r#gold: impl Into<f32>) -> Self {
+        self.r#gold = r#gold.into();
+        self
+    }
+    pub fn set_gold(&mut self, r#gold: impl Into<f32>) -> &mut Self {
         self.r#gold = r#gold.into();
         self
     }
@@ -14903,7 +16649,15 @@ impl BulletBody {
         self.r#size = r#size.into();
         self
     }
+    pub fn set_size(&mut self, r#size: impl Into<f32>) -> &mut Self {
+        self.r#size = r#size.into();
+        self
+    }
     pub fn with_length(mut self, r#length: impl Into<f32>) -> Self {
+        self.r#length = r#length.into();
+        self
+    }
+    pub fn set_length(&mut self, r#length: impl Into<f32>) -> &mut Self {
         self.r#length = r#length.into();
         self
     }
@@ -14911,7 +16665,18 @@ impl BulletBody {
         self.r#velocity = r#velocity.into();
         self
     }
+    pub fn set_velocity(&mut self, r#velocity: impl Into<f32>) -> &mut Self {
+        self.r#velocity = r#velocity.into();
+        self
+    }
     pub fn with_parent_velocity_effect(mut self, r#parent_velocity_effect: impl Into<f32>) -> Self {
+        self.r#parent_velocity_effect = r#parent_velocity_effect.into();
+        self
+    }
+    pub fn set_parent_velocity_effect(
+        &mut self,
+        r#parent_velocity_effect: impl Into<f32>,
+    ) -> &mut Self {
         self.r#parent_velocity_effect = r#parent_velocity_effect.into();
         self
     }
@@ -14919,7 +16684,15 @@ impl BulletBody {
         self.r#attached_to_parent = r#attached_to_parent.into();
         self
     }
+    pub fn set_attached_to_parent(&mut self, r#attached_to_parent: impl Into<bool>) -> &mut Self {
+        self.r#attached_to_parent = r#attached_to_parent.into();
+        self
+    }
     pub fn with_range(mut self, r#range: impl Into<f32>) -> Self {
+        self.r#range = r#range.into();
+        self
+    }
+    pub fn set_range(&mut self, r#range: impl Into<f32>) -> &mut Self {
         self.r#range = r#range.into();
         self
     }
@@ -14927,7 +16700,15 @@ impl BulletBody {
         self.r#lifetime = r#lifetime.into();
         self
     }
+    pub fn set_lifetime(&mut self, r#lifetime: impl Into<f32>) -> &mut Self {
+        self.r#lifetime = r#lifetime.into();
+        self
+    }
     pub fn with_weight(mut self, r#weight: impl Into<f32>) -> Self {
+        self.r#weight = r#weight.into();
+        self
+    }
+    pub fn set_weight(&mut self, r#weight: impl Into<f32>) -> &mut Self {
         self.r#weight = r#weight.into();
         self
     }
@@ -14935,7 +16716,15 @@ impl BulletBody {
         self.r#hit_points = r#hit_points.into();
         self
     }
+    pub fn set_hit_points(&mut self, r#hit_points: impl Into<i32>) -> &mut Self {
+        self.r#hit_points = r#hit_points.into();
+        self
+    }
     pub fn with_color(mut self, r#color: impl Into<String>) -> Self {
+        self.r#color = r#color.into();
+        self
+    }
+    pub fn set_color(&mut self, r#color: impl Into<String>) -> &mut Self {
         self.r#color = r#color.into();
         self
     }
@@ -14946,7 +16735,18 @@ impl BulletBody {
         self.r#bullet_prefab = r#bullet_prefab.into();
         self
     }
+    pub fn set_bullet_prefab(
+        &mut self,
+        r#bullet_prefab: impl Into<Option<BulletPrefabId>>,
+    ) -> &mut Self {
+        self.r#bullet_prefab = r#bullet_prefab.into();
+        self
+    }
     pub fn with_energy_cost(mut self, r#energy_cost: impl Into<f32>) -> Self {
+        self.r#energy_cost = r#energy_cost.into();
+        self
+    }
+    pub fn set_energy_cost(&mut self, r#energy_cost: impl Into<f32>) -> &mut Self {
         self.r#energy_cost = r#energy_cost.into();
         self
     }
@@ -14954,7 +16754,15 @@ impl BulletBody {
         self.r#can_be_disarmed = r#can_be_disarmed.into();
         self
     }
+    pub fn set_can_be_disarmed(&mut self, r#can_be_disarmed: impl Into<bool>) -> &mut Self {
+        self.r#can_be_disarmed = r#can_be_disarmed.into();
+        self
+    }
     pub fn with_friendly_fire(mut self, r#friendly_fire: impl Into<bool>) -> Self {
+        self.r#friendly_fire = r#friendly_fire.into();
+        self
+    }
+    pub fn set_friendly_fire(&mut self, r#friendly_fire: impl Into<bool>) -> &mut Self {
         self.r#friendly_fire = r#friendly_fire.into();
         self
     }
@@ -14965,7 +16773,18 @@ impl BulletBody {
         self.r#ai_bullet_behavior = r#ai_bullet_behavior.into();
         self
     }
+    pub fn set_ai_bullet_behavior(
+        &mut self,
+        r#ai_bullet_behavior: impl Into<AiBulletBehavior>,
+    ) -> &mut Self {
+        self.r#ai_bullet_behavior = r#ai_bullet_behavior.into();
+        self
+    }
     pub fn with_type(mut self, r#type: impl Into<BulletTypeObsolete>) -> Self {
+        self.r#type = r#type.into();
+        self
+    }
+    pub fn set_type(&mut self, r#type: impl Into<BulletTypeObsolete>) -> &mut Self {
         self.r#type = r#type.into();
         self
     }
@@ -15221,11 +17040,26 @@ impl BulletControllerHoming {
         self.r#starting_velocity_modifier = r#starting_velocity_modifier.into();
         self
     }
+    pub fn set_starting_velocity_modifier(
+        &mut self,
+        r#starting_velocity_modifier: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#starting_velocity_modifier = r#starting_velocity_modifier.into();
+        self
+    }
     pub fn with_ignore_rotation(mut self, r#ignore_rotation: impl Into<bool>) -> Self {
         self.r#ignore_rotation = r#ignore_rotation.into();
         self
     }
+    pub fn set_ignore_rotation(&mut self, r#ignore_rotation: impl Into<bool>) -> &mut Self {
+        self.r#ignore_rotation = r#ignore_rotation.into();
+        self
+    }
     pub fn with_smart_aim(mut self, r#smart_aim: impl Into<bool>) -> Self {
+        self.r#smart_aim = r#smart_aim.into();
+        self
+    }
+    pub fn set_smart_aim(&mut self, r#smart_aim: impl Into<bool>) -> &mut Self {
         self.r#smart_aim = r#smart_aim.into();
         self
     }
@@ -15332,7 +17166,15 @@ impl BulletControllerParametric {
         self.r#x = r#x.into();
         self
     }
+    pub fn set_x(&mut self, r#x: impl Into<String>) -> &mut Self {
+        self.r#x = r#x.into();
+        self
+    }
     pub fn with_y(mut self, r#y: impl Into<String>) -> Self {
+        self.r#y = r#y.into();
+        self
+    }
+    pub fn set_y(&mut self, r#y: impl Into<String>) -> &mut Self {
         self.r#y = r#y.into();
         self
     }
@@ -15340,11 +17182,23 @@ impl BulletControllerParametric {
         self.r#rotation = r#rotation.into();
         self
     }
+    pub fn set_rotation(&mut self, r#rotation: impl Into<String>) -> &mut Self {
+        self.r#rotation = r#rotation.into();
+        self
+    }
     pub fn with_size(mut self, r#size: impl Into<String>) -> Self {
         self.r#size = r#size.into();
         self
     }
+    pub fn set_size(&mut self, r#size: impl Into<String>) -> &mut Self {
+        self.r#size = r#size.into();
+        self
+    }
     pub fn with_length(mut self, r#length: impl Into<String>) -> Self {
+        self.r#length = r#length.into();
+        self
+    }
+    pub fn set_length(&mut self, r#length: impl Into<String>) -> &mut Self {
         self.r#length = r#length.into();
         self
     }
@@ -15468,7 +17322,15 @@ impl BulletTriggerNone {
         self.r#condition = r#condition.into();
         self
     }
+    pub fn set_condition(&mut self, r#condition: impl Into<BulletTriggerCondition>) -> &mut Self {
+        self.r#condition = r#condition.into();
+        self
+    }
     pub fn with_cooldown(mut self, r#cooldown: impl Into<f32>) -> Self {
+        self.r#cooldown = r#cooldown.into();
+        self
+    }
+    pub fn set_cooldown(&mut self, r#cooldown: impl Into<f32>) -> &mut Self {
         self.r#cooldown = r#cooldown.into();
         self
     }
@@ -15547,6 +17409,10 @@ impl BulletTriggerPlaySfx {
         self.r#condition = r#condition.into();
         self
     }
+    pub fn set_condition(&mut self, r#condition: impl Into<BulletTriggerCondition>) -> &mut Self {
+        self.r#condition = r#condition.into();
+        self
+    }
     pub fn with_visual_effect(
         mut self,
         r#visual_effect: impl Into<Option<VisualEffectId>>,
@@ -15554,7 +17420,18 @@ impl BulletTriggerPlaySfx {
         self.r#visual_effect = r#visual_effect.into();
         self
     }
+    pub fn set_visual_effect(
+        &mut self,
+        r#visual_effect: impl Into<Option<VisualEffectId>>,
+    ) -> &mut Self {
+        self.r#visual_effect = r#visual_effect.into();
+        self
+    }
     pub fn with_audio_clip(mut self, r#audio_clip: impl Into<String>) -> Self {
+        self.r#audio_clip = r#audio_clip.into();
+        self
+    }
+    pub fn set_audio_clip(&mut self, r#audio_clip: impl Into<String>) -> &mut Self {
         self.r#audio_clip = r#audio_clip.into();
         self
     }
@@ -15562,7 +17439,15 @@ impl BulletTriggerPlaySfx {
         self.r#color = r#color.into();
         self
     }
+    pub fn set_color(&mut self, r#color: impl Into<String>) -> &mut Self {
+        self.r#color = r#color.into();
+        self
+    }
     pub fn with_color_mode(mut self, r#color_mode: impl Into<ColorMode>) -> Self {
+        self.r#color_mode = r#color_mode.into();
+        self
+    }
+    pub fn set_color_mode(&mut self, r#color_mode: impl Into<ColorMode>) -> &mut Self {
         self.r#color_mode = r#color_mode.into();
         self
     }
@@ -15570,11 +17455,23 @@ impl BulletTriggerPlaySfx {
         self.r#size = r#size.into();
         self
     }
+    pub fn set_size(&mut self, r#size: impl Into<f32>) -> &mut Self {
+        self.r#size = r#size.into();
+        self
+    }
     pub fn with_lifetime(mut self, r#lifetime: impl Into<f32>) -> Self {
         self.r#lifetime = r#lifetime.into();
         self
     }
+    pub fn set_lifetime(&mut self, r#lifetime: impl Into<f32>) -> &mut Self {
+        self.r#lifetime = r#lifetime.into();
+        self
+    }
     pub fn with_cooldown(mut self, r#cooldown: impl Into<f32>) -> Self {
+        self.r#cooldown = r#cooldown.into();
+        self
+    }
+    pub fn set_cooldown(&mut self, r#cooldown: impl Into<f32>) -> &mut Self {
         self.r#cooldown = r#cooldown.into();
         self
     }
@@ -15701,7 +17598,15 @@ impl BulletTriggerSpawnBullet {
         self.r#condition = r#condition.into();
         self
     }
+    pub fn set_condition(&mut self, r#condition: impl Into<BulletTriggerCondition>) -> &mut Self {
+        self.r#condition = r#condition.into();
+        self
+    }
     pub fn with_audio_clip(mut self, r#audio_clip: impl Into<String>) -> Self {
+        self.r#audio_clip = r#audio_clip.into();
+        self
+    }
+    pub fn set_audio_clip(&mut self, r#audio_clip: impl Into<String>) -> &mut Self {
         self.r#audio_clip = r#audio_clip.into();
         self
     }
@@ -15709,7 +17614,15 @@ impl BulletTriggerSpawnBullet {
         self.r#ammunition = r#ammunition.into();
         self
     }
+    pub fn set_ammunition(&mut self, r#ammunition: impl Into<Option<AmmunitionId>>) -> &mut Self {
+        self.r#ammunition = r#ammunition.into();
+        self
+    }
     pub fn with_color(mut self, r#color: impl Into<String>) -> Self {
+        self.r#color = r#color.into();
+        self
+    }
+    pub fn set_color(&mut self, r#color: impl Into<String>) -> &mut Self {
         self.r#color = r#color.into();
         self
     }
@@ -15717,7 +17630,15 @@ impl BulletTriggerSpawnBullet {
         self.r#color_mode = r#color_mode.into();
         self
     }
+    pub fn set_color_mode(&mut self, r#color_mode: impl Into<ColorMode>) -> &mut Self {
+        self.r#color_mode = r#color_mode.into();
+        self
+    }
     pub fn with_quantity(mut self, r#quantity: impl Into<i32>) -> Self {
+        self.r#quantity = r#quantity.into();
+        self
+    }
+    pub fn set_quantity(&mut self, r#quantity: impl Into<i32>) -> &mut Self {
         self.r#quantity = r#quantity.into();
         self
     }
@@ -15725,7 +17646,15 @@ impl BulletTriggerSpawnBullet {
         self.r#size = r#size.into();
         self
     }
+    pub fn set_size(&mut self, r#size: impl Into<f32>) -> &mut Self {
+        self.r#size = r#size.into();
+        self
+    }
     pub fn with_cooldown(mut self, r#cooldown: impl Into<f32>) -> Self {
+        self.r#cooldown = r#cooldown.into();
+        self
+    }
+    pub fn set_cooldown(&mut self, r#cooldown: impl Into<f32>) -> &mut Self {
         self.r#cooldown = r#cooldown.into();
         self
     }
@@ -15733,7 +17662,15 @@ impl BulletTriggerSpawnBullet {
         self.r#random_factor = r#random_factor.into();
         self
     }
+    pub fn set_random_factor(&mut self, r#random_factor: impl Into<f32>) -> &mut Self {
+        self.r#random_factor = r#random_factor.into();
+        self
+    }
     pub fn with_power_multiplier(mut self, r#power_multiplier: impl Into<f32>) -> Self {
+        self.r#power_multiplier = r#power_multiplier.into();
+        self
+    }
+    pub fn set_power_multiplier(&mut self, r#power_multiplier: impl Into<f32>) -> &mut Self {
         self.r#power_multiplier = r#power_multiplier.into();
         self
     }
@@ -15741,7 +17678,15 @@ impl BulletTriggerSpawnBullet {
         self.r#max_nesting_level = r#max_nesting_level.into();
         self
     }
+    pub fn set_max_nesting_level(&mut self, r#max_nesting_level: impl Into<i32>) -> &mut Self {
+        self.r#max_nesting_level = r#max_nesting_level.into();
+        self
+    }
     pub fn with_rotation(mut self, r#rotation: impl Into<String>) -> Self {
+        self.r#rotation = r#rotation.into();
+        self
+    }
+    pub fn set_rotation(&mut self, r#rotation: impl Into<String>) -> &mut Self {
         self.r#rotation = r#rotation.into();
         self
     }
@@ -15749,7 +17694,15 @@ impl BulletTriggerSpawnBullet {
         self.r#offset_x = r#offset_x.into();
         self
     }
+    pub fn set_offset_x(&mut self, r#offset_x: impl Into<String>) -> &mut Self {
+        self.r#offset_x = r#offset_x.into();
+        self
+    }
     pub fn with_offset_y(mut self, r#offset_y: impl Into<String>) -> Self {
+        self.r#offset_y = r#offset_y.into();
+        self
+    }
+    pub fn set_offset_y(&mut self, r#offset_y: impl Into<String>) -> &mut Self {
         self.r#offset_y = r#offset_y.into();
         self
     }
@@ -15897,7 +17850,15 @@ impl BulletTriggerDetonate {
         self.r#condition = r#condition.into();
         self
     }
+    pub fn set_condition(&mut self, r#condition: impl Into<BulletTriggerCondition>) -> &mut Self {
+        self.r#condition = r#condition.into();
+        self
+    }
     pub fn with_cooldown(mut self, r#cooldown: impl Into<f32>) -> Self {
+        self.r#cooldown = r#cooldown.into();
+        self
+    }
+    pub fn set_cooldown(&mut self, r#cooldown: impl Into<f32>) -> &mut Self {
         self.r#cooldown = r#cooldown.into();
         self
     }
@@ -15976,6 +17937,10 @@ impl BulletTriggerSpawnStaticSfx {
         self.r#condition = r#condition.into();
         self
     }
+    pub fn set_condition(&mut self, r#condition: impl Into<BulletTriggerCondition>) -> &mut Self {
+        self.r#condition = r#condition.into();
+        self
+    }
     pub fn with_visual_effect(
         mut self,
         r#visual_effect: impl Into<Option<VisualEffectId>>,
@@ -15983,7 +17948,18 @@ impl BulletTriggerSpawnStaticSfx {
         self.r#visual_effect = r#visual_effect.into();
         self
     }
+    pub fn set_visual_effect(
+        &mut self,
+        r#visual_effect: impl Into<Option<VisualEffectId>>,
+    ) -> &mut Self {
+        self.r#visual_effect = r#visual_effect.into();
+        self
+    }
     pub fn with_audio_clip(mut self, r#audio_clip: impl Into<String>) -> Self {
+        self.r#audio_clip = r#audio_clip.into();
+        self
+    }
+    pub fn set_audio_clip(&mut self, r#audio_clip: impl Into<String>) -> &mut Self {
         self.r#audio_clip = r#audio_clip.into();
         self
     }
@@ -15991,7 +17967,15 @@ impl BulletTriggerSpawnStaticSfx {
         self.r#color = r#color.into();
         self
     }
+    pub fn set_color(&mut self, r#color: impl Into<String>) -> &mut Self {
+        self.r#color = r#color.into();
+        self
+    }
     pub fn with_color_mode(mut self, r#color_mode: impl Into<ColorMode>) -> Self {
+        self.r#color_mode = r#color_mode.into();
+        self
+    }
+    pub fn set_color_mode(&mut self, r#color_mode: impl Into<ColorMode>) -> &mut Self {
         self.r#color_mode = r#color_mode.into();
         self
     }
@@ -15999,11 +17983,23 @@ impl BulletTriggerSpawnStaticSfx {
         self.r#size = r#size.into();
         self
     }
+    pub fn set_size(&mut self, r#size: impl Into<f32>) -> &mut Self {
+        self.r#size = r#size.into();
+        self
+    }
     pub fn with_lifetime(mut self, r#lifetime: impl Into<f32>) -> Self {
         self.r#lifetime = r#lifetime.into();
         self
     }
+    pub fn set_lifetime(&mut self, r#lifetime: impl Into<f32>) -> &mut Self {
+        self.r#lifetime = r#lifetime.into();
+        self
+    }
     pub fn with_cooldown(mut self, r#cooldown: impl Into<f32>) -> Self {
+        self.r#cooldown = r#cooldown.into();
+        self
+    }
+    pub fn set_cooldown(&mut self, r#cooldown: impl Into<f32>) -> &mut Self {
         self.r#cooldown = r#cooldown.into();
         self
     }
@@ -16110,7 +18106,15 @@ impl BulletTriggerGravityField {
         self.r#condition = r#condition.into();
         self
     }
+    pub fn set_condition(&mut self, r#condition: impl Into<BulletTriggerCondition>) -> &mut Self {
+        self.r#condition = r#condition.into();
+        self
+    }
     pub fn with_size(mut self, r#size: impl Into<f32>) -> Self {
+        self.r#size = r#size.into();
+        self
+    }
+    pub fn set_size(&mut self, r#size: impl Into<f32>) -> &mut Self {
         self.r#size = r#size.into();
         self
     }
@@ -16118,7 +18122,15 @@ impl BulletTriggerGravityField {
         self.r#cooldown = r#cooldown.into();
         self
     }
+    pub fn set_cooldown(&mut self, r#cooldown: impl Into<f32>) -> &mut Self {
+        self.r#cooldown = r#cooldown.into();
+        self
+    }
     pub fn with_power_multiplier(mut self, r#power_multiplier: impl Into<f32>) -> Self {
+        self.r#power_multiplier = r#power_multiplier.into();
+        self
+    }
+    pub fn set_power_multiplier(&mut self, r#power_multiplier: impl Into<f32>) -> &mut Self {
         self.r#power_multiplier = r#power_multiplier.into();
         self
     }
@@ -16336,7 +18348,15 @@ impl ImpactEffect {
         self.r#type = r#type.into();
         self
     }
+    pub fn set_type(&mut self, r#type: impl Into<ImpactEffectType>) -> &mut Self {
+        self.r#type = r#type.into();
+        self
+    }
     pub fn with_damage_type(mut self, r#damage_type: impl Into<DamageType>) -> Self {
+        self.r#damage_type = r#damage_type.into();
+        self
+    }
+    pub fn set_damage_type(&mut self, r#damage_type: impl Into<DamageType>) -> &mut Self {
         self.r#damage_type = r#damage_type.into();
         self
     }
@@ -16344,7 +18364,15 @@ impl ImpactEffect {
         self.r#power = r#power.into();
         self
     }
+    pub fn set_power(&mut self, r#power: impl Into<f32>) -> &mut Self {
+        self.r#power = r#power.into();
+        self
+    }
     pub fn with_factor(mut self, r#factor: impl Into<f32>) -> Self {
+        self.r#factor = r#factor.into();
+        self
+    }
+    pub fn set_factor(&mut self, r#factor: impl Into<f32>) -> &mut Self {
         self.r#factor = r#factor.into();
         self
     }
@@ -16436,7 +18464,15 @@ impl VisualEffectElement {
         self.r#type = r#type.into();
         self
     }
+    pub fn set_type(&mut self, r#type: impl Into<VisualEffectType>) -> &mut Self {
+        self.r#type = r#type.into();
+        self
+    }
     pub fn with_image(mut self, r#image: impl Into<String>) -> Self {
+        self.r#image = r#image.into();
+        self
+    }
+    pub fn set_image(&mut self, r#image: impl Into<String>) -> &mut Self {
         self.r#image = r#image.into();
         self
     }
@@ -16444,7 +18480,15 @@ impl VisualEffectElement {
         self.r#color_mode = r#color_mode.into();
         self
     }
+    pub fn set_color_mode(&mut self, r#color_mode: impl Into<ColorMode>) -> &mut Self {
+        self.r#color_mode = r#color_mode.into();
+        self
+    }
     pub fn with_color(mut self, r#color: impl Into<String>) -> Self {
+        self.r#color = r#color.into();
+        self
+    }
+    pub fn set_color(&mut self, r#color: impl Into<String>) -> &mut Self {
         self.r#color = r#color.into();
         self
     }
@@ -16452,7 +18496,15 @@ impl VisualEffectElement {
         self.r#quantity = r#quantity.into();
         self
     }
+    pub fn set_quantity(&mut self, r#quantity: impl Into<i32>) -> &mut Self {
+        self.r#quantity = r#quantity.into();
+        self
+    }
     pub fn with_size(mut self, r#size: impl Into<f32>) -> Self {
+        self.r#size = r#size.into();
+        self
+    }
+    pub fn set_size(&mut self, r#size: impl Into<f32>) -> &mut Self {
         self.r#size = r#size.into();
         self
     }
@@ -16460,7 +18512,15 @@ impl VisualEffectElement {
         self.r#growth_rate = r#growth_rate.into();
         self
     }
+    pub fn set_growth_rate(&mut self, r#growth_rate: impl Into<f32>) -> &mut Self {
+        self.r#growth_rate = r#growth_rate.into();
+        self
+    }
     pub fn with_turn_rate(mut self, r#turn_rate: impl Into<f32>) -> Self {
+        self.r#turn_rate = r#turn_rate.into();
+        self
+    }
+    pub fn set_turn_rate(&mut self, r#turn_rate: impl Into<f32>) -> &mut Self {
         self.r#turn_rate = r#turn_rate.into();
         self
     }
@@ -16468,7 +18528,15 @@ impl VisualEffectElement {
         self.r#start_time = r#start_time.into();
         self
     }
+    pub fn set_start_time(&mut self, r#start_time: impl Into<f32>) -> &mut Self {
+        self.r#start_time = r#start_time.into();
+        self
+    }
     pub fn with_lifetime(mut self, r#lifetime: impl Into<f32>) -> Self {
+        self.r#lifetime = r#lifetime.into();
+        self
+    }
+    pub fn set_lifetime(&mut self, r#lifetime: impl Into<f32>) -> &mut Self {
         self.r#lifetime = r#lifetime.into();
         self
     }
@@ -16476,7 +18544,15 @@ impl VisualEffectElement {
         self.r#particle_size = r#particle_size.into();
         self
     }
+    pub fn set_particle_size(&mut self, r#particle_size: impl Into<f32>) -> &mut Self {
+        self.r#particle_size = r#particle_size.into();
+        self
+    }
     pub fn with_loop(mut self, r#loop: impl Into<bool>) -> Self {
+        self.r#loop = r#loop.into();
+        self
+    }
+    pub fn set_loop(&mut self, r#loop: impl Into<bool>) -> &mut Self {
         self.r#loop = r#loop.into();
         self
     }
@@ -16648,11 +18724,26 @@ impl CombatSettings {
         self.r#enemy_ai = r#enemy_ai.into();
         self
     }
+    pub fn set_enemy_ai(&mut self, r#enemy_ai: impl Into<Option<BehaviorTreeId>>) -> &mut Self {
+        self.r#enemy_ai = r#enemy_ai.into();
+        self
+    }
     pub fn with_autopilot_ai(mut self, r#autopilot_ai: impl Into<Option<BehaviorTreeId>>) -> Self {
         self.r#autopilot_ai = r#autopilot_ai.into();
         self
     }
+    pub fn set_autopilot_ai(
+        &mut self,
+        r#autopilot_ai: impl Into<Option<BehaviorTreeId>>,
+    ) -> &mut Self {
+        self.r#autopilot_ai = r#autopilot_ai.into();
+        self
+    }
     pub fn with_clone_ai(mut self, r#clone_ai: impl Into<Option<BehaviorTreeId>>) -> Self {
+        self.r#clone_ai = r#clone_ai.into();
+        self
+    }
+    pub fn set_clone_ai(&mut self, r#clone_ai: impl Into<Option<BehaviorTreeId>>) -> &mut Self {
         self.r#clone_ai = r#clone_ai.into();
         self
     }
@@ -16663,6 +18754,13 @@ impl CombatSettings {
         self.r#defensive_drone_ai = r#defensive_drone_ai.into();
         self
     }
+    pub fn set_defensive_drone_ai(
+        &mut self,
+        r#defensive_drone_ai: impl Into<Option<BehaviorTreeId>>,
+    ) -> &mut Self {
+        self.r#defensive_drone_ai = r#defensive_drone_ai.into();
+        self
+    }
     pub fn with_offensive_drone_ai(
         mut self,
         r#offensive_drone_ai: impl Into<Option<BehaviorTreeId>>,
@@ -16670,7 +18768,21 @@ impl CombatSettings {
         self.r#offensive_drone_ai = r#offensive_drone_ai.into();
         self
     }
+    pub fn set_offensive_drone_ai(
+        &mut self,
+        r#offensive_drone_ai: impl Into<Option<BehaviorTreeId>>,
+    ) -> &mut Self {
+        self.r#offensive_drone_ai = r#offensive_drone_ai.into();
+        self
+    }
     pub fn with_starbase_ai(mut self, r#starbase_ai: impl Into<Option<BehaviorTreeId>>) -> Self {
+        self.r#starbase_ai = r#starbase_ai.into();
+        self
+    }
+    pub fn set_starbase_ai(
+        &mut self,
+        r#starbase_ai: impl Into<Option<BehaviorTreeId>>,
+    ) -> &mut Self {
         self.r#starbase_ai = r#starbase_ai.into();
         self
     }
@@ -16678,6 +18790,13 @@ impl CombatSettings {
         mut self,
         r#default_combat_rules: impl Into<Option<CombatRulesId>>,
     ) -> Self {
+        self.r#default_combat_rules = r#default_combat_rules.into();
+        self
+    }
+    pub fn set_default_combat_rules(
+        &mut self,
+        r#default_combat_rules: impl Into<Option<CombatRulesId>>,
+    ) -> &mut Self {
         self.r#default_combat_rules = r#default_combat_rules.into();
         self
     }
@@ -16720,7 +18839,18 @@ impl DatabaseSettings {
         self.r#database_version = r#database_version.into();
         self
     }
+    pub fn set_database_version(&mut self, r#database_version: impl Into<i32>) -> &mut Self {
+        self.r#database_version = r#database_version.into();
+        self
+    }
     pub fn with_database_version_minor(mut self, r#database_version_minor: impl Into<i32>) -> Self {
+        self.r#database_version_minor = r#database_version_minor.into();
+        self
+    }
+    pub fn set_database_version_minor(
+        &mut self,
+        r#database_version_minor: impl Into<i32>,
+    ) -> &mut Self {
         self.r#database_version_minor = r#database_version_minor.into();
         self
     }
@@ -16728,7 +18858,15 @@ impl DatabaseSettings {
         self.r#mod_name = r#mod_name.into();
         self
     }
+    pub fn set_mod_name(&mut self, r#mod_name: impl Into<String>) -> &mut Self {
+        self.r#mod_name = r#mod_name.into();
+        self
+    }
     pub fn with_mod_id(mut self, r#mod_id: impl Into<String>) -> Self {
+        self.r#mod_id = r#mod_id.into();
+        self
+    }
+    pub fn set_mod_id(&mut self, r#mod_id: impl Into<String>) -> &mut Self {
         self.r#mod_id = r#mod_id.into();
         self
     }
@@ -16736,10 +18874,21 @@ impl DatabaseSettings {
         self.r#mod_version = r#mod_version.into();
         self
     }
+    pub fn set_mod_version(&mut self, r#mod_version: impl Into<i32>) -> &mut Self {
+        self.r#mod_version = r#mod_version.into();
+        self
+    }
     pub fn with_unload_original_database(
         mut self,
         r#unload_original_database: impl Into<bool>,
     ) -> Self {
+        self.r#unload_original_database = r#unload_original_database.into();
+        self
+    }
+    pub fn set_unload_original_database(
+        &mut self,
+        r#unload_original_database: impl Into<bool>,
+    ) -> &mut Self {
         self.r#unload_original_database = r#unload_original_database.into();
         self
     }
@@ -16793,7 +18942,18 @@ impl DebugSettings {
         self.r#codes = r#codes.into();
         self
     }
+    pub fn set_codes(&mut self, r#codes: impl Into<Vec<DebugCode>>) -> &mut Self {
+        self.r#codes = r#codes.into();
+        self
+    }
     pub fn with_enable_debug_console(mut self, r#enable_debug_console: impl Into<bool>) -> Self {
+        self.r#enable_debug_console = r#enable_debug_console.into();
+        self
+    }
+    pub fn set_enable_debug_console(
+        &mut self,
+        r#enable_debug_console: impl Into<bool>,
+    ) -> &mut Self {
         self.r#enable_debug_console = r#enable_debug_console.into();
         self
     }
@@ -16834,7 +18994,15 @@ impl ExplorationSettings {
         self.r#outpost_ship = r#outpost_ship.into();
         self
     }
+    pub fn set_outpost_ship(&mut self, r#outpost_ship: impl Into<Option<ShipId>>) -> &mut Self {
+        self.r#outpost_ship = r#outpost_ship.into();
+        self
+    }
     pub fn with_turret_ship(mut self, r#turret_ship: impl Into<Option<ShipId>>) -> Self {
+        self.r#turret_ship = r#turret_ship.into();
+        self
+    }
+    pub fn set_turret_ship(&mut self, r#turret_ship: impl Into<Option<ShipId>>) -> &mut Self {
         self.r#turret_ship = r#turret_ship.into();
         self
     }
@@ -16845,6 +19013,13 @@ impl ExplorationSettings {
         self.r#infected_planet_faction = r#infected_planet_faction.into();
         self
     }
+    pub fn set_infected_planet_faction(
+        &mut self,
+        r#infected_planet_faction: impl Into<Option<FactionId>>,
+    ) -> &mut Self {
+        self.r#infected_planet_faction = r#infected_planet_faction.into();
+        self
+    }
     pub fn with_hive_ship_build(
         mut self,
         r#hive_ship_build: impl Into<Option<ShipBuildId>>,
@@ -16852,7 +19027,18 @@ impl ExplorationSettings {
         self.r#hive_ship_build = r#hive_ship_build.into();
         self
     }
+    pub fn set_hive_ship_build(
+        &mut self,
+        r#hive_ship_build: impl Into<Option<ShipBuildId>>,
+    ) -> &mut Self {
+        self.r#hive_ship_build = r#hive_ship_build.into();
+        self
+    }
     pub fn with_gas_cloud_dps(mut self, r#gas_cloud_dps: impl Into<String>) -> Self {
+        self.r#gas_cloud_dps = r#gas_cloud_dps.into();
+        self
+    }
+    pub fn set_gas_cloud_dps(&mut self, r#gas_cloud_dps: impl Into<String>) -> &mut Self {
         self.r#gas_cloud_dps = r#gas_cloud_dps.into();
         self
     }
@@ -16892,7 +19078,21 @@ impl FactionsSettings {
         self.r#starbase_initial_defense = r#starbase_initial_defense.into();
         self
     }
+    pub fn set_starbase_initial_defense(
+        &mut self,
+        r#starbase_initial_defense: impl Into<String>,
+    ) -> &mut Self {
+        self.r#starbase_initial_defense = r#starbase_initial_defense.into();
+        self
+    }
     pub fn with_starbase_min_defense(mut self, r#starbase_min_defense: impl Into<i32>) -> Self {
+        self.r#starbase_min_defense = r#starbase_min_defense.into();
+        self
+    }
+    pub fn set_starbase_min_defense(
+        &mut self,
+        r#starbase_min_defense: impl Into<i32>,
+    ) -> &mut Self {
         self.r#starbase_min_defense = r#starbase_min_defense.into();
         self
     }
@@ -16900,6 +19100,13 @@ impl FactionsSettings {
         mut self,
         r#defense_loss_per_enemy_defeated: impl Into<i32>,
     ) -> Self {
+        self.r#defense_loss_per_enemy_defeated = r#defense_loss_per_enemy_defeated.into();
+        self
+    }
+    pub fn set_defense_loss_per_enemy_defeated(
+        &mut self,
+        r#defense_loss_per_enemy_defeated: impl Into<i32>,
+    ) -> &mut Self {
         self.r#defense_loss_per_enemy_defeated = r#defense_loss_per_enemy_defeated.into();
         self
     }
@@ -16991,10 +19198,21 @@ impl FrontierSettings {
         self.r#base_command_points = r#base_command_points.into();
         self
     }
+    pub fn set_base_command_points(&mut self, r#base_command_points: impl Into<i32>) -> &mut Self {
+        self.r#base_command_points = r#base_command_points.into();
+        self
+    }
     pub fn with_max_extra_command_points(
         mut self,
         r#max_extra_command_points: impl Into<i32>,
     ) -> Self {
+        self.r#max_extra_command_points = r#max_extra_command_points.into();
+        self
+    }
+    pub fn set_max_extra_command_points(
+        &mut self,
+        r#max_extra_command_points: impl Into<i32>,
+    ) -> &mut Self {
         self.r#max_extra_command_points = r#max_extra_command_points.into();
         self
     }
@@ -17005,7 +19223,21 @@ impl FrontierSettings {
         self.r#supporter_pack_ship = r#supporter_pack_ship.into();
         self
     }
+    pub fn set_supporter_pack_ship(
+        &mut self,
+        r#supporter_pack_ship: impl Into<Option<ShipId>>,
+    ) -> &mut Self {
+        self.r#supporter_pack_ship = r#supporter_pack_ship.into();
+        self
+    }
     pub fn with_falcon_pack_ship(mut self, r#falcon_pack_ship: impl Into<Option<ShipId>>) -> Self {
+        self.r#falcon_pack_ship = r#falcon_pack_ship.into();
+        self
+    }
+    pub fn set_falcon_pack_ship(
+        &mut self,
+        r#falcon_pack_ship: impl Into<Option<ShipId>>,
+    ) -> &mut Self {
         self.r#falcon_pack_ship = r#falcon_pack_ship.into();
         self
     }
@@ -17016,10 +19248,24 @@ impl FrontierSettings {
         self.r#big_boss_easy_build = r#big_boss_easy_build.into();
         self
     }
+    pub fn set_big_boss_easy_build(
+        &mut self,
+        r#big_boss_easy_build: impl Into<Option<ShipBuildId>>,
+    ) -> &mut Self {
+        self.r#big_boss_easy_build = r#big_boss_easy_build.into();
+        self
+    }
     pub fn with_big_boss_normal_build(
         mut self,
         r#big_boss_normal_build: impl Into<Option<ShipBuildId>>,
     ) -> Self {
+        self.r#big_boss_normal_build = r#big_boss_normal_build.into();
+        self
+    }
+    pub fn set_big_boss_normal_build(
+        &mut self,
+        r#big_boss_normal_build: impl Into<Option<ShipBuildId>>,
+    ) -> &mut Self {
         self.r#big_boss_normal_build = r#big_boss_normal_build.into();
         self
     }
@@ -17030,10 +19276,24 @@ impl FrontierSettings {
         self.r#big_boss_hard_build = r#big_boss_hard_build.into();
         self
     }
+    pub fn set_big_boss_hard_build(
+        &mut self,
+        r#big_boss_hard_build: impl Into<Option<ShipBuildId>>,
+    ) -> &mut Self {
+        self.r#big_boss_hard_build = r#big_boss_hard_build.into();
+        self
+    }
     pub fn with_demo_scene_starbase_build(
         mut self,
         r#demo_scene_starbase_build: impl Into<Option<ShipBuildId>>,
     ) -> Self {
+        self.r#demo_scene_starbase_build = r#demo_scene_starbase_build.into();
+        self
+    }
+    pub fn set_demo_scene_starbase_build(
+        &mut self,
+        r#demo_scene_starbase_build: impl Into<Option<ShipBuildId>>,
+    ) -> &mut Self {
         self.r#demo_scene_starbase_build = r#demo_scene_starbase_build.into();
         self
     }
@@ -17044,10 +19304,24 @@ impl FrontierSettings {
         self.r#tutorial_starbase_build = r#tutorial_starbase_build.into();
         self
     }
+    pub fn set_tutorial_starbase_build(
+        &mut self,
+        r#tutorial_starbase_build: impl Into<Option<ShipBuildId>>,
+    ) -> &mut Self {
+        self.r#tutorial_starbase_build = r#tutorial_starbase_build.into();
+        self
+    }
     pub fn with_default_starbase_build(
         mut self,
         r#default_starbase_build: impl Into<Option<ShipBuildId>>,
     ) -> Self {
+        self.r#default_starbase_build = r#default_starbase_build.into();
+        self
+    }
+    pub fn set_default_starbase_build(
+        &mut self,
+        r#default_starbase_build: impl Into<Option<ShipBuildId>>,
+    ) -> &mut Self {
         self.r#default_starbase_build = r#default_starbase_build.into();
         self
     }
@@ -17058,10 +19332,24 @@ impl FrontierSettings {
         self.r#exploration_starbase = r#exploration_starbase.into();
         self
     }
+    pub fn set_exploration_starbase(
+        &mut self,
+        r#exploration_starbase: impl Into<Option<ShipId>>,
+    ) -> &mut Self {
+        self.r#exploration_starbase = r#exploration_starbase.into();
+        self
+    }
     pub fn with_merchant_ship_build(
         mut self,
         r#merchant_ship_build: impl Into<Option<ShipBuildId>>,
     ) -> Self {
+        self.r#merchant_ship_build = r#merchant_ship_build.into();
+        self
+    }
+    pub fn set_merchant_ship_build(
+        &mut self,
+        r#merchant_ship_build: impl Into<Option<ShipBuildId>>,
+    ) -> &mut Self {
         self.r#merchant_ship_build = r#merchant_ship_build.into();
         self
     }
@@ -17072,10 +19360,24 @@ impl FrontierSettings {
         self.r#smuggler_ship_build = r#smuggler_ship_build.into();
         self
     }
+    pub fn set_smuggler_ship_build(
+        &mut self,
+        r#smuggler_ship_build: impl Into<Option<ShipBuildId>>,
+    ) -> &mut Self {
+        self.r#smuggler_ship_build = r#smuggler_ship_build.into();
+        self
+    }
     pub fn with_engineer_ship_build(
         mut self,
         r#engineer_ship_build: impl Into<Option<ShipBuildId>>,
     ) -> Self {
+        self.r#engineer_ship_build = r#engineer_ship_build.into();
+        self
+    }
+    pub fn set_engineer_ship_build(
+        &mut self,
+        r#engineer_ship_build: impl Into<Option<ShipBuildId>>,
+    ) -> &mut Self {
         self.r#engineer_ship_build = r#engineer_ship_build.into();
         self
     }
@@ -17086,10 +19388,24 @@ impl FrontierSettings {
         self.r#mercenary_ship_build = r#mercenary_ship_build.into();
         self
     }
+    pub fn set_mercenary_ship_build(
+        &mut self,
+        r#mercenary_ship_build: impl Into<Option<ShipBuildId>>,
+    ) -> &mut Self {
+        self.r#mercenary_ship_build = r#mercenary_ship_build.into();
+        self
+    }
     pub fn with_shipyard_ship_build(
         mut self,
         r#shipyard_ship_build: impl Into<Option<ShipBuildId>>,
     ) -> Self {
+        self.r#shipyard_ship_build = r#shipyard_ship_build.into();
+        self
+    }
+    pub fn set_shipyard_ship_build(
+        &mut self,
+        r#shipyard_ship_build: impl Into<Option<ShipBuildId>>,
+    ) -> &mut Self {
         self.r#shipyard_ship_build = r#shipyard_ship_build.into();
         self
     }
@@ -17100,10 +19416,24 @@ impl FrontierSettings {
         self.r#santa_ship_build = r#santa_ship_build.into();
         self
     }
+    pub fn set_santa_ship_build(
+        &mut self,
+        r#santa_ship_build: impl Into<Option<ShipBuildId>>,
+    ) -> &mut Self {
+        self.r#santa_ship_build = r#santa_ship_build.into();
+        self
+    }
     pub fn with_salvage_drone_build(
         mut self,
         r#salvage_drone_build: impl Into<Option<ShipBuildId>>,
     ) -> Self {
+        self.r#salvage_drone_build = r#salvage_drone_build.into();
+        self
+    }
+    pub fn set_salvage_drone_build(
+        &mut self,
+        r#salvage_drone_build: impl Into<Option<ShipBuildId>>,
+    ) -> &mut Self {
         self.r#salvage_drone_build = r#salvage_drone_build.into();
         self
     }
@@ -17114,6 +19444,13 @@ impl FrontierSettings {
         self.r#custom_ship_levels = r#custom_ship_levels.into();
         self
     }
+    pub fn set_custom_ship_levels(
+        &mut self,
+        r#custom_ship_levels: impl Into<Vec<ShipToValue>>,
+    ) -> &mut Self {
+        self.r#custom_ship_levels = r#custom_ship_levels.into();
+        self
+    }
     pub fn with_custom_ship_prices(
         mut self,
         r#custom_ship_prices: impl Into<Vec<ShipToValue>>,
@@ -17121,7 +19458,21 @@ impl FrontierSettings {
         self.r#custom_ship_prices = r#custom_ship_prices.into();
         self
     }
+    pub fn set_custom_ship_prices(
+        &mut self,
+        r#custom_ship_prices: impl Into<Vec<ShipToValue>>,
+    ) -> &mut Self {
+        self.r#custom_ship_prices = r#custom_ship_prices.into();
+        self
+    }
     pub fn with_exploration_ships(mut self, r#exploration_ships: impl Into<Vec<ShipId>>) -> Self {
+        self.r#exploration_ships = r#exploration_ships.into();
+        self
+    }
+    pub fn set_exploration_ships(
+        &mut self,
+        r#exploration_ships: impl Into<Vec<ShipId>>,
+    ) -> &mut Self {
         self.r#exploration_ships = r#exploration_ships.into();
         self
     }
@@ -17207,10 +19558,24 @@ impl GalaxySettings {
         self.r#abandoned_starbase_faction = r#abandoned_starbase_faction.into();
         self
     }
+    pub fn set_abandoned_starbase_faction(
+        &mut self,
+        r#abandoned_starbase_faction: impl Into<Option<FactionId>>,
+    ) -> &mut Self {
+        self.r#abandoned_starbase_faction = r#abandoned_starbase_faction.into();
+        self
+    }
     pub fn with_starting_ship_builds(
         mut self,
         r#starting_ship_builds: impl Into<Vec<ShipBuildId>>,
     ) -> Self {
+        self.r#starting_ship_builds = r#starting_ship_builds.into();
+        self
+    }
+    pub fn set_starting_ship_builds(
+        &mut self,
+        r#starting_ship_builds: impl Into<Vec<ShipBuildId>>,
+    ) -> &mut Self {
         self.r#starting_ship_builds = r#starting_ship_builds.into();
         self
     }
@@ -17221,10 +19586,24 @@ impl GalaxySettings {
         self.r#starting_inventory = r#starting_inventory.into();
         self
     }
+    pub fn set_starting_inventory(
+        &mut self,
+        r#starting_inventory: impl Into<Option<LootId>>,
+    ) -> &mut Self {
+        self.r#starting_inventory = r#starting_inventory.into();
+        self
+    }
     pub fn with_supporter_pack_ship(
         mut self,
         r#supporter_pack_ship: impl Into<Option<ShipBuildId>>,
     ) -> Self {
+        self.r#supporter_pack_ship = r#supporter_pack_ship.into();
+        self
+    }
+    pub fn set_supporter_pack_ship(
+        &mut self,
+        r#supporter_pack_ship: impl Into<Option<ShipBuildId>>,
+    ) -> &mut Self {
         self.r#supporter_pack_ship = r#supporter_pack_ship.into();
         self
     }
@@ -17235,11 +19614,29 @@ impl GalaxySettings {
         self.r#default_starbase_build = r#default_starbase_build.into();
         self
     }
+    pub fn set_default_starbase_build(
+        &mut self,
+        r#default_starbase_build: impl Into<Option<ShipBuildId>>,
+    ) -> &mut Self {
+        self.r#default_starbase_build = r#default_starbase_build.into();
+        self
+    }
     pub fn with_max_enemy_ships_level(mut self, r#max_enemy_ships_level: impl Into<i32>) -> Self {
         self.r#max_enemy_ships_level = r#max_enemy_ships_level.into();
         self
     }
+    pub fn set_max_enemy_ships_level(
+        &mut self,
+        r#max_enemy_ships_level: impl Into<i32>,
+    ) -> &mut Self {
+        self.r#max_enemy_ships_level = r#max_enemy_ships_level.into();
+        self
+    }
     pub fn with_enemy_level(mut self, r#enemy_level: impl Into<String>) -> Self {
+        self.r#enemy_level = r#enemy_level.into();
+        self
+    }
+    pub fn set_enemy_level(&mut self, r#enemy_level: impl Into<String>) -> &mut Self {
         self.r#enemy_level = r#enemy_level.into();
         self
     }
@@ -17250,10 +19647,24 @@ impl GalaxySettings {
         self.r#ship_min_spawn_distance = r#ship_min_spawn_distance.into();
         self
     }
+    pub fn set_ship_min_spawn_distance(
+        &mut self,
+        r#ship_min_spawn_distance: impl Into<String>,
+    ) -> &mut Self {
+        self.r#ship_min_spawn_distance = r#ship_min_spawn_distance.into();
+        self
+    }
     pub fn with_capture_starbase_quest(
         mut self,
         r#capture_starbase_quest: impl Into<Option<QuestId>>,
     ) -> Self {
+        self.r#capture_starbase_quest = r#capture_starbase_quest.into();
+        self
+    }
+    pub fn set_capture_starbase_quest(
+        &mut self,
+        r#capture_starbase_quest: impl Into<Option<QuestId>>,
+    ) -> &mut Self {
         self.r#capture_starbase_quest = r#capture_starbase_quest.into();
         self
     }
@@ -17264,10 +19675,24 @@ impl GalaxySettings {
         self.r#starting_invenory = r#starting_invenory.into();
         self
     }
+    pub fn set_starting_invenory(
+        &mut self,
+        r#starting_invenory: impl Into<Option<LootId>>,
+    ) -> &mut Self {
+        self.r#starting_invenory = r#starting_invenory.into();
+        self
+    }
     pub fn with_survival_combat_rules(
         mut self,
         r#survival_combat_rules: impl Into<Option<CombatRulesId>>,
     ) -> Self {
+        self.r#survival_combat_rules = r#survival_combat_rules.into();
+        self
+    }
+    pub fn set_survival_combat_rules(
+        &mut self,
+        r#survival_combat_rules: impl Into<Option<CombatRulesId>>,
+    ) -> &mut Self {
         self.r#survival_combat_rules = r#survival_combat_rules.into();
         self
     }
@@ -17278,10 +19703,24 @@ impl GalaxySettings {
         self.r#starbase_combat_rules = r#starbase_combat_rules.into();
         self
     }
+    pub fn set_starbase_combat_rules(
+        &mut self,
+        r#starbase_combat_rules: impl Into<Option<CombatRulesId>>,
+    ) -> &mut Self {
+        self.r#starbase_combat_rules = r#starbase_combat_rules.into();
+        self
+    }
     pub fn with_flagship_combat_rules(
         mut self,
         r#flagship_combat_rules: impl Into<Option<CombatRulesId>>,
     ) -> Self {
+        self.r#flagship_combat_rules = r#flagship_combat_rules.into();
+        self
+    }
+    pub fn set_flagship_combat_rules(
+        &mut self,
+        r#flagship_combat_rules: impl Into<Option<CombatRulesId>>,
+    ) -> &mut Self {
         self.r#flagship_combat_rules = r#flagship_combat_rules.into();
         self
     }
@@ -17292,6 +19731,13 @@ impl GalaxySettings {
         self.r#arena_combat_rules = r#arena_combat_rules.into();
         self
     }
+    pub fn set_arena_combat_rules(
+        &mut self,
+        r#arena_combat_rules: impl Into<Option<CombatRulesId>>,
+    ) -> &mut Self {
+        self.r#arena_combat_rules = r#arena_combat_rules.into();
+        self
+    }
     pub fn with_challenge_combat_rules(
         mut self,
         r#challenge_combat_rules: impl Into<Option<CombatRulesId>>,
@@ -17299,10 +19745,24 @@ impl GalaxySettings {
         self.r#challenge_combat_rules = r#challenge_combat_rules.into();
         self
     }
+    pub fn set_challenge_combat_rules(
+        &mut self,
+        r#challenge_combat_rules: impl Into<Option<CombatRulesId>>,
+    ) -> &mut Self {
+        self.r#challenge_combat_rules = r#challenge_combat_rules.into();
+        self
+    }
     pub fn with_quick_combat_rules(
         mut self,
         r#quick_combat_rules: impl Into<Option<CombatRulesId>>,
     ) -> Self {
+        self.r#quick_combat_rules = r#quick_combat_rules.into();
+        self
+    }
+    pub fn set_quick_combat_rules(
+        &mut self,
+        r#quick_combat_rules: impl Into<Option<CombatRulesId>>,
+    ) -> &mut Self {
         self.r#quick_combat_rules = r#quick_combat_rules.into();
         self
     }
@@ -17367,7 +19827,21 @@ impl MusicPlaylist {
         self.r#main_menu_music = r#main_menu_music.into();
         self
     }
+    pub fn set_main_menu_music(
+        &mut self,
+        r#main_menu_music: impl Into<Vec<SoundTrack>>,
+    ) -> &mut Self {
+        self.r#main_menu_music = r#main_menu_music.into();
+        self
+    }
     pub fn with_galaxy_map_music(mut self, r#galaxy_map_music: impl Into<Vec<SoundTrack>>) -> Self {
+        self.r#galaxy_map_music = r#galaxy_map_music.into();
+        self
+    }
+    pub fn set_galaxy_map_music(
+        &mut self,
+        r#galaxy_map_music: impl Into<Vec<SoundTrack>>,
+    ) -> &mut Self {
         self.r#galaxy_map_music = r#galaxy_map_music.into();
         self
     }
@@ -17375,10 +19849,21 @@ impl MusicPlaylist {
         self.r#combat_music = r#combat_music.into();
         self
     }
+    pub fn set_combat_music(&mut self, r#combat_music: impl Into<Vec<SoundTrack>>) -> &mut Self {
+        self.r#combat_music = r#combat_music.into();
+        self
+    }
     pub fn with_exploration_music(
         mut self,
         r#exploration_music: impl Into<Vec<SoundTrack>>,
     ) -> Self {
+        self.r#exploration_music = r#exploration_music.into();
+        self
+    }
+    pub fn set_exploration_music(
+        &mut self,
+        r#exploration_music: impl Into<Vec<SoundTrack>>,
+    ) -> &mut Self {
         self.r#exploration_music = r#exploration_music.into();
         self
     }
@@ -17428,7 +19913,18 @@ impl ShipModSettings {
         self.r#remove_weapon_slot_mod = r#remove_weapon_slot_mod.into();
         self
     }
+    pub fn set_remove_weapon_slot_mod(
+        &mut self,
+        r#remove_weapon_slot_mod: impl Into<bool>,
+    ) -> &mut Self {
+        self.r#remove_weapon_slot_mod = r#remove_weapon_slot_mod.into();
+        self
+    }
     pub fn with_heat_defense_value(mut self, r#heat_defense_value: impl Into<f32>) -> Self {
+        self.r#heat_defense_value = r#heat_defense_value.into();
+        self
+    }
+    pub fn set_heat_defense_value(&mut self, r#heat_defense_value: impl Into<f32>) -> &mut Self {
         self.r#heat_defense_value = r#heat_defense_value.into();
         self
     }
@@ -17436,7 +19932,21 @@ impl ShipModSettings {
         self.r#kinetic_defense_value = r#kinetic_defense_value.into();
         self
     }
+    pub fn set_kinetic_defense_value(
+        &mut self,
+        r#kinetic_defense_value: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#kinetic_defense_value = r#kinetic_defense_value.into();
+        self
+    }
     pub fn with_energy_defense_value(mut self, r#energy_defense_value: impl Into<f32>) -> Self {
+        self.r#energy_defense_value = r#energy_defense_value.into();
+        self
+    }
+    pub fn set_energy_defense_value(
+        &mut self,
+        r#energy_defense_value: impl Into<f32>,
+    ) -> &mut Self {
         self.r#energy_defense_value = r#energy_defense_value.into();
         self
     }
@@ -17444,7 +19954,15 @@ impl ShipModSettings {
         self.r#regeneration_value = r#regeneration_value.into();
         self
     }
+    pub fn set_regeneration_value(&mut self, r#regeneration_value: impl Into<f32>) -> &mut Self {
+        self.r#regeneration_value = r#regeneration_value.into();
+        self
+    }
     pub fn with_regeneration_armor(mut self, r#regeneration_armor: impl Into<f32>) -> Self {
+        self.r#regeneration_armor = r#regeneration_armor.into();
+        self
+    }
+    pub fn set_regeneration_armor(&mut self, r#regeneration_armor: impl Into<f32>) -> &mut Self {
         self.r#regeneration_armor = r#regeneration_armor.into();
         self
     }
@@ -17452,7 +19970,15 @@ impl ShipModSettings {
         self.r#weight_reduction = r#weight_reduction.into();
         self
     }
+    pub fn set_weight_reduction(&mut self, r#weight_reduction: impl Into<f32>) -> &mut Self {
+        self.r#weight_reduction = r#weight_reduction.into();
+        self
+    }
     pub fn with_attack_reduction(mut self, r#attack_reduction: impl Into<f32>) -> Self {
+        self.r#attack_reduction = r#attack_reduction.into();
+        self
+    }
+    pub fn set_attack_reduction(&mut self, r#attack_reduction: impl Into<f32>) -> &mut Self {
         self.r#attack_reduction = r#attack_reduction.into();
         self
     }
@@ -17639,6 +20165,13 @@ impl ShipSettings {
         self.r#default_weight_per_cell = r#default_weight_per_cell.into();
         self
     }
+    pub fn set_default_weight_per_cell(
+        &mut self,
+        r#default_weight_per_cell: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#default_weight_per_cell = r#default_weight_per_cell.into();
+        self
+    }
     pub fn with_minimum_weight_per_cell(
         mut self,
         r#minimum_weight_per_cell: impl Into<f32>,
@@ -17646,7 +20179,18 @@ impl ShipSettings {
         self.r#minimum_weight_per_cell = r#minimum_weight_per_cell.into();
         self
     }
+    pub fn set_minimum_weight_per_cell(
+        &mut self,
+        r#minimum_weight_per_cell: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#minimum_weight_per_cell = r#minimum_weight_per_cell.into();
+        self
+    }
     pub fn with_base_armor_points(mut self, r#base_armor_points: impl Into<f32>) -> Self {
+        self.r#base_armor_points = r#base_armor_points.into();
+        self
+    }
+    pub fn set_base_armor_points(&mut self, r#base_armor_points: impl Into<f32>) -> &mut Self {
         self.r#base_armor_points = r#base_armor_points.into();
         self
     }
@@ -17654,11 +20198,29 @@ impl ShipSettings {
         self.r#armor_points_per_cell = r#armor_points_per_cell.into();
         self
     }
+    pub fn set_armor_points_per_cell(
+        &mut self,
+        r#armor_points_per_cell: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#armor_points_per_cell = r#armor_points_per_cell.into();
+        self
+    }
     pub fn with_armor_repair_cooldown(mut self, r#armor_repair_cooldown: impl Into<f32>) -> Self {
         self.r#armor_repair_cooldown = r#armor_repair_cooldown.into();
         self
     }
+    pub fn set_armor_repair_cooldown(
+        &mut self,
+        r#armor_repair_cooldown: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#armor_repair_cooldown = r#armor_repair_cooldown.into();
+        self
+    }
     pub fn with_base_energy_points(mut self, r#base_energy_points: impl Into<f32>) -> Self {
+        self.r#base_energy_points = r#base_energy_points.into();
+        self
+    }
+    pub fn set_base_energy_points(&mut self, r#base_energy_points: impl Into<f32>) -> &mut Self {
         self.r#base_energy_points = r#base_energy_points.into();
         self
     }
@@ -17669,10 +20231,24 @@ impl ShipSettings {
         self.r#base_energy_recharge_rate = r#base_energy_recharge_rate.into();
         self
     }
+    pub fn set_base_energy_recharge_rate(
+        &mut self,
+        r#base_energy_recharge_rate: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#base_energy_recharge_rate = r#base_energy_recharge_rate.into();
+        self
+    }
     pub fn with_energy_recharge_cooldown(
         mut self,
         r#energy_recharge_cooldown: impl Into<f32>,
     ) -> Self {
+        self.r#energy_recharge_cooldown = r#energy_recharge_cooldown.into();
+        self
+    }
+    pub fn set_energy_recharge_cooldown(
+        &mut self,
+        r#energy_recharge_cooldown: impl Into<f32>,
+    ) -> &mut Self {
         self.r#energy_recharge_cooldown = r#energy_recharge_cooldown.into();
         self
     }
@@ -17683,10 +20259,24 @@ impl ShipSettings {
         self.r#base_shield_recharge_rate = r#base_shield_recharge_rate.into();
         self
     }
+    pub fn set_base_shield_recharge_rate(
+        &mut self,
+        r#base_shield_recharge_rate: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#base_shield_recharge_rate = r#base_shield_recharge_rate.into();
+        self
+    }
     pub fn with_shield_recharge_cooldown(
         mut self,
         r#shield_recharge_cooldown: impl Into<f32>,
     ) -> Self {
+        self.r#shield_recharge_cooldown = r#shield_recharge_cooldown.into();
+        self
+    }
+    pub fn set_shield_recharge_cooldown(
+        &mut self,
+        r#shield_recharge_cooldown: impl Into<f32>,
+    ) -> &mut Self {
         self.r#shield_recharge_cooldown = r#shield_recharge_cooldown.into();
         self
     }
@@ -17697,11 +20287,26 @@ impl ShipSettings {
         self.r#base_drone_reconstruction_speed = r#base_drone_reconstruction_speed.into();
         self
     }
+    pub fn set_base_drone_reconstruction_speed(
+        &mut self,
+        r#base_drone_reconstruction_speed: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#base_drone_reconstruction_speed = r#base_drone_reconstruction_speed.into();
+        self
+    }
     pub fn with_max_velocity(mut self, r#max_velocity: impl Into<f32>) -> Self {
         self.r#max_velocity = r#max_velocity.into();
         self
     }
+    pub fn set_max_velocity(&mut self, r#max_velocity: impl Into<f32>) -> &mut Self {
+        self.r#max_velocity = r#max_velocity.into();
+        self
+    }
     pub fn with_max_turn_rate(mut self, r#max_turn_rate: impl Into<f32>) -> Self {
+        self.r#max_turn_rate = r#max_turn_rate.into();
+        self
+    }
+    pub fn set_max_turn_rate(&mut self, r#max_turn_rate: impl Into<f32>) -> &mut Self {
         self.r#max_turn_rate = r#max_turn_rate.into();
         self
     }
@@ -18014,6 +20619,13 @@ impl SkillSettings {
         self.r#beat_all_enemies_faction_list = r#beat_all_enemies_faction_list.into();
         self
     }
+    pub fn set_beat_all_enemies_faction_list(
+        &mut self,
+        r#beat_all_enemies_faction_list: impl Into<Vec<FactionId>>,
+    ) -> &mut Self {
+        self.r#beat_all_enemies_faction_list = r#beat_all_enemies_faction_list.into();
+        self
+    }
     pub fn with_disable_exceed_the_limits(
         mut self,
         r#disable_exceed_the_limits: impl Into<bool>,
@@ -18021,7 +20633,18 @@ impl SkillSettings {
         self.r#disable_exceed_the_limits = r#disable_exceed_the_limits.into();
         self
     }
+    pub fn set_disable_exceed_the_limits(
+        &mut self,
+        r#disable_exceed_the_limits: impl Into<bool>,
+    ) -> &mut Self {
+        self.r#disable_exceed_the_limits = r#disable_exceed_the_limits.into();
+        self
+    }
     pub fn with_fuel_tank_capacity(mut self, r#fuel_tank_capacity: impl Into<String>) -> Self {
+        self.r#fuel_tank_capacity = r#fuel_tank_capacity.into();
+        self
+    }
+    pub fn set_fuel_tank_capacity(&mut self, r#fuel_tank_capacity: impl Into<String>) -> &mut Self {
         self.r#fuel_tank_capacity = r#fuel_tank_capacity.into();
         self
     }
@@ -18029,7 +20652,15 @@ impl SkillSettings {
         self.r#attack_bonus = r#attack_bonus.into();
         self
     }
+    pub fn set_attack_bonus(&mut self, r#attack_bonus: impl Into<String>) -> &mut Self {
+        self.r#attack_bonus = r#attack_bonus.into();
+        self
+    }
     pub fn with_defense_bonus(mut self, r#defense_bonus: impl Into<String>) -> Self {
+        self.r#defense_bonus = r#defense_bonus.into();
+        self
+    }
+    pub fn set_defense_bonus(&mut self, r#defense_bonus: impl Into<String>) -> &mut Self {
         self.r#defense_bonus = r#defense_bonus.into();
         self
     }
@@ -18040,6 +20671,13 @@ impl SkillSettings {
         self.r#shield_strength_bonus = r#shield_strength_bonus.into();
         self
     }
+    pub fn set_shield_strength_bonus(
+        &mut self,
+        r#shield_strength_bonus: impl Into<String>,
+    ) -> &mut Self {
+        self.r#shield_strength_bonus = r#shield_strength_bonus.into();
+        self
+    }
     pub fn with_shield_recharge_bonus(
         mut self,
         r#shield_recharge_bonus: impl Into<String>,
@@ -18047,7 +20685,18 @@ impl SkillSettings {
         self.r#shield_recharge_bonus = r#shield_recharge_bonus.into();
         self
     }
+    pub fn set_shield_recharge_bonus(
+        &mut self,
+        r#shield_recharge_bonus: impl Into<String>,
+    ) -> &mut Self {
+        self.r#shield_recharge_bonus = r#shield_recharge_bonus.into();
+        self
+    }
     pub fn with_experience_bonus(mut self, r#experience_bonus: impl Into<String>) -> Self {
+        self.r#experience_bonus = r#experience_bonus.into();
+        self
+    }
+    pub fn set_experience_bonus(&mut self, r#experience_bonus: impl Into<String>) -> &mut Self {
         self.r#experience_bonus = r#experience_bonus.into();
         self
     }
@@ -18055,7 +20704,15 @@ impl SkillSettings {
         self.r#flight_speed = r#flight_speed.into();
         self
     }
+    pub fn set_flight_speed(&mut self, r#flight_speed: impl Into<String>) -> &mut Self {
+        self.r#flight_speed = r#flight_speed.into();
+        self
+    }
     pub fn with_flight_range(mut self, r#flight_range: impl Into<String>) -> Self {
+        self.r#flight_range = r#flight_range.into();
+        self
+    }
+    pub fn set_flight_range(&mut self, r#flight_range: impl Into<String>) -> &mut Self {
         self.r#flight_range = r#flight_range.into();
         self
     }
@@ -18066,7 +20723,18 @@ impl SkillSettings {
         self.r#exploration_loot_bonus = r#exploration_loot_bonus.into();
         self
     }
+    pub fn set_exploration_loot_bonus(
+        &mut self,
+        r#exploration_loot_bonus: impl Into<String>,
+    ) -> &mut Self {
+        self.r#exploration_loot_bonus = r#exploration_loot_bonus.into();
+        self
+    }
     pub fn with_heat_resistance(mut self, r#heat_resistance: impl Into<String>) -> Self {
+        self.r#heat_resistance = r#heat_resistance.into();
+        self
+    }
+    pub fn set_heat_resistance(&mut self, r#heat_resistance: impl Into<String>) -> &mut Self {
         self.r#heat_resistance = r#heat_resistance.into();
         self
     }
@@ -18074,7 +20742,15 @@ impl SkillSettings {
         self.r#kinetic_resistance = r#kinetic_resistance.into();
         self
     }
+    pub fn set_kinetic_resistance(&mut self, r#kinetic_resistance: impl Into<String>) -> &mut Self {
+        self.r#kinetic_resistance = r#kinetic_resistance.into();
+        self
+    }
     pub fn with_energy_resistance(mut self, r#energy_resistance: impl Into<String>) -> Self {
+        self.r#energy_resistance = r#energy_resistance.into();
+        self
+    }
+    pub fn set_energy_resistance(&mut self, r#energy_resistance: impl Into<String>) -> &mut Self {
         self.r#energy_resistance = r#energy_resistance.into();
         self
     }
@@ -18085,10 +20761,24 @@ impl SkillSettings {
         self.r#merchant_price_factor = r#merchant_price_factor.into();
         self
     }
+    pub fn set_merchant_price_factor(
+        &mut self,
+        r#merchant_price_factor: impl Into<String>,
+    ) -> &mut Self {
+        self.r#merchant_price_factor = r#merchant_price_factor.into();
+        self
+    }
     pub fn with_crafting_price_factor(
         mut self,
         r#crafting_price_factor: impl Into<String>,
     ) -> Self {
+        self.r#crafting_price_factor = r#crafting_price_factor.into();
+        self
+    }
+    pub fn set_crafting_price_factor(
+        &mut self,
+        r#crafting_price_factor: impl Into<String>,
+    ) -> &mut Self {
         self.r#crafting_price_factor = r#crafting_price_factor.into();
         self
     }
@@ -18099,7 +20789,21 @@ impl SkillSettings {
         self.r#crafting_level_reduction = r#crafting_level_reduction.into();
         self
     }
+    pub fn set_crafting_level_reduction(
+        &mut self,
+        r#crafting_level_reduction: impl Into<String>,
+    ) -> &mut Self {
+        self.r#crafting_level_reduction = r#crafting_level_reduction.into();
+        self
+    }
     pub fn with_max_player_ships_level(mut self, r#max_player_ships_level: impl Into<i32>) -> Self {
+        self.r#max_player_ships_level = r#max_player_ships_level.into();
+        self
+    }
+    pub fn set_max_player_ships_level(
+        &mut self,
+        r#max_player_ships_level: impl Into<i32>,
+    ) -> &mut Self {
         self.r#max_player_ships_level = r#max_player_ships_level.into();
         self
     }
@@ -18107,7 +20811,18 @@ impl SkillSettings {
         self.r#increased_level_limit = r#increased_level_limit.into();
         self
     }
+    pub fn set_increased_level_limit(
+        &mut self,
+        r#increased_level_limit: impl Into<i32>,
+    ) -> &mut Self {
+        self.r#increased_level_limit = r#increased_level_limit.into();
+        self
+    }
     pub fn with_base_fuel_capacity(mut self, r#base_fuel_capacity: impl Into<i32>) -> Self {
+        self.r#base_fuel_capacity = r#base_fuel_capacity.into();
+        self
+    }
+    pub fn set_base_fuel_capacity(&mut self, r#base_fuel_capacity: impl Into<i32>) -> &mut Self {
         self.r#base_fuel_capacity = r#base_fuel_capacity.into();
         self
     }
@@ -18115,7 +20830,15 @@ impl SkillSettings {
         self.r#base_flight_range = r#base_flight_range.into();
         self
     }
+    pub fn set_base_flight_range(&mut self, r#base_flight_range: impl Into<f32>) -> &mut Self {
+        self.r#base_flight_range = r#base_flight_range.into();
+        self
+    }
     pub fn with_base_flight_speed(mut self, r#base_flight_speed: impl Into<f32>) -> Self {
+        self.r#base_flight_speed = r#base_flight_speed.into();
+        self
+    }
+    pub fn set_base_flight_speed(&mut self, r#base_flight_speed: impl Into<f32>) -> &mut Self {
         self.r#base_flight_speed = r#base_flight_speed.into();
         self
     }
@@ -18238,7 +20961,15 @@ impl SpecialEventSettings {
         self.r#enable_xmas_event = r#enable_xmas_event.into();
         self
     }
+    pub fn set_enable_xmas_event(&mut self, r#enable_xmas_event: impl Into<bool>) -> &mut Self {
+        self.r#enable_xmas_event = r#enable_xmas_event.into();
+        self
+    }
     pub fn with_xmas_days_before(mut self, r#xmas_days_before: impl Into<i32>) -> Self {
+        self.r#xmas_days_before = r#xmas_days_before.into();
+        self
+    }
+    pub fn set_xmas_days_before(&mut self, r#xmas_days_before: impl Into<i32>) -> &mut Self {
         self.r#xmas_days_before = r#xmas_days_before.into();
         self
     }
@@ -18246,7 +20977,15 @@ impl SpecialEventSettings {
         self.r#xmas_days_after = r#xmas_days_after.into();
         self
     }
+    pub fn set_xmas_days_after(&mut self, r#xmas_days_after: impl Into<i32>) -> &mut Self {
+        self.r#xmas_days_after = r#xmas_days_after.into();
+        self
+    }
     pub fn with_xmas_quest(mut self, r#xmas_quest: impl Into<Option<QuestId>>) -> Self {
+        self.r#xmas_quest = r#xmas_quest.into();
+        self
+    }
+    pub fn set_xmas_quest(&mut self, r#xmas_quest: impl Into<Option<QuestId>>) -> &mut Self {
         self.r#xmas_quest = r#xmas_quest.into();
         self
     }
@@ -18257,6 +20996,13 @@ impl SpecialEventSettings {
         self.r#xmas_combat_rules = r#xmas_combat_rules.into();
         self
     }
+    pub fn set_xmas_combat_rules(
+        &mut self,
+        r#xmas_combat_rules: impl Into<Option<CombatRulesId>>,
+    ) -> &mut Self {
+        self.r#xmas_combat_rules = r#xmas_combat_rules.into();
+        self
+    }
     pub fn with_convert_credits_to_snowflakes(
         mut self,
         r#convert_credits_to_snowflakes: impl Into<String>,
@@ -18264,7 +21010,18 @@ impl SpecialEventSettings {
         self.r#convert_credits_to_snowflakes = r#convert_credits_to_snowflakes.into();
         self
     }
+    pub fn set_convert_credits_to_snowflakes(
+        &mut self,
+        r#convert_credits_to_snowflakes: impl Into<String>,
+    ) -> &mut Self {
+        self.r#convert_credits_to_snowflakes = r#convert_credits_to_snowflakes.into();
+        self
+    }
     pub fn with_enable_easter_event(mut self, r#enable_easter_event: impl Into<bool>) -> Self {
+        self.r#enable_easter_event = r#enable_easter_event.into();
+        self
+    }
+    pub fn set_enable_easter_event(&mut self, r#enable_easter_event: impl Into<bool>) -> &mut Self {
         self.r#enable_easter_event = r#enable_easter_event.into();
         self
     }
@@ -18272,11 +21029,23 @@ impl SpecialEventSettings {
         self.r#easter_days_before = r#easter_days_before.into();
         self
     }
+    pub fn set_easter_days_before(&mut self, r#easter_days_before: impl Into<i32>) -> &mut Self {
+        self.r#easter_days_before = r#easter_days_before.into();
+        self
+    }
     pub fn with_easter_days_after(mut self, r#easter_days_after: impl Into<i32>) -> Self {
         self.r#easter_days_after = r#easter_days_after.into();
         self
     }
+    pub fn set_easter_days_after(&mut self, r#easter_days_after: impl Into<i32>) -> &mut Self {
+        self.r#easter_days_after = r#easter_days_after.into();
+        self
+    }
     pub fn with_easter_quest(mut self, r#easter_quest: impl Into<Option<QuestId>>) -> Self {
+        self.r#easter_quest = r#easter_quest.into();
+        self
+    }
+    pub fn set_easter_quest(&mut self, r#easter_quest: impl Into<Option<QuestId>>) -> &mut Self {
         self.r#easter_quest = r#easter_quest.into();
         self
     }
@@ -18287,7 +21056,21 @@ impl SpecialEventSettings {
         self.r#enable_halloween_event = r#enable_halloween_event.into();
         self
     }
+    pub fn set_enable_halloween_event(
+        &mut self,
+        r#enable_halloween_event: impl Into<bool>,
+    ) -> &mut Self {
+        self.r#enable_halloween_event = r#enable_halloween_event.into();
+        self
+    }
     pub fn with_halloween_days_before(mut self, r#halloween_days_before: impl Into<i32>) -> Self {
+        self.r#halloween_days_before = r#halloween_days_before.into();
+        self
+    }
+    pub fn set_halloween_days_before(
+        &mut self,
+        r#halloween_days_before: impl Into<i32>,
+    ) -> &mut Self {
         self.r#halloween_days_before = r#halloween_days_before.into();
         self
     }
@@ -18295,7 +21078,21 @@ impl SpecialEventSettings {
         self.r#halloween_days_after = r#halloween_days_after.into();
         self
     }
+    pub fn set_halloween_days_after(
+        &mut self,
+        r#halloween_days_after: impl Into<i32>,
+    ) -> &mut Self {
+        self.r#halloween_days_after = r#halloween_days_after.into();
+        self
+    }
     pub fn with_halloween_quest(mut self, r#halloween_quest: impl Into<Option<QuestId>>) -> Self {
+        self.r#halloween_quest = r#halloween_quest.into();
+        self
+    }
+    pub fn set_halloween_quest(
+        &mut self,
+        r#halloween_quest: impl Into<Option<QuestId>>,
+    ) -> &mut Self {
         self.r#halloween_quest = r#halloween_quest.into();
         self
     }
@@ -18507,7 +21304,15 @@ impl UiSettings {
         self.r#window_color = r#window_color.into();
         self
     }
+    pub fn set_window_color(&mut self, r#window_color: impl Into<String>) -> &mut Self {
+        self.r#window_color = r#window_color.into();
+        self
+    }
     pub fn with_scroll_bar_color(mut self, r#scroll_bar_color: impl Into<String>) -> Self {
+        self.r#scroll_bar_color = r#scroll_bar_color.into();
+        self
+    }
+    pub fn set_scroll_bar_color(&mut self, r#scroll_bar_color: impl Into<String>) -> &mut Self {
         self.r#scroll_bar_color = r#scroll_bar_color.into();
         self
     }
@@ -18515,7 +21320,15 @@ impl UiSettings {
         self.r#icon_color = r#icon_color.into();
         self
     }
+    pub fn set_icon_color(&mut self, r#icon_color: impl Into<String>) -> &mut Self {
+        self.r#icon_color = r#icon_color.into();
+        self
+    }
     pub fn with_selection_color(mut self, r#selection_color: impl Into<String>) -> Self {
+        self.r#selection_color = r#selection_color.into();
+        self
+    }
+    pub fn set_selection_color(&mut self, r#selection_color: impl Into<String>) -> &mut Self {
         self.r#selection_color = r#selection_color.into();
         self
     }
@@ -18523,7 +21336,15 @@ impl UiSettings {
         self.r#button_color = r#button_color.into();
         self
     }
+    pub fn set_button_color(&mut self, r#button_color: impl Into<String>) -> &mut Self {
+        self.r#button_color = r#button_color.into();
+        self
+    }
     pub fn with_button_focus_color(mut self, r#button_focus_color: impl Into<String>) -> Self {
+        self.r#button_focus_color = r#button_focus_color.into();
+        self
+    }
+    pub fn set_button_focus_color(&mut self, r#button_focus_color: impl Into<String>) -> &mut Self {
         self.r#button_focus_color = r#button_focus_color.into();
         self
     }
@@ -18531,11 +21352,26 @@ impl UiSettings {
         self.r#button_text_color = r#button_text_color.into();
         self
     }
+    pub fn set_button_text_color(&mut self, r#button_text_color: impl Into<String>) -> &mut Self {
+        self.r#button_text_color = r#button_text_color.into();
+        self
+    }
     pub fn with_button_icon_color(mut self, r#button_icon_color: impl Into<String>) -> Self {
         self.r#button_icon_color = r#button_icon_color.into();
         self
     }
+    pub fn set_button_icon_color(&mut self, r#button_icon_color: impl Into<String>) -> &mut Self {
+        self.r#button_icon_color = r#button_icon_color.into();
+        self
+    }
     pub fn with_warning_button_color(mut self, r#warning_button_color: impl Into<String>) -> Self {
+        self.r#warning_button_color = r#warning_button_color.into();
+        self
+    }
+    pub fn set_warning_button_color(
+        &mut self,
+        r#warning_button_color: impl Into<String>,
+    ) -> &mut Self {
         self.r#warning_button_color = r#warning_button_color.into();
         self
     }
@@ -18546,10 +21382,24 @@ impl UiSettings {
         self.r#warning_button_focus_color = r#warning_button_focus_color.into();
         self
     }
+    pub fn set_warning_button_focus_color(
+        &mut self,
+        r#warning_button_focus_color: impl Into<String>,
+    ) -> &mut Self {
+        self.r#warning_button_focus_color = r#warning_button_focus_color.into();
+        self
+    }
     pub fn with_warning_button_text_color(
         mut self,
         r#warning_button_text_color: impl Into<String>,
     ) -> Self {
+        self.r#warning_button_text_color = r#warning_button_text_color.into();
+        self
+    }
+    pub fn set_warning_button_text_color(
+        &mut self,
+        r#warning_button_text_color: impl Into<String>,
+    ) -> &mut Self {
         self.r#warning_button_text_color = r#warning_button_text_color.into();
         self
     }
@@ -18560,7 +21410,21 @@ impl UiSettings {
         self.r#warning_button_icon_color = r#warning_button_icon_color.into();
         self
     }
+    pub fn set_warning_button_icon_color(
+        &mut self,
+        r#warning_button_icon_color: impl Into<String>,
+    ) -> &mut Self {
+        self.r#warning_button_icon_color = r#warning_button_icon_color.into();
+        self
+    }
     pub fn with_premium_button_color(mut self, r#premium_button_color: impl Into<String>) -> Self {
+        self.r#premium_button_color = r#premium_button_color.into();
+        self
+    }
+    pub fn set_premium_button_color(
+        &mut self,
+        r#premium_button_color: impl Into<String>,
+    ) -> &mut Self {
         self.r#premium_button_color = r#premium_button_color.into();
         self
     }
@@ -18571,10 +21435,24 @@ impl UiSettings {
         self.r#premium_button_focus_color = r#premium_button_focus_color.into();
         self
     }
+    pub fn set_premium_button_focus_color(
+        &mut self,
+        r#premium_button_focus_color: impl Into<String>,
+    ) -> &mut Self {
+        self.r#premium_button_focus_color = r#premium_button_focus_color.into();
+        self
+    }
     pub fn with_premium_button_text_color(
         mut self,
         r#premium_button_text_color: impl Into<String>,
     ) -> Self {
+        self.r#premium_button_text_color = r#premium_button_text_color.into();
+        self
+    }
+    pub fn set_premium_button_text_color(
+        &mut self,
+        r#premium_button_text_color: impl Into<String>,
+    ) -> &mut Self {
         self.r#premium_button_text_color = r#premium_button_text_color.into();
         self
     }
@@ -18585,7 +21463,18 @@ impl UiSettings {
         self.r#premium_button_icon_color = r#premium_button_icon_color.into();
         self
     }
+    pub fn set_premium_button_icon_color(
+        &mut self,
+        r#premium_button_icon_color: impl Into<String>,
+    ) -> &mut Self {
+        self.r#premium_button_icon_color = r#premium_button_icon_color.into();
+        self
+    }
     pub fn with_text_color(mut self, r#text_color: impl Into<String>) -> Self {
+        self.r#text_color = r#text_color.into();
+        self
+    }
+    pub fn set_text_color(&mut self, r#text_color: impl Into<String>) -> &mut Self {
         self.r#text_color = r#text_color.into();
         self
     }
@@ -18593,7 +21482,15 @@ impl UiSettings {
         self.r#error_text_color = r#error_text_color.into();
         self
     }
+    pub fn set_error_text_color(&mut self, r#error_text_color: impl Into<String>) -> &mut Self {
+        self.r#error_text_color = r#error_text_color.into();
+        self
+    }
     pub fn with_header_text_color(mut self, r#header_text_color: impl Into<String>) -> Self {
+        self.r#header_text_color = r#header_text_color.into();
+        self
+    }
+    pub fn set_header_text_color(&mut self, r#header_text_color: impl Into<String>) -> &mut Self {
         self.r#header_text_color = r#header_text_color.into();
         self
     }
@@ -18601,11 +21498,23 @@ impl UiSettings {
         self.r#pale_text_color = r#pale_text_color.into();
         self
     }
+    pub fn set_pale_text_color(&mut self, r#pale_text_color: impl Into<String>) -> &mut Self {
+        self.r#pale_text_color = r#pale_text_color.into();
+        self
+    }
     pub fn with_bright_text_color(mut self, r#bright_text_color: impl Into<String>) -> Self {
         self.r#bright_text_color = r#bright_text_color.into();
         self
     }
+    pub fn set_bright_text_color(&mut self, r#bright_text_color: impl Into<String>) -> &mut Self {
+        self.r#bright_text_color = r#bright_text_color.into();
+        self
+    }
     pub fn with_background_dark(mut self, r#background_dark: impl Into<String>) -> Self {
+        self.r#background_dark = r#background_dark.into();
+        self
+    }
+    pub fn set_background_dark(&mut self, r#background_dark: impl Into<String>) -> &mut Self {
         self.r#background_dark = r#background_dark.into();
         self
     }
@@ -18616,10 +21525,24 @@ impl UiSettings {
         self.r#low_quality_item_color = r#low_quality_item_color.into();
         self
     }
+    pub fn set_low_quality_item_color(
+        &mut self,
+        r#low_quality_item_color: impl Into<String>,
+    ) -> &mut Self {
+        self.r#low_quality_item_color = r#low_quality_item_color.into();
+        self
+    }
     pub fn with_common_quality_item_color(
         mut self,
         r#common_quality_item_color: impl Into<String>,
     ) -> Self {
+        self.r#common_quality_item_color = r#common_quality_item_color.into();
+        self
+    }
+    pub fn set_common_quality_item_color(
+        &mut self,
+        r#common_quality_item_color: impl Into<String>,
+    ) -> &mut Self {
         self.r#common_quality_item_color = r#common_quality_item_color.into();
         self
     }
@@ -18630,10 +21553,24 @@ impl UiSettings {
         self.r#medium_quality_item_color = r#medium_quality_item_color.into();
         self
     }
+    pub fn set_medium_quality_item_color(
+        &mut self,
+        r#medium_quality_item_color: impl Into<String>,
+    ) -> &mut Self {
+        self.r#medium_quality_item_color = r#medium_quality_item_color.into();
+        self
+    }
     pub fn with_high_quality_item_color(
         mut self,
         r#high_quality_item_color: impl Into<String>,
     ) -> Self {
+        self.r#high_quality_item_color = r#high_quality_item_color.into();
+        self
+    }
+    pub fn set_high_quality_item_color(
+        &mut self,
+        r#high_quality_item_color: impl Into<String>,
+    ) -> &mut Self {
         self.r#high_quality_item_color = r#high_quality_item_color.into();
         self
     }
@@ -18644,7 +21581,21 @@ impl UiSettings {
         self.r#perfect_quality_item_color = r#perfect_quality_item_color.into();
         self
     }
+    pub fn set_perfect_quality_item_color(
+        &mut self,
+        r#perfect_quality_item_color: impl Into<String>,
+    ) -> &mut Self {
+        self.r#perfect_quality_item_color = r#perfect_quality_item_color.into();
+        self
+    }
     pub fn with_available_tech_color(mut self, r#available_tech_color: impl Into<String>) -> Self {
+        self.r#available_tech_color = r#available_tech_color.into();
+        self
+    }
+    pub fn set_available_tech_color(
+        &mut self,
+        r#available_tech_color: impl Into<String>,
+    ) -> &mut Self {
         self.r#available_tech_color = r#available_tech_color.into();
         self
     }
@@ -18655,7 +21606,21 @@ impl UiSettings {
         self.r#unavailable_tech_color = r#unavailable_tech_color.into();
         self
     }
+    pub fn set_unavailable_tech_color(
+        &mut self,
+        r#unavailable_tech_color: impl Into<String>,
+    ) -> &mut Self {
+        self.r#unavailable_tech_color = r#unavailable_tech_color.into();
+        self
+    }
     pub fn with_obtained_tech_color(mut self, r#obtained_tech_color: impl Into<String>) -> Self {
+        self.r#obtained_tech_color = r#obtained_tech_color.into();
+        self
+    }
+    pub fn set_obtained_tech_color(
+        &mut self,
+        r#obtained_tech_color: impl Into<String>,
+    ) -> &mut Self {
         self.r#obtained_tech_color = r#obtained_tech_color.into();
         self
     }
@@ -18663,7 +21628,15 @@ impl UiSettings {
         self.r#hidden_tech_color = r#hidden_tech_color.into();
         self
     }
+    pub fn set_hidden_tech_color(&mut self, r#hidden_tech_color: impl Into<String>) -> &mut Self {
+        self.r#hidden_tech_color = r#hidden_tech_color.into();
+        self
+    }
     pub fn with_credits_color(mut self, r#credits_color: impl Into<String>) -> Self {
+        self.r#credits_color = r#credits_color.into();
+        self
+    }
+    pub fn set_credits_color(&mut self, r#credits_color: impl Into<String>) -> &mut Self {
         self.r#credits_color = r#credits_color.into();
         self
     }
@@ -18671,7 +21644,15 @@ impl UiSettings {
         self.r#stars_color = r#stars_color.into();
         self
     }
+    pub fn set_stars_color(&mut self, r#stars_color: impl Into<String>) -> &mut Self {
+        self.r#stars_color = r#stars_color.into();
+        self
+    }
     pub fn with_money_color(mut self, r#money_color: impl Into<String>) -> Self {
+        self.r#money_color = r#money_color.into();
+        self
+    }
+    pub fn set_money_color(&mut self, r#money_color: impl Into<String>) -> &mut Self {
         self.r#money_color = r#money_color.into();
         self
     }
@@ -18679,7 +21660,15 @@ impl UiSettings {
         self.r#fuel_color = r#fuel_color.into();
         self
     }
+    pub fn set_fuel_color(&mut self, r#fuel_color: impl Into<String>) -> &mut Self {
+        self.r#fuel_color = r#fuel_color.into();
+        self
+    }
     pub fn with_tokens_color(mut self, r#tokens_color: impl Into<String>) -> Self {
+        self.r#tokens_color = r#tokens_color.into();
+        self
+    }
+    pub fn set_tokens_color(&mut self, r#tokens_color: impl Into<String>) -> &mut Self {
         self.r#tokens_color = r#tokens_color.into();
         self
     }
@@ -18715,7 +21704,15 @@ impl BehaviorTree {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<BehaviorTreeId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_root_node(mut self, r#root_node: impl Into<BehaviorTreeNode>) -> Self {
+        self.r#root_node = r#root_node.into();
+        self
+    }
+    pub fn set_root_node(&mut self, r#root_node: impl Into<BehaviorTreeNode>) -> &mut Self {
         self.r#root_node = r#root_node.into();
         self
     }
@@ -18790,6 +21787,10 @@ impl AmmunitionObsolete {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<AmmunitionObsoleteId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_ammunition_class(
         mut self,
         r#ammunition_class: impl Into<AmmunitionClassObsolete>,
@@ -18797,7 +21798,18 @@ impl AmmunitionObsolete {
         self.r#ammunition_class = r#ammunition_class.into();
         self
     }
+    pub fn set_ammunition_class(
+        &mut self,
+        r#ammunition_class: impl Into<AmmunitionClassObsolete>,
+    ) -> &mut Self {
+        self.r#ammunition_class = r#ammunition_class.into();
+        self
+    }
     pub fn with_damage_type(mut self, r#damage_type: impl Into<DamageType>) -> Self {
+        self.r#damage_type = r#damage_type.into();
+        self
+    }
+    pub fn set_damage_type(&mut self, r#damage_type: impl Into<DamageType>) -> &mut Self {
         self.r#damage_type = r#damage_type.into();
         self
     }
@@ -18805,7 +21817,15 @@ impl AmmunitionObsolete {
         self.r#impulse = r#impulse.into();
         self
     }
+    pub fn set_impulse(&mut self, r#impulse: impl Into<f32>) -> &mut Self {
+        self.r#impulse = r#impulse.into();
+        self
+    }
     pub fn with_recoil(mut self, r#recoil: impl Into<f32>) -> Self {
+        self.r#recoil = r#recoil.into();
+        self
+    }
+    pub fn set_recoil(&mut self, r#recoil: impl Into<f32>) -> &mut Self {
         self.r#recoil = r#recoil.into();
         self
     }
@@ -18813,7 +21833,18 @@ impl AmmunitionObsolete {
         self.r#size = r#size.into();
         self
     }
+    pub fn set_size(&mut self, r#size: impl Into<f32>) -> &mut Self {
+        self.r#size = r#size.into();
+        self
+    }
     pub fn with_initial_position(mut self, r#initial_position: impl Into<glam::f32::Vec2>) -> Self {
+        self.r#initial_position = r#initial_position.into();
+        self
+    }
+    pub fn set_initial_position(
+        &mut self,
+        r#initial_position: impl Into<glam::f32::Vec2>,
+    ) -> &mut Self {
         self.r#initial_position = r#initial_position.into();
         self
     }
@@ -18821,7 +21852,15 @@ impl AmmunitionObsolete {
         self.r#area_of_effect = r#area_of_effect.into();
         self
     }
+    pub fn set_area_of_effect(&mut self, r#area_of_effect: impl Into<f32>) -> &mut Self {
+        self.r#area_of_effect = r#area_of_effect.into();
+        self
+    }
     pub fn with_damage(mut self, r#damage: impl Into<f32>) -> Self {
+        self.r#damage = r#damage.into();
+        self
+    }
+    pub fn set_damage(&mut self, r#damage: impl Into<f32>) -> &mut Self {
         self.r#damage = r#damage.into();
         self
     }
@@ -18829,7 +21868,15 @@ impl AmmunitionObsolete {
         self.r#range = r#range.into();
         self
     }
+    pub fn set_range(&mut self, r#range: impl Into<f32>) -> &mut Self {
+        self.r#range = r#range.into();
+        self
+    }
     pub fn with_velocity(mut self, r#velocity: impl Into<f32>) -> Self {
+        self.r#velocity = r#velocity.into();
+        self
+    }
+    pub fn set_velocity(&mut self, r#velocity: impl Into<f32>) -> &mut Self {
         self.r#velocity = r#velocity.into();
         self
     }
@@ -18837,7 +21884,15 @@ impl AmmunitionObsolete {
         self.r#life_time = r#life_time.into();
         self
     }
+    pub fn set_life_time(&mut self, r#life_time: impl Into<f32>) -> &mut Self {
+        self.r#life_time = r#life_time.into();
+        self
+    }
     pub fn with_hit_points(mut self, r#hit_points: impl Into<i32>) -> Self {
+        self.r#hit_points = r#hit_points.into();
+        self
+    }
+    pub fn set_hit_points(&mut self, r#hit_points: impl Into<i32>) -> &mut Self {
         self.r#hit_points = r#hit_points.into();
         self
     }
@@ -18845,7 +21900,18 @@ impl AmmunitionObsolete {
         self.r#ignores_ship_velocity = r#ignores_ship_velocity.into();
         self
     }
+    pub fn set_ignores_ship_velocity(
+        &mut self,
+        r#ignores_ship_velocity: impl Into<bool>,
+    ) -> &mut Self {
+        self.r#ignores_ship_velocity = r#ignores_ship_velocity.into();
+        self
+    }
     pub fn with_energy_cost(mut self, r#energy_cost: impl Into<f32>) -> Self {
+        self.r#energy_cost = r#energy_cost.into();
+        self
+    }
+    pub fn set_energy_cost(&mut self, r#energy_cost: impl Into<f32>) -> &mut Self {
         self.r#energy_cost = r#energy_cost.into();
         self
     }
@@ -18856,7 +21922,18 @@ impl AmmunitionObsolete {
         self.r#coupled_ammunition_id = r#coupled_ammunition_id.into();
         self
     }
+    pub fn set_coupled_ammunition_id(
+        &mut self,
+        r#coupled_ammunition_id: impl Into<Option<AmmunitionObsoleteId>>,
+    ) -> &mut Self {
+        self.r#coupled_ammunition_id = r#coupled_ammunition_id.into();
+        self
+    }
     pub fn with_color(mut self, r#color: impl Into<String>) -> Self {
+        self.r#color = r#color.into();
+        self
+    }
+    pub fn set_color(&mut self, r#color: impl Into<String>) -> &mut Self {
         self.r#color = r#color.into();
         self
     }
@@ -18864,7 +21941,15 @@ impl AmmunitionObsolete {
         self.r#fire_sound = r#fire_sound.into();
         self
     }
+    pub fn set_fire_sound(&mut self, r#fire_sound: impl Into<String>) -> &mut Self {
+        self.r#fire_sound = r#fire_sound.into();
+        self
+    }
     pub fn with_hit_sound(mut self, r#hit_sound: impl Into<String>) -> Self {
+        self.r#hit_sound = r#hit_sound.into();
+        self
+    }
+    pub fn set_hit_sound(&mut self, r#hit_sound: impl Into<String>) -> &mut Self {
         self.r#hit_sound = r#hit_sound.into();
         self
     }
@@ -18872,7 +21957,15 @@ impl AmmunitionObsolete {
         self.r#hit_effect_prefab = r#hit_effect_prefab.into();
         self
     }
+    pub fn set_hit_effect_prefab(&mut self, r#hit_effect_prefab: impl Into<String>) -> &mut Self {
+        self.r#hit_effect_prefab = r#hit_effect_prefab.into();
+        self
+    }
     pub fn with_bullet_prefab(mut self, r#bullet_prefab: impl Into<String>) -> Self {
+        self.r#bullet_prefab = r#bullet_prefab.into();
+        self
+    }
+    pub fn set_bullet_prefab(&mut self, r#bullet_prefab: impl Into<String>) -> &mut Self {
         self.r#bullet_prefab = r#bullet_prefab.into();
         self
     }
@@ -19126,11 +22219,23 @@ impl Component {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<ComponentId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_name(mut self, r#name: impl Into<String>) -> Self {
         self.r#name = r#name.into();
         self
     }
+    pub fn set_name(&mut self, r#name: impl Into<String>) -> &mut Self {
+        self.r#name = r#name.into();
+        self
+    }
     pub fn with_description(mut self, r#description: impl Into<String>) -> Self {
+        self.r#description = r#description.into();
+        self
+    }
+    pub fn set_description(&mut self, r#description: impl Into<String>) -> &mut Self {
         self.r#description = r#description.into();
         self
     }
@@ -19141,7 +22246,18 @@ impl Component {
         self.r#display_category = r#display_category.into();
         self
     }
+    pub fn set_display_category(
+        &mut self,
+        r#display_category: impl Into<ComponentCategory>,
+    ) -> &mut Self {
+        self.r#display_category = r#display_category.into();
+        self
+    }
     pub fn with_availability(mut self, r#availability: impl Into<Availability>) -> Self {
+        self.r#availability = r#availability.into();
+        self
+    }
+    pub fn set_availability(&mut self, r#availability: impl Into<Availability>) -> &mut Self {
         self.r#availability = r#availability.into();
         self
     }
@@ -19152,7 +22268,18 @@ impl Component {
         self.r#component_stats_id = r#component_stats_id.into();
         self
     }
+    pub fn set_component_stats_id(
+        &mut self,
+        r#component_stats_id: impl Into<ComponentStatsId>,
+    ) -> &mut Self {
+        self.r#component_stats_id = r#component_stats_id.into();
+        self
+    }
     pub fn with_faction(mut self, r#faction: impl Into<Option<FactionId>>) -> Self {
+        self.r#faction = r#faction.into();
+        self
+    }
+    pub fn set_faction(&mut self, r#faction: impl Into<Option<FactionId>>) -> &mut Self {
         self.r#faction = r#faction.into();
         self
     }
@@ -19160,7 +22287,15 @@ impl Component {
         self.r#level = r#level.into();
         self
     }
+    pub fn set_level(&mut self, r#level: impl Into<i32>) -> &mut Self {
+        self.r#level = r#level.into();
+        self
+    }
     pub fn with_icon(mut self, r#icon: impl Into<String>) -> Self {
+        self.r#icon = r#icon.into();
+        self
+    }
+    pub fn set_icon(&mut self, r#icon: impl Into<String>) -> &mut Self {
         self.r#icon = r#icon.into();
         self
     }
@@ -19168,7 +22303,15 @@ impl Component {
         self.r#color = r#color.into();
         self
     }
+    pub fn set_color(&mut self, r#color: impl Into<String>) -> &mut Self {
+        self.r#color = r#color.into();
+        self
+    }
     pub fn with_layout(mut self, r#layout: impl Into<String>) -> Self {
+        self.r#layout = r#layout.into();
+        self
+    }
+    pub fn set_layout(&mut self, r#layout: impl Into<String>) -> &mut Self {
         self.r#layout = r#layout.into();
         self
     }
@@ -19176,7 +22319,15 @@ impl Component {
         self.r#cell_type = r#cell_type.into();
         self
     }
+    pub fn set_cell_type(&mut self, r#cell_type: impl Into<String>) -> &mut Self {
+        self.r#cell_type = r#cell_type.into();
+        self
+    }
     pub fn with_device_id(mut self, r#device_id: impl Into<Option<DeviceId>>) -> Self {
+        self.r#device_id = r#device_id.into();
+        self
+    }
+    pub fn set_device_id(&mut self, r#device_id: impl Into<Option<DeviceId>>) -> &mut Self {
         self.r#device_id = r#device_id.into();
         self
     }
@@ -19184,7 +22335,18 @@ impl Component {
         self.r#weapon_id = r#weapon_id.into();
         self
     }
+    pub fn set_weapon_id(&mut self, r#weapon_id: impl Into<Option<WeaponId>>) -> &mut Self {
+        self.r#weapon_id = r#weapon_id.into();
+        self
+    }
     pub fn with_ammunition_id(mut self, r#ammunition_id: impl Into<Option<AmmunitionId>>) -> Self {
+        self.r#ammunition_id = r#ammunition_id.into();
+        self
+    }
+    pub fn set_ammunition_id(
+        &mut self,
+        r#ammunition_id: impl Into<Option<AmmunitionId>>,
+    ) -> &mut Self {
         self.r#ammunition_id = r#ammunition_id.into();
         self
     }
@@ -19192,7 +22354,15 @@ impl Component {
         self.r#weapon_slot_type = r#weapon_slot_type.into();
         self
     }
+    pub fn set_weapon_slot_type(&mut self, r#weapon_slot_type: impl Into<String>) -> &mut Self {
+        self.r#weapon_slot_type = r#weapon_slot_type.into();
+        self
+    }
     pub fn with_drone_bay_id(mut self, r#drone_bay_id: impl Into<Option<DroneBayId>>) -> Self {
+        self.r#drone_bay_id = r#drone_bay_id.into();
+        self
+    }
+    pub fn set_drone_bay_id(&mut self, r#drone_bay_id: impl Into<Option<DroneBayId>>) -> &mut Self {
         self.r#drone_bay_id = r#drone_bay_id.into();
         self
     }
@@ -19200,7 +22370,18 @@ impl Component {
         self.r#drone_id = r#drone_id.into();
         self
     }
+    pub fn set_drone_id(&mut self, r#drone_id: impl Into<Option<ShipBuildId>>) -> &mut Self {
+        self.r#drone_id = r#drone_id.into();
+        self
+    }
     pub fn with_restrictions(mut self, r#restrictions: impl Into<ComponentRestrictions>) -> Self {
+        self.r#restrictions = r#restrictions.into();
+        self
+    }
+    pub fn set_restrictions(
+        &mut self,
+        r#restrictions: impl Into<ComponentRestrictions>,
+    ) -> &mut Self {
         self.r#restrictions = r#restrictions.into();
         self
     }
@@ -19208,6 +22389,13 @@ impl Component {
         mut self,
         r#possible_modifications: impl Into<Vec<ComponentModId>>,
     ) -> Self {
+        self.r#possible_modifications = r#possible_modifications.into();
+        self
+    }
+    pub fn set_possible_modifications(
+        &mut self,
+        r#possible_modifications: impl Into<Vec<ComponentModId>>,
+    ) -> &mut Self {
         self.r#possible_modifications = r#possible_modifications.into();
         self
     }
@@ -19270,11 +22458,26 @@ impl ComponentMod {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<ComponentModId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_description(mut self, r#description: impl Into<String>) -> Self {
         self.r#description = r#description.into();
         self
     }
+    pub fn set_description(&mut self, r#description: impl Into<String>) -> &mut Self {
+        self.r#description = r#description.into();
+        self
+    }
     pub fn with_modifications(mut self, r#modifications: impl Into<Vec<StatModification>>) -> Self {
+        self.r#modifications = r#modifications.into();
+        self
+    }
+    pub fn set_modifications(
+        &mut self,
+        r#modifications: impl Into<Vec<StatModification>>,
+    ) -> &mut Self {
         self.r#modifications = r#modifications.into();
         self
     }
@@ -19373,7 +22576,15 @@ impl ComponentStats {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<ComponentStatsId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_type(mut self, r#type: impl Into<ComponentStatsType>) -> Self {
+        self.r#type = r#type.into();
+        self
+    }
+    pub fn set_type(&mut self, r#type: impl Into<ComponentStatsType>) -> &mut Self {
         self.r#type = r#type.into();
         self
     }
@@ -19381,7 +22592,15 @@ impl ComponentStats {
         self.r#armor_points = r#armor_points.into();
         self
     }
+    pub fn set_armor_points(&mut self, r#armor_points: impl Into<f32>) -> &mut Self {
+        self.r#armor_points = r#armor_points.into();
+        self
+    }
     pub fn with_armor_repair_rate(mut self, r#armor_repair_rate: impl Into<f32>) -> Self {
+        self.r#armor_repair_rate = r#armor_repair_rate.into();
+        self
+    }
+    pub fn set_armor_repair_rate(&mut self, r#armor_repair_rate: impl Into<f32>) -> &mut Self {
         self.r#armor_repair_rate = r#armor_repair_rate.into();
         self
     }
@@ -19392,11 +22611,29 @@ impl ComponentStats {
         self.r#armor_repair_cooldown_modifier = r#armor_repair_cooldown_modifier.into();
         self
     }
+    pub fn set_armor_repair_cooldown_modifier(
+        &mut self,
+        r#armor_repair_cooldown_modifier: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#armor_repair_cooldown_modifier = r#armor_repair_cooldown_modifier.into();
+        self
+    }
     pub fn with_energy_points(mut self, r#energy_points: impl Into<f32>) -> Self {
         self.r#energy_points = r#energy_points.into();
         self
     }
+    pub fn set_energy_points(&mut self, r#energy_points: impl Into<f32>) -> &mut Self {
+        self.r#energy_points = r#energy_points.into();
+        self
+    }
     pub fn with_energy_recharge_rate(mut self, r#energy_recharge_rate: impl Into<f32>) -> Self {
+        self.r#energy_recharge_rate = r#energy_recharge_rate.into();
+        self
+    }
+    pub fn set_energy_recharge_rate(
+        &mut self,
+        r#energy_recharge_rate: impl Into<f32>,
+    ) -> &mut Self {
         self.r#energy_recharge_rate = r#energy_recharge_rate.into();
         self
     }
@@ -19407,11 +22644,29 @@ impl ComponentStats {
         self.r#energy_recharge_cooldown_modifier = r#energy_recharge_cooldown_modifier.into();
         self
     }
+    pub fn set_energy_recharge_cooldown_modifier(
+        &mut self,
+        r#energy_recharge_cooldown_modifier: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#energy_recharge_cooldown_modifier = r#energy_recharge_cooldown_modifier.into();
+        self
+    }
     pub fn with_shield_points(mut self, r#shield_points: impl Into<f32>) -> Self {
         self.r#shield_points = r#shield_points.into();
         self
     }
+    pub fn set_shield_points(&mut self, r#shield_points: impl Into<f32>) -> &mut Self {
+        self.r#shield_points = r#shield_points.into();
+        self
+    }
     pub fn with_shield_recharge_rate(mut self, r#shield_recharge_rate: impl Into<f32>) -> Self {
+        self.r#shield_recharge_rate = r#shield_recharge_rate.into();
+        self
+    }
+    pub fn set_shield_recharge_rate(
+        &mut self,
+        r#shield_recharge_rate: impl Into<f32>,
+    ) -> &mut Self {
         self.r#shield_recharge_rate = r#shield_recharge_rate.into();
         self
     }
@@ -19422,7 +22677,18 @@ impl ComponentStats {
         self.r#shield_recharge_cooldown_modifier = r#shield_recharge_cooldown_modifier.into();
         self
     }
+    pub fn set_shield_recharge_cooldown_modifier(
+        &mut self,
+        r#shield_recharge_cooldown_modifier: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#shield_recharge_cooldown_modifier = r#shield_recharge_cooldown_modifier.into();
+        self
+    }
     pub fn with_weight(mut self, r#weight: impl Into<f32>) -> Self {
+        self.r#weight = r#weight.into();
+        self
+    }
+    pub fn set_weight(&mut self, r#weight: impl Into<f32>) -> &mut Self {
         self.r#weight = r#weight.into();
         self
     }
@@ -19430,7 +22696,15 @@ impl ComponentStats {
         self.r#ramming_damage = r#ramming_damage.into();
         self
     }
+    pub fn set_ramming_damage(&mut self, r#ramming_damage: impl Into<f32>) -> &mut Self {
+        self.r#ramming_damage = r#ramming_damage.into();
+        self
+    }
     pub fn with_energy_absorption(mut self, r#energy_absorption: impl Into<f32>) -> Self {
+        self.r#energy_absorption = r#energy_absorption.into();
+        self
+    }
+    pub fn set_energy_absorption(&mut self, r#energy_absorption: impl Into<f32>) -> &mut Self {
         self.r#energy_absorption = r#energy_absorption.into();
         self
     }
@@ -19438,7 +22712,15 @@ impl ComponentStats {
         self.r#kinetic_resistance = r#kinetic_resistance.into();
         self
     }
+    pub fn set_kinetic_resistance(&mut self, r#kinetic_resistance: impl Into<f32>) -> &mut Self {
+        self.r#kinetic_resistance = r#kinetic_resistance.into();
+        self
+    }
     pub fn with_energy_resistance(mut self, r#energy_resistance: impl Into<f32>) -> Self {
+        self.r#energy_resistance = r#energy_resistance.into();
+        self
+    }
+    pub fn set_energy_resistance(&mut self, r#energy_resistance: impl Into<f32>) -> &mut Self {
         self.r#energy_resistance = r#energy_resistance.into();
         self
     }
@@ -19446,7 +22728,15 @@ impl ComponentStats {
         self.r#thermal_resistance = r#thermal_resistance.into();
         self
     }
+    pub fn set_thermal_resistance(&mut self, r#thermal_resistance: impl Into<f32>) -> &mut Self {
+        self.r#thermal_resistance = r#thermal_resistance.into();
+        self
+    }
     pub fn with_engine_power(mut self, r#engine_power: impl Into<f32>) -> Self {
+        self.r#engine_power = r#engine_power.into();
+        self
+    }
+    pub fn set_engine_power(&mut self, r#engine_power: impl Into<f32>) -> &mut Self {
         self.r#engine_power = r#engine_power.into();
         self
     }
@@ -19454,7 +22744,15 @@ impl ComponentStats {
         self.r#turn_rate = r#turn_rate.into();
         self
     }
+    pub fn set_turn_rate(&mut self, r#turn_rate: impl Into<f32>) -> &mut Self {
+        self.r#turn_rate = r#turn_rate.into();
+        self
+    }
     pub fn with_autopilot(mut self, r#autopilot: impl Into<bool>) -> Self {
+        self.r#autopilot = r#autopilot.into();
+        self
+    }
+    pub fn set_autopilot(&mut self, r#autopilot: impl Into<bool>) -> &mut Self {
         self.r#autopilot = r#autopilot.into();
         self
     }
@@ -19462,7 +22760,21 @@ impl ComponentStats {
         self.r#drone_range_modifier = r#drone_range_modifier.into();
         self
     }
+    pub fn set_drone_range_modifier(
+        &mut self,
+        r#drone_range_modifier: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#drone_range_modifier = r#drone_range_modifier.into();
+        self
+    }
     pub fn with_drone_damage_modifier(mut self, r#drone_damage_modifier: impl Into<f32>) -> Self {
+        self.r#drone_damage_modifier = r#drone_damage_modifier.into();
+        self
+    }
+    pub fn set_drone_damage_modifier(
+        &mut self,
+        r#drone_damage_modifier: impl Into<f32>,
+    ) -> &mut Self {
         self.r#drone_damage_modifier = r#drone_damage_modifier.into();
         self
     }
@@ -19470,7 +22782,21 @@ impl ComponentStats {
         self.r#drone_defense_modifier = r#drone_defense_modifier.into();
         self
     }
+    pub fn set_drone_defense_modifier(
+        &mut self,
+        r#drone_defense_modifier: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#drone_defense_modifier = r#drone_defense_modifier.into();
+        self
+    }
     pub fn with_drone_speed_modifier(mut self, r#drone_speed_modifier: impl Into<f32>) -> Self {
+        self.r#drone_speed_modifier = r#drone_speed_modifier.into();
+        self
+    }
+    pub fn set_drone_speed_modifier(
+        &mut self,
+        r#drone_speed_modifier: impl Into<f32>,
+    ) -> &mut Self {
         self.r#drone_speed_modifier = r#drone_speed_modifier.into();
         self
     }
@@ -19481,10 +22807,24 @@ impl ComponentStats {
         self.r#drones_built_per_second = r#drones_built_per_second.into();
         self
     }
+    pub fn set_drones_built_per_second(
+        &mut self,
+        r#drones_built_per_second: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#drones_built_per_second = r#drones_built_per_second.into();
+        self
+    }
     pub fn with_drone_build_time_modifier(
         mut self,
         r#drone_build_time_modifier: impl Into<f32>,
     ) -> Self {
+        self.r#drone_build_time_modifier = r#drone_build_time_modifier.into();
+        self
+    }
+    pub fn set_drone_build_time_modifier(
+        &mut self,
+        r#drone_build_time_modifier: impl Into<f32>,
+    ) -> &mut Self {
         self.r#drone_build_time_modifier = r#drone_build_time_modifier.into();
         self
     }
@@ -19495,11 +22835,32 @@ impl ComponentStats {
         self.r#weapon_fire_rate_modifier = r#weapon_fire_rate_modifier.into();
         self
     }
+    pub fn set_weapon_fire_rate_modifier(
+        &mut self,
+        r#weapon_fire_rate_modifier: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#weapon_fire_rate_modifier = r#weapon_fire_rate_modifier.into();
+        self
+    }
     pub fn with_weapon_damage_modifier(mut self, r#weapon_damage_modifier: impl Into<f32>) -> Self {
         self.r#weapon_damage_modifier = r#weapon_damage_modifier.into();
         self
     }
+    pub fn set_weapon_damage_modifier(
+        &mut self,
+        r#weapon_damage_modifier: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#weapon_damage_modifier = r#weapon_damage_modifier.into();
+        self
+    }
     pub fn with_weapon_range_modifier(mut self, r#weapon_range_modifier: impl Into<f32>) -> Self {
+        self.r#weapon_range_modifier = r#weapon_range_modifier.into();
+        self
+    }
+    pub fn set_weapon_range_modifier(
+        &mut self,
+        r#weapon_range_modifier: impl Into<f32>,
+    ) -> &mut Self {
         self.r#weapon_range_modifier = r#weapon_range_modifier.into();
         self
     }
@@ -19510,7 +22871,21 @@ impl ComponentStats {
         self.r#weapon_energy_cost_modifier = r#weapon_energy_cost_modifier.into();
         self
     }
+    pub fn set_weapon_energy_cost_modifier(
+        &mut self,
+        r#weapon_energy_cost_modifier: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#weapon_energy_cost_modifier = r#weapon_energy_cost_modifier.into();
+        self
+    }
     pub fn with_alter_weapon_platform(mut self, r#alter_weapon_platform: impl Into<i32>) -> Self {
+        self.r#alter_weapon_platform = r#alter_weapon_platform.into();
+        self
+    }
+    pub fn set_alter_weapon_platform(
+        &mut self,
+        r#alter_weapon_platform: impl Into<i32>,
+    ) -> &mut Self {
         self.r#alter_weapon_platform = r#alter_weapon_platform.into();
         self
     }
@@ -19518,7 +22893,15 @@ impl ComponentStats {
         self.r#auto_aiming_arc = r#auto_aiming_arc.into();
         self
     }
+    pub fn set_auto_aiming_arc(&mut self, r#auto_aiming_arc: impl Into<f32>) -> &mut Self {
+        self.r#auto_aiming_arc = r#auto_aiming_arc.into();
+        self
+    }
     pub fn with_turret_turn_speed(mut self, r#turret_turn_speed: impl Into<f32>) -> Self {
+        self.r#turret_turn_speed = r#turret_turn_speed.into();
+        self
+    }
+    pub fn set_turret_turn_speed(&mut self, r#turret_turn_speed: impl Into<f32>) -> &mut Self {
         self.r#turret_turn_speed = r#turret_turn_speed.into();
         self
     }
@@ -20115,11 +23498,23 @@ impl Device {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<DeviceId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_device_class(mut self, r#device_class: impl Into<DeviceClass>) -> Self {
         self.r#device_class = r#device_class.into();
         self
     }
+    pub fn set_device_class(&mut self, r#device_class: impl Into<DeviceClass>) -> &mut Self {
+        self.r#device_class = r#device_class.into();
+        self
+    }
     pub fn with_energy_consumption(mut self, r#energy_consumption: impl Into<f32>) -> Self {
+        self.r#energy_consumption = r#energy_consumption.into();
+        self
+    }
+    pub fn set_energy_consumption(&mut self, r#energy_consumption: impl Into<f32>) -> &mut Self {
         self.r#energy_consumption = r#energy_consumption.into();
         self
     }
@@ -20130,7 +23525,18 @@ impl Device {
         self.r#passive_energy_consumption = r#passive_energy_consumption.into();
         self
     }
+    pub fn set_passive_energy_consumption(
+        &mut self,
+        r#passive_energy_consumption: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#passive_energy_consumption = r#passive_energy_consumption.into();
+        self
+    }
     pub fn with_power(mut self, r#power: impl Into<f32>) -> Self {
+        self.r#power = r#power.into();
+        self
+    }
+    pub fn set_power(&mut self, r#power: impl Into<f32>) -> &mut Self {
         self.r#power = r#power.into();
         self
     }
@@ -20138,7 +23544,15 @@ impl Device {
         self.r#range = r#range.into();
         self
     }
+    pub fn set_range(&mut self, r#range: impl Into<f32>) -> &mut Self {
+        self.r#range = r#range.into();
+        self
+    }
     pub fn with_size(mut self, r#size: impl Into<f32>) -> Self {
+        self.r#size = r#size.into();
+        self
+    }
+    pub fn set_size(&mut self, r#size: impl Into<f32>) -> &mut Self {
         self.r#size = r#size.into();
         self
     }
@@ -20146,7 +23560,15 @@ impl Device {
         self.r#cooldown = r#cooldown.into();
         self
     }
+    pub fn set_cooldown(&mut self, r#cooldown: impl Into<f32>) -> &mut Self {
+        self.r#cooldown = r#cooldown.into();
+        self
+    }
     pub fn with_lifetime(mut self, r#lifetime: impl Into<f32>) -> Self {
+        self.r#lifetime = r#lifetime.into();
+        self
+    }
+    pub fn set_lifetime(&mut self, r#lifetime: impl Into<f32>) -> &mut Self {
         self.r#lifetime = r#lifetime.into();
         self
     }
@@ -20154,7 +23576,18 @@ impl Device {
         self.r#offset = r#offset.into();
         self
     }
+    pub fn set_offset(&mut self, r#offset: impl Into<glam::f32::Vec2>) -> &mut Self {
+        self.r#offset = r#offset.into();
+        self
+    }
     pub fn with_activation_type(mut self, r#activation_type: impl Into<ActivationType>) -> Self {
+        self.r#activation_type = r#activation_type.into();
+        self
+    }
+    pub fn set_activation_type(
+        &mut self,
+        r#activation_type: impl Into<ActivationType>,
+    ) -> &mut Self {
         self.r#activation_type = r#activation_type.into();
         self
     }
@@ -20162,7 +23595,15 @@ impl Device {
         self.r#color = r#color.into();
         self
     }
+    pub fn set_color(&mut self, r#color: impl Into<String>) -> &mut Self {
+        self.r#color = r#color.into();
+        self
+    }
     pub fn with_sound(mut self, r#sound: impl Into<String>) -> Self {
+        self.r#sound = r#sound.into();
+        self
+    }
+    pub fn set_sound(&mut self, r#sound: impl Into<String>) -> &mut Self {
         self.r#sound = r#sound.into();
         self
     }
@@ -20170,7 +23611,15 @@ impl Device {
         self.r#effect_prefab = r#effect_prefab.into();
         self
     }
+    pub fn set_effect_prefab(&mut self, r#effect_prefab: impl Into<String>) -> &mut Self {
+        self.r#effect_prefab = r#effect_prefab.into();
+        self
+    }
     pub fn with_object_prefab(mut self, r#object_prefab: impl Into<String>) -> Self {
+        self.r#object_prefab = r#object_prefab.into();
+        self
+    }
+    pub fn set_object_prefab(&mut self, r#object_prefab: impl Into<String>) -> &mut Self {
         self.r#object_prefab = r#object_prefab.into();
         self
     }
@@ -20178,7 +23627,18 @@ impl Device {
         self.r#prefab = r#prefab.into();
         self
     }
+    pub fn set_prefab(&mut self, r#prefab: impl Into<Option<GameObjectPrefabId>>) -> &mut Self {
+        self.r#prefab = r#prefab.into();
+        self
+    }
     pub fn with_control_button_icon(mut self, r#control_button_icon: impl Into<String>) -> Self {
+        self.r#control_button_icon = r#control_button_icon.into();
+        self
+    }
+    pub fn set_control_button_icon(
+        &mut self,
+        r#control_button_icon: impl Into<String>,
+    ) -> &mut Self {
         self.r#control_button_icon = r#control_button_icon.into();
         self
     }
@@ -20370,7 +23830,15 @@ impl DroneBay {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<DroneBayId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_energy_consumption(mut self, r#energy_consumption: impl Into<f32>) -> Self {
+        self.r#energy_consumption = r#energy_consumption.into();
+        self
+    }
+    pub fn set_energy_consumption(&mut self, r#energy_consumption: impl Into<f32>) -> &mut Self {
         self.r#energy_consumption = r#energy_consumption.into();
         self
     }
@@ -20381,7 +23849,18 @@ impl DroneBay {
         self.r#passive_energy_consumption = r#passive_energy_consumption.into();
         self
     }
+    pub fn set_passive_energy_consumption(
+        &mut self,
+        r#passive_energy_consumption: impl Into<f32>,
+    ) -> &mut Self {
+        self.r#passive_energy_consumption = r#passive_energy_consumption.into();
+        self
+    }
     pub fn with_range(mut self, r#range: impl Into<f32>) -> Self {
+        self.r#range = r#range.into();
+        self
+    }
+    pub fn set_range(&mut self, r#range: impl Into<f32>) -> &mut Self {
         self.r#range = r#range.into();
         self
     }
@@ -20389,7 +23868,15 @@ impl DroneBay {
         self.r#damage_multiplier = r#damage_multiplier.into();
         self
     }
+    pub fn set_damage_multiplier(&mut self, r#damage_multiplier: impl Into<f32>) -> &mut Self {
+        self.r#damage_multiplier = r#damage_multiplier.into();
+        self
+    }
     pub fn with_defense_multiplier(mut self, r#defense_multiplier: impl Into<f32>) -> Self {
+        self.r#defense_multiplier = r#defense_multiplier.into();
+        self
+    }
+    pub fn set_defense_multiplier(&mut self, r#defense_multiplier: impl Into<f32>) -> &mut Self {
         self.r#defense_multiplier = r#defense_multiplier.into();
         self
     }
@@ -20397,7 +23884,15 @@ impl DroneBay {
         self.r#speed_multiplier = r#speed_multiplier.into();
         self
     }
+    pub fn set_speed_multiplier(&mut self, r#speed_multiplier: impl Into<f32>) -> &mut Self {
+        self.r#speed_multiplier = r#speed_multiplier.into();
+        self
+    }
     pub fn with_build_extra_cycles(mut self, r#build_extra_cycles: impl Into<i32>) -> Self {
+        self.r#build_extra_cycles = r#build_extra_cycles.into();
+        self
+    }
+    pub fn set_build_extra_cycles(&mut self, r#build_extra_cycles: impl Into<i32>) -> &mut Self {
         self.r#build_extra_cycles = r#build_extra_cycles.into();
         self
     }
@@ -20405,7 +23900,15 @@ impl DroneBay {
         self.r#improved_ai = r#improved_ai.into();
         self
     }
+    pub fn set_improved_ai(&mut self, r#improved_ai: impl Into<bool>) -> &mut Self {
+        self.r#improved_ai = r#improved_ai.into();
+        self
+    }
     pub fn with_capacity(mut self, r#capacity: impl Into<i32>) -> Self {
+        self.r#capacity = r#capacity.into();
+        self
+    }
+    pub fn set_capacity(&mut self, r#capacity: impl Into<i32>) -> &mut Self {
         self.r#capacity = r#capacity.into();
         self
     }
@@ -20413,7 +23916,18 @@ impl DroneBay {
         self.r#activation_type = r#activation_type.into();
         self
     }
+    pub fn set_activation_type(
+        &mut self,
+        r#activation_type: impl Into<ActivationType>,
+    ) -> &mut Self {
+        self.r#activation_type = r#activation_type.into();
+        self
+    }
     pub fn with_launch_sound(mut self, r#launch_sound: impl Into<String>) -> Self {
+        self.r#launch_sound = r#launch_sound.into();
+        self
+    }
+    pub fn set_launch_sound(&mut self, r#launch_sound: impl Into<String>) -> &mut Self {
         self.r#launch_sound = r#launch_sound.into();
         self
     }
@@ -20421,7 +23935,21 @@ impl DroneBay {
         self.r#launch_effect_prefab = r#launch_effect_prefab.into();
         self
     }
+    pub fn set_launch_effect_prefab(
+        &mut self,
+        r#launch_effect_prefab: impl Into<String>,
+    ) -> &mut Self {
+        self.r#launch_effect_prefab = r#launch_effect_prefab.into();
+        self
+    }
     pub fn with_control_button_icon(mut self, r#control_button_icon: impl Into<String>) -> Self {
+        self.r#control_button_icon = r#control_button_icon.into();
+        self
+    }
+    pub fn set_control_button_icon(
+        &mut self,
+        r#control_button_icon: impl Into<String>,
+    ) -> &mut Self {
         self.r#control_button_icon = r#control_button_icon.into();
         self
     }
@@ -20432,10 +23960,24 @@ impl DroneBay {
         self.r#defensive_drone_ai = r#defensive_drone_ai.into();
         self
     }
+    pub fn set_defensive_drone_ai(
+        &mut self,
+        r#defensive_drone_ai: impl Into<Option<BehaviorTreeId>>,
+    ) -> &mut Self {
+        self.r#defensive_drone_ai = r#defensive_drone_ai.into();
+        self
+    }
     pub fn with_offensive_drone_ai(
         mut self,
         r#offensive_drone_ai: impl Into<Option<BehaviorTreeId>>,
     ) -> Self {
+        self.r#offensive_drone_ai = r#offensive_drone_ai.into();
+        self
+    }
+    pub fn set_offensive_drone_ai(
+        &mut self,
+        r#offensive_drone_ai: impl Into<Option<BehaviorTreeId>>,
+    ) -> &mut Self {
         self.r#offensive_drone_ai = r#offensive_drone_ai.into();
         self
     }
@@ -20648,7 +24190,15 @@ impl Faction {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<FactionId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_name(mut self, r#name: impl Into<String>) -> Self {
+        self.r#name = r#name.into();
+        self
+    }
+    pub fn set_name(&mut self, r#name: impl Into<String>) -> &mut Self {
         self.r#name = r#name.into();
         self
     }
@@ -20656,7 +24206,15 @@ impl Faction {
         self.r#color = r#color.into();
         self
     }
+    pub fn set_color(&mut self, r#color: impl Into<String>) -> &mut Self {
+        self.r#color = r#color.into();
+        self
+    }
     pub fn with_no_territories(mut self, r#no_territories: impl Into<bool>) -> Self {
+        self.r#no_territories = r#no_territories.into();
+        self
+    }
+    pub fn set_no_territories(&mut self, r#no_territories: impl Into<bool>) -> &mut Self {
         self.r#no_territories = r#no_territories.into();
         self
     }
@@ -20664,11 +24222,26 @@ impl Faction {
         self.r#home_star_distance = r#home_star_distance.into();
         self
     }
+    pub fn set_home_star_distance(&mut self, r#home_star_distance: impl Into<i32>) -> &mut Self {
+        self.r#home_star_distance = r#home_star_distance.into();
+        self
+    }
     pub fn with_home_star_distance_max(mut self, r#home_star_distance_max: impl Into<i32>) -> Self {
         self.r#home_star_distance_max = r#home_star_distance_max.into();
         self
     }
+    pub fn set_home_star_distance_max(
+        &mut self,
+        r#home_star_distance_max: impl Into<i32>,
+    ) -> &mut Self {
+        self.r#home_star_distance_max = r#home_star_distance_max.into();
+        self
+    }
     pub fn with_no_wandering_ships(mut self, r#no_wandering_ships: impl Into<bool>) -> Self {
+        self.r#no_wandering_ships = r#no_wandering_ships.into();
+        self
+    }
+    pub fn set_no_wandering_ships(&mut self, r#no_wandering_ships: impl Into<bool>) -> &mut Self {
         self.r#no_wandering_ships = r#no_wandering_ships.into();
         self
     }
@@ -20679,6 +24252,13 @@ impl Faction {
         self.r#wandering_ships_distance = r#wandering_ships_distance.into();
         self
     }
+    pub fn set_wandering_ships_distance(
+        &mut self,
+        r#wandering_ships_distance: impl Into<i32>,
+    ) -> &mut Self {
+        self.r#wandering_ships_distance = r#wandering_ships_distance.into();
+        self
+    }
     pub fn with_wandering_ships_distance_max(
         mut self,
         r#wandering_ships_distance_max: impl Into<i32>,
@@ -20686,7 +24266,18 @@ impl Faction {
         self.r#wandering_ships_distance_max = r#wandering_ships_distance_max.into();
         self
     }
+    pub fn set_wandering_ships_distance_max(
+        &mut self,
+        r#wandering_ships_distance_max: impl Into<i32>,
+    ) -> &mut Self {
+        self.r#wandering_ships_distance_max = r#wandering_ships_distance_max.into();
+        self
+    }
     pub fn with_hide_from_merchants(mut self, r#hide_from_merchants: impl Into<bool>) -> Self {
+        self.r#hide_from_merchants = r#hide_from_merchants.into();
+        self
+    }
+    pub fn set_hide_from_merchants(&mut self, r#hide_from_merchants: impl Into<bool>) -> &mut Self {
         self.r#hide_from_merchants = r#hide_from_merchants.into();
         self
     }
@@ -20694,7 +24285,15 @@ impl Faction {
         self.r#hide_research_tree = r#hide_research_tree.into();
         self
     }
+    pub fn set_hide_research_tree(&mut self, r#hide_research_tree: impl Into<bool>) -> &mut Self {
+        self.r#hide_research_tree = r#hide_research_tree.into();
+        self
+    }
     pub fn with_no_missions(mut self, r#no_missions: impl Into<bool>) -> Self {
+        self.r#no_missions = r#no_missions.into();
+        self
+    }
+    pub fn set_no_missions(&mut self, r#no_missions: impl Into<bool>) -> &mut Self {
         self.r#no_missions = r#no_missions.into();
         self
     }
@@ -20702,7 +24301,15 @@ impl Faction {
         self.r#hidden = r#hidden.into();
         self
     }
+    pub fn set_hidden(&mut self, r#hidden: impl Into<bool>) -> &mut Self {
+        self.r#hidden = r#hidden.into();
+        self
+    }
     pub fn with_hostile(mut self, r#hostile: impl Into<bool>) -> Self {
+        self.r#hostile = r#hostile.into();
+        self
+    }
+    pub fn set_hostile(&mut self, r#hostile: impl Into<bool>) -> &mut Self {
         self.r#hostile = r#hostile.into();
         self
     }
@@ -20829,6 +24436,10 @@ impl GameObjectPrefabUndefined {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<GameObjectPrefabId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
 }
 impl DatabaseItem for GameObjectPrefabUndefined {
     fn validate(&mut self) {}
@@ -20884,7 +24495,15 @@ impl GameObjectPrefabWormTailSegment {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<GameObjectPrefabId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_image_1(mut self, r#image_1: impl Into<String>) -> Self {
+        self.r#image_1 = r#image_1.into();
+        self
+    }
+    pub fn set_image_1(&mut self, r#image_1: impl Into<String>) -> &mut Self {
         self.r#image_1 = r#image_1.into();
         self
     }
@@ -20892,7 +24511,15 @@ impl GameObjectPrefabWormTailSegment {
         self.r#image_2 = r#image_2.into();
         self
     }
+    pub fn set_image_2(&mut self, r#image_2: impl Into<String>) -> &mut Self {
+        self.r#image_2 = r#image_2.into();
+        self
+    }
     pub fn with_image_scale(mut self, r#image_scale: impl Into<f32>) -> Self {
+        self.r#image_scale = r#image_scale.into();
+        self
+    }
+    pub fn set_image_scale(&mut self, r#image_scale: impl Into<f32>) -> &mut Self {
         self.r#image_scale = r#image_scale.into();
         self
     }
@@ -20900,7 +24527,15 @@ impl GameObjectPrefabWormTailSegment {
         self.r#image_offset = r#image_offset.into();
         self
     }
+    pub fn set_image_offset(&mut self, r#image_offset: impl Into<f32>) -> &mut Self {
+        self.r#image_offset = r#image_offset.into();
+        self
+    }
     pub fn with_length(mut self, r#length: impl Into<f32>) -> Self {
+        self.r#length = r#length.into();
+        self
+    }
+    pub fn set_length(&mut self, r#length: impl Into<f32>) -> &mut Self {
         self.r#length = r#length.into();
         self
     }
@@ -20908,7 +24543,15 @@ impl GameObjectPrefabWormTailSegment {
         self.r#offset_1 = r#offset_1.into();
         self
     }
+    pub fn set_offset_1(&mut self, r#offset_1: impl Into<f32>) -> &mut Self {
+        self.r#offset_1 = r#offset_1.into();
+        self
+    }
     pub fn with_offset_2(mut self, r#offset_2: impl Into<f32>) -> Self {
+        self.r#offset_2 = r#offset_2.into();
+        self
+    }
+    pub fn set_offset_2(&mut self, r#offset_2: impl Into<f32>) -> &mut Self {
         self.r#offset_2 = r#offset_2.into();
         self
     }
@@ -20916,7 +24559,15 @@ impl GameObjectPrefabWormTailSegment {
         self.r#angle_1 = r#angle_1.into();
         self
     }
+    pub fn set_angle_1(&mut self, r#angle_1: impl Into<f32>) -> &mut Self {
+        self.r#angle_1 = r#angle_1.into();
+        self
+    }
     pub fn with_angle_2(mut self, r#angle_2: impl Into<f32>) -> Self {
+        self.r#angle_2 = r#angle_2.into();
+        self
+    }
+    pub fn set_angle_2(&mut self, r#angle_2: impl Into<f32>) -> &mut Self {
         self.r#angle_2 = r#angle_2.into();
         self
     }
@@ -21090,11 +24741,23 @@ impl GameObjectPrefabCircularSpriteObject {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<GameObjectPrefabId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_image_1(mut self, r#image_1: impl Into<String>) -> Self {
         self.r#image_1 = r#image_1.into();
         self
     }
+    pub fn set_image_1(&mut self, r#image_1: impl Into<String>) -> &mut Self {
+        self.r#image_1 = r#image_1.into();
+        self
+    }
     pub fn with_image_scale(mut self, r#image_scale: impl Into<f32>) -> Self {
+        self.r#image_scale = r#image_scale.into();
+        self
+    }
+    pub fn set_image_scale(&mut self, r#image_scale: impl Into<f32>) -> &mut Self {
         self.r#image_scale = r#image_scale.into();
         self
     }
@@ -21164,7 +24827,15 @@ impl GameObjectPrefabCircularOutlineObject {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<GameObjectPrefabId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_image_1(mut self, r#image_1: impl Into<String>) -> Self {
+        self.r#image_1 = r#image_1.into();
+        self
+    }
+    pub fn set_image_1(&mut self, r#image_1: impl Into<String>) -> &mut Self {
         self.r#image_1 = r#image_1.into();
         self
     }
@@ -21172,11 +24843,23 @@ impl GameObjectPrefabCircularOutlineObject {
         self.r#image_scale = r#image_scale.into();
         self
     }
+    pub fn set_image_scale(&mut self, r#image_scale: impl Into<f32>) -> &mut Self {
+        self.r#image_scale = r#image_scale.into();
+        self
+    }
     pub fn with_thickness(mut self, r#thickness: impl Into<f32>) -> Self {
         self.r#thickness = r#thickness.into();
         self
     }
+    pub fn set_thickness(&mut self, r#thickness: impl Into<f32>) -> &mut Self {
+        self.r#thickness = r#thickness.into();
+        self
+    }
     pub fn with_aspect_ratio(mut self, r#aspect_ratio: impl Into<f32>) -> Self {
+        self.r#aspect_ratio = r#aspect_ratio.into();
+        self
+    }
+    pub fn set_aspect_ratio(&mut self, r#aspect_ratio: impl Into<f32>) -> &mut Self {
         self.r#aspect_ratio = r#aspect_ratio.into();
         self
     }
@@ -21375,7 +25058,15 @@ impl Character {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<CharacterId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_name(mut self, r#name: impl Into<String>) -> Self {
+        self.r#name = r#name.into();
+        self
+    }
+    pub fn set_name(&mut self, r#name: impl Into<String>) -> &mut Self {
         self.r#name = r#name.into();
         self
     }
@@ -21383,7 +25074,15 @@ impl Character {
         self.r#avatar_icon = r#avatar_icon.into();
         self
     }
+    pub fn set_avatar_icon(&mut self, r#avatar_icon: impl Into<String>) -> &mut Self {
+        self.r#avatar_icon = r#avatar_icon.into();
+        self
+    }
     pub fn with_faction(mut self, r#faction: impl Into<Option<FactionId>>) -> Self {
+        self.r#faction = r#faction.into();
+        self
+    }
+    pub fn set_faction(&mut self, r#faction: impl Into<Option<FactionId>>) -> &mut Self {
         self.r#faction = r#faction.into();
         self
     }
@@ -21391,7 +25090,15 @@ impl Character {
         self.r#inventory = r#inventory.into();
         self
     }
+    pub fn set_inventory(&mut self, r#inventory: impl Into<Option<LootId>>) -> &mut Self {
+        self.r#inventory = r#inventory.into();
+        self
+    }
     pub fn with_fleet(mut self, r#fleet: impl Into<Option<FleetId>>) -> Self {
+        self.r#fleet = r#fleet.into();
+        self
+    }
+    pub fn set_fleet(&mut self, r#fleet: impl Into<Option<FleetId>>) -> &mut Self {
         self.r#fleet = r#fleet.into();
         self
     }
@@ -21399,7 +25106,15 @@ impl Character {
         self.r#relations = r#relations.into();
         self
     }
+    pub fn set_relations(&mut self, r#relations: impl Into<i32>) -> &mut Self {
+        self.r#relations = r#relations.into();
+        self
+    }
     pub fn with_is_unique(mut self, r#is_unique: impl Into<bool>) -> Self {
+        self.r#is_unique = r#is_unique.into();
+        self
+    }
+    pub fn set_is_unique(&mut self, r#is_unique: impl Into<bool>) -> &mut Self {
         self.r#is_unique = r#is_unique.into();
         self
     }
@@ -21484,7 +25199,18 @@ impl CombatRules {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<CombatRulesId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_initial_enemy_ships(mut self, r#initial_enemy_ships: impl Into<String>) -> Self {
+        self.r#initial_enemy_ships = r#initial_enemy_ships.into();
+        self
+    }
+    pub fn set_initial_enemy_ships(
+        &mut self,
+        r#initial_enemy_ships: impl Into<String>,
+    ) -> &mut Self {
         self.r#initial_enemy_ships = r#initial_enemy_ships.into();
         self
     }
@@ -21492,7 +25218,15 @@ impl CombatRules {
         self.r#max_enemy_ships = r#max_enemy_ships.into();
         self
     }
+    pub fn set_max_enemy_ships(&mut self, r#max_enemy_ships: impl Into<String>) -> &mut Self {
+        self.r#max_enemy_ships = r#max_enemy_ships.into();
+        self
+    }
     pub fn with_battle_map_size(mut self, r#battle_map_size: impl Into<i32>) -> Self {
+        self.r#battle_map_size = r#battle_map_size.into();
+        self
+    }
+    pub fn set_battle_map_size(&mut self, r#battle_map_size: impl Into<i32>) -> &mut Self {
         self.r#battle_map_size = r#battle_map_size.into();
         self
     }
@@ -21500,7 +25234,15 @@ impl CombatRules {
         self.r#time_limit = r#time_limit.into();
         self
     }
+    pub fn set_time_limit(&mut self, r#time_limit: impl Into<String>) -> &mut Self {
+        self.r#time_limit = r#time_limit.into();
+        self
+    }
     pub fn with_time_out_mode(mut self, r#time_out_mode: impl Into<TimeOutMode>) -> Self {
+        self.r#time_out_mode = r#time_out_mode.into();
+        self
+    }
+    pub fn set_time_out_mode(&mut self, r#time_out_mode: impl Into<TimeOutMode>) -> &mut Self {
         self.r#time_out_mode = r#time_out_mode.into();
         self
     }
@@ -21508,7 +25250,18 @@ impl CombatRules {
         self.r#loot_condition = r#loot_condition.into();
         self
     }
+    pub fn set_loot_condition(
+        &mut self,
+        r#loot_condition: impl Into<RewardCondition>,
+    ) -> &mut Self {
+        self.r#loot_condition = r#loot_condition.into();
+        self
+    }
     pub fn with_exp_condition(mut self, r#exp_condition: impl Into<RewardCondition>) -> Self {
+        self.r#exp_condition = r#exp_condition.into();
+        self
+    }
+    pub fn set_exp_condition(&mut self, r#exp_condition: impl Into<RewardCondition>) -> &mut Self {
         self.r#exp_condition = r#exp_condition.into();
         self
     }
@@ -21519,7 +25272,21 @@ impl CombatRules {
         self.r#ship_selection = r#ship_selection.into();
         self
     }
+    pub fn set_ship_selection(
+        &mut self,
+        r#ship_selection: impl Into<PlayerShipSelectionMode>,
+    ) -> &mut Self {
+        self.r#ship_selection = r#ship_selection.into();
+        self
+    }
     pub fn with_disable_skill_bonuses(mut self, r#disable_skill_bonuses: impl Into<bool>) -> Self {
+        self.r#disable_skill_bonuses = r#disable_skill_bonuses.into();
+        self
+    }
+    pub fn set_disable_skill_bonuses(
+        &mut self,
+        r#disable_skill_bonuses: impl Into<bool>,
+    ) -> &mut Self {
         self.r#disable_skill_bonuses = r#disable_skill_bonuses.into();
         self
     }
@@ -21527,7 +25294,15 @@ impl CombatRules {
         self.r#disable_random_loot = r#disable_random_loot.into();
         self
     }
+    pub fn set_disable_random_loot(&mut self, r#disable_random_loot: impl Into<bool>) -> &mut Self {
+        self.r#disable_random_loot = r#disable_random_loot.into();
+        self
+    }
     pub fn with_disable_asteroids(mut self, r#disable_asteroids: impl Into<bool>) -> Self {
+        self.r#disable_asteroids = r#disable_asteroids.into();
+        self
+    }
+    pub fn set_disable_asteroids(&mut self, r#disable_asteroids: impl Into<bool>) -> &mut Self {
         self.r#disable_asteroids = r#disable_asteroids.into();
         self
     }
@@ -21535,7 +25310,15 @@ impl CombatRules {
         self.r#disable_planet = r#disable_planet.into();
         self
     }
+    pub fn set_disable_planet(&mut self, r#disable_planet: impl Into<bool>) -> &mut Self {
+        self.r#disable_planet = r#disable_planet.into();
+        self
+    }
     pub fn with_next_enemy_button(mut self, r#next_enemy_button: impl Into<bool>) -> Self {
+        self.r#next_enemy_button = r#next_enemy_button.into();
+        self
+    }
+    pub fn set_next_enemy_button(&mut self, r#next_enemy_button: impl Into<bool>) -> &mut Self {
         self.r#next_enemy_button = r#next_enemy_button.into();
         self
     }
@@ -21543,10 +25326,24 @@ impl CombatRules {
         self.r#kill_them_all_button = r#kill_them_all_button.into();
         self
     }
+    pub fn set_kill_them_all_button(
+        &mut self,
+        r#kill_them_all_button: impl Into<bool>,
+    ) -> &mut Self {
+        self.r#kill_them_all_button = r#kill_them_all_button.into();
+        self
+    }
     pub fn with_custom_soundtrack(
         mut self,
         r#custom_soundtrack: impl Into<Vec<SoundTrack>>,
     ) -> Self {
+        self.r#custom_soundtrack = r#custom_soundtrack.into();
+        self
+    }
+    pub fn set_custom_soundtrack(
+        &mut self,
+        r#custom_soundtrack: impl Into<Vec<SoundTrack>>,
+    ) -> &mut Self {
         self.r#custom_soundtrack = r#custom_soundtrack.into();
         self
     }
@@ -21611,7 +25408,15 @@ impl Fleet {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<FleetId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_factions(mut self, r#factions: impl Into<FactionFilter>) -> Self {
+        self.r#factions = r#factions.into();
+        self
+    }
+    pub fn set_factions(&mut self, r#factions: impl Into<FactionFilter>) -> &mut Self {
         self.r#factions = r#factions.into();
         self
     }
@@ -21619,7 +25424,15 @@ impl Fleet {
         self.r#level_bonus = r#level_bonus.into();
         self
     }
+    pub fn set_level_bonus(&mut self, r#level_bonus: impl Into<i32>) -> &mut Self {
+        self.r#level_bonus = r#level_bonus.into();
+        self
+    }
     pub fn with_no_random_ships(mut self, r#no_random_ships: impl Into<bool>) -> Self {
+        self.r#no_random_ships = r#no_random_ships.into();
+        self
+    }
+    pub fn set_no_random_ships(&mut self, r#no_random_ships: impl Into<bool>) -> &mut Self {
         self.r#no_random_ships = r#no_random_ships.into();
         self
     }
@@ -21627,7 +25440,18 @@ impl Fleet {
         self.r#combat_time_limit = r#combat_time_limit.into();
         self
     }
+    pub fn set_combat_time_limit(&mut self, r#combat_time_limit: impl Into<i32>) -> &mut Self {
+        self.r#combat_time_limit = r#combat_time_limit.into();
+        self
+    }
     pub fn with_loot_condition(mut self, r#loot_condition: impl Into<RewardCondition>) -> Self {
+        self.r#loot_condition = r#loot_condition.into();
+        self
+    }
+    pub fn set_loot_condition(
+        &mut self,
+        r#loot_condition: impl Into<RewardCondition>,
+    ) -> &mut Self {
         self.r#loot_condition = r#loot_condition.into();
         self
     }
@@ -21635,7 +25459,18 @@ impl Fleet {
         self.r#exp_condition = r#exp_condition.into();
         self
     }
+    pub fn set_exp_condition(&mut self, r#exp_condition: impl Into<RewardCondition>) -> &mut Self {
+        self.r#exp_condition = r#exp_condition.into();
+        self
+    }
     pub fn with_specific_ships(mut self, r#specific_ships: impl Into<Vec<ShipBuildId>>) -> Self {
+        self.r#specific_ships = r#specific_ships.into();
+        self
+    }
+    pub fn set_specific_ships(
+        &mut self,
+        r#specific_ships: impl Into<Vec<ShipBuildId>>,
+    ) -> &mut Self {
         self.r#specific_ships = r#specific_ships.into();
         self
     }
@@ -21643,11 +25478,26 @@ impl Fleet {
         self.r#no_ship_changing = r#no_ship_changing.into();
         self
     }
+    pub fn set_no_ship_changing(&mut self, r#no_ship_changing: impl Into<bool>) -> &mut Self {
+        self.r#no_ship_changing = r#no_ship_changing.into();
+        self
+    }
     pub fn with_player_has_one_ship(mut self, r#player_has_one_ship: impl Into<bool>) -> Self {
         self.r#player_has_one_ship = r#player_has_one_ship.into();
         self
     }
+    pub fn set_player_has_one_ship(&mut self, r#player_has_one_ship: impl Into<bool>) -> &mut Self {
+        self.r#player_has_one_ship = r#player_has_one_ship.into();
+        self
+    }
     pub fn with_combat_rules(mut self, r#combat_rules: impl Into<Option<CombatRulesId>>) -> Self {
+        self.r#combat_rules = r#combat_rules.into();
+        self
+    }
+    pub fn set_combat_rules(
+        &mut self,
+        r#combat_rules: impl Into<Option<CombatRulesId>>,
+    ) -> &mut Self {
         self.r#combat_rules = r#combat_rules.into();
         self
     }
@@ -21756,7 +25606,15 @@ impl Loot {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<LootId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_loot(mut self, r#loot: impl Into<LootContent>) -> Self {
+        self.r#loot = r#loot.into();
+        self
+    }
+    pub fn set_loot(&mut self, r#loot: impl Into<LootContent>) -> &mut Self {
         self.r#loot = r#loot.into();
         self
     }
@@ -21809,7 +25667,15 @@ impl Quest {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<QuestId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_name(mut self, r#name: impl Into<String>) -> Self {
+        self.r#name = r#name.into();
+        self
+    }
+    pub fn set_name(&mut self, r#name: impl Into<String>) -> &mut Self {
         self.r#name = r#name.into();
         self
     }
@@ -21817,7 +25683,18 @@ impl Quest {
         self.r#quest_type = r#quest_type.into();
         self
     }
+    pub fn set_quest_type(&mut self, r#quest_type: impl Into<QuestType>) -> &mut Self {
+        self.r#quest_type = r#quest_type.into();
+        self
+    }
     pub fn with_start_condition(mut self, r#start_condition: impl Into<StartCondition>) -> Self {
+        self.r#start_condition = r#start_condition.into();
+        self
+    }
+    pub fn set_start_condition(
+        &mut self,
+        r#start_condition: impl Into<StartCondition>,
+    ) -> &mut Self {
         self.r#start_condition = r#start_condition.into();
         self
     }
@@ -21825,7 +25702,15 @@ impl Quest {
         self.r#weight = r#weight.into();
         self
     }
+    pub fn set_weight(&mut self, r#weight: impl Into<f32>) -> &mut Self {
+        self.r#weight = r#weight.into();
+        self
+    }
     pub fn with_origin(mut self, r#origin: impl Into<QuestOrigin>) -> Self {
+        self.r#origin = r#origin.into();
+        self
+    }
+    pub fn set_origin(&mut self, r#origin: impl Into<QuestOrigin>) -> &mut Self {
         self.r#origin = r#origin.into();
         self
     }
@@ -21833,7 +25718,15 @@ impl Quest {
         self.r#requirement = r#requirement.into();
         self
     }
+    pub fn set_requirement(&mut self, r#requirement: impl Into<Requirement>) -> &mut Self {
+        self.r#requirement = r#requirement.into();
+        self
+    }
     pub fn with_level(mut self, r#level: impl Into<i32>) -> Self {
+        self.r#level = r#level.into();
+        self
+    }
+    pub fn set_level(&mut self, r#level: impl Into<i32>) -> &mut Self {
         self.r#level = r#level.into();
         self
     }
@@ -21841,7 +25734,15 @@ impl Quest {
         self.r#use_random_seed = r#use_random_seed.into();
         self
     }
+    pub fn set_use_random_seed(&mut self, r#use_random_seed: impl Into<bool>) -> &mut Self {
+        self.r#use_random_seed = r#use_random_seed.into();
+        self
+    }
     pub fn with_nodes(mut self, r#nodes: impl Into<Vec<Node>>) -> Self {
+        self.r#nodes = r#nodes.into();
+        self
+    }
+    pub fn set_nodes(&mut self, r#nodes: impl Into<Vec<Node>>) -> &mut Self {
         self.r#nodes = r#nodes.into();
         self
     }
@@ -21923,7 +25824,15 @@ impl QuestItem {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<QuestItemId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_name(mut self, r#name: impl Into<String>) -> Self {
+        self.r#name = r#name.into();
+        self
+    }
+    pub fn set_name(&mut self, r#name: impl Into<String>) -> &mut Self {
         self.r#name = r#name.into();
         self
     }
@@ -21931,7 +25840,15 @@ impl QuestItem {
         self.r#description = r#description.into();
         self
     }
+    pub fn set_description(&mut self, r#description: impl Into<String>) -> &mut Self {
+        self.r#description = r#description.into();
+        self
+    }
     pub fn with_icon(mut self, r#icon: impl Into<String>) -> Self {
+        self.r#icon = r#icon.into();
+        self
+    }
+    pub fn set_icon(&mut self, r#icon: impl Into<String>) -> &mut Self {
         self.r#icon = r#icon.into();
         self
     }
@@ -21939,7 +25856,15 @@ impl QuestItem {
         self.r#color = r#color.into();
         self
     }
+    pub fn set_color(&mut self, r#color: impl Into<String>) -> &mut Self {
+        self.r#color = r#color.into();
+        self
+    }
     pub fn with_price(mut self, r#price: impl Into<i32>) -> Self {
+        self.r#price = r#price.into();
+        self
+    }
+    pub fn set_price(&mut self, r#price: impl Into<i32>) -> &mut Self {
         self.r#price = r#price.into();
         self
     }
@@ -22005,7 +25930,15 @@ impl Satellite {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<SatelliteId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_name(mut self, r#name: impl Into<String>) -> Self {
+        self.r#name = r#name.into();
+        self
+    }
+    pub fn set_name(&mut self, r#name: impl Into<String>) -> &mut Self {
         self.r#name = r#name.into();
         self
     }
@@ -22013,7 +25946,15 @@ impl Satellite {
         self.r#model_image = r#model_image.into();
         self
     }
+    pub fn set_model_image(&mut self, r#model_image: impl Into<String>) -> &mut Self {
+        self.r#model_image = r#model_image.into();
+        self
+    }
     pub fn with_model_scale(mut self, r#model_scale: impl Into<f32>) -> Self {
+        self.r#model_scale = r#model_scale.into();
+        self
+    }
+    pub fn set_model_scale(&mut self, r#model_scale: impl Into<f32>) -> &mut Self {
         self.r#model_scale = r#model_scale.into();
         self
     }
@@ -22021,11 +25962,23 @@ impl Satellite {
         self.r#size_class = r#size_class.into();
         self
     }
+    pub fn set_size_class(&mut self, r#size_class: impl Into<SizeClass>) -> &mut Self {
+        self.r#size_class = r#size_class.into();
+        self
+    }
     pub fn with_layout(mut self, r#layout: impl Into<String>) -> Self {
         self.r#layout = r#layout.into();
         self
     }
+    pub fn set_layout(&mut self, r#layout: impl Into<String>) -> &mut Self {
+        self.r#layout = r#layout.into();
+        self
+    }
     pub fn with_barrels(mut self, r#barrels: impl Into<Vec<Barrel>>) -> Self {
+        self.r#barrels = r#barrels.into();
+        self
+    }
+    pub fn set_barrels(&mut self, r#barrels: impl Into<Vec<Barrel>>) -> &mut Self {
         self.r#barrels = r#barrels.into();
         self
     }
@@ -22087,7 +26040,15 @@ impl SatelliteBuild {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<SatelliteBuildId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_satellite_id(mut self, r#satellite_id: impl Into<SatelliteId>) -> Self {
+        self.r#satellite_id = r#satellite_id.into();
+        self
+    }
+    pub fn set_satellite_id(&mut self, r#satellite_id: impl Into<SatelliteId>) -> &mut Self {
         self.r#satellite_id = r#satellite_id.into();
         self
     }
@@ -22095,11 +26056,32 @@ impl SatelliteBuild {
         self.r#not_available_in_game = r#not_available_in_game.into();
         self
     }
+    pub fn set_not_available_in_game(
+        &mut self,
+        r#not_available_in_game: impl Into<bool>,
+    ) -> &mut Self {
+        self.r#not_available_in_game = r#not_available_in_game.into();
+        self
+    }
     pub fn with_difficulty_class(mut self, r#difficulty_class: impl Into<DifficultyClass>) -> Self {
         self.r#difficulty_class = r#difficulty_class.into();
         self
     }
+    pub fn set_difficulty_class(
+        &mut self,
+        r#difficulty_class: impl Into<DifficultyClass>,
+    ) -> &mut Self {
+        self.r#difficulty_class = r#difficulty_class.into();
+        self
+    }
     pub fn with_components(mut self, r#components: impl Into<Vec<InstalledComponent>>) -> Self {
+        self.r#components = r#components.into();
+        self
+    }
+    pub fn set_components(
+        &mut self,
+        r#components: impl Into<Vec<InstalledComponent>>,
+    ) -> &mut Self {
         self.r#components = r#components.into();
         self
     }
@@ -22184,7 +26166,15 @@ impl Ship {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<ShipId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_ship_type(mut self, r#ship_type: impl Into<ShipType>) -> Self {
+        self.r#ship_type = r#ship_type.into();
+        self
+    }
+    pub fn set_ship_type(&mut self, r#ship_type: impl Into<ShipType>) -> &mut Self {
         self.r#ship_type = r#ship_type.into();
         self
     }
@@ -22192,7 +26182,15 @@ impl Ship {
         self.r#ship_rarity = r#ship_rarity.into();
         self
     }
+    pub fn set_ship_rarity(&mut self, r#ship_rarity: impl Into<ShipRarity>) -> &mut Self {
+        self.r#ship_rarity = r#ship_rarity.into();
+        self
+    }
     pub fn with_size_class(mut self, r#size_class: impl Into<SizeClass>) -> Self {
+        self.r#size_class = r#size_class.into();
+        self
+    }
+    pub fn set_size_class(&mut self, r#size_class: impl Into<SizeClass>) -> &mut Self {
         self.r#size_class = r#size_class.into();
         self
     }
@@ -22200,7 +26198,15 @@ impl Ship {
         self.r#name = r#name.into();
         self
     }
+    pub fn set_name(&mut self, r#name: impl Into<String>) -> &mut Self {
+        self.r#name = r#name.into();
+        self
+    }
     pub fn with_description(mut self, r#description: impl Into<String>) -> Self {
+        self.r#description = r#description.into();
+        self
+    }
+    pub fn set_description(&mut self, r#description: impl Into<String>) -> &mut Self {
         self.r#description = r#description.into();
         self
     }
@@ -22208,7 +26214,15 @@ impl Ship {
         self.r#faction = r#faction.into();
         self
     }
+    pub fn set_faction(&mut self, r#faction: impl Into<Option<FactionId>>) -> &mut Self {
+        self.r#faction = r#faction.into();
+        self
+    }
     pub fn with_icon_image(mut self, r#icon_image: impl Into<String>) -> Self {
+        self.r#icon_image = r#icon_image.into();
+        self
+    }
+    pub fn set_icon_image(&mut self, r#icon_image: impl Into<String>) -> &mut Self {
         self.r#icon_image = r#icon_image.into();
         self
     }
@@ -22216,7 +26230,15 @@ impl Ship {
         self.r#icon_scale = r#icon_scale.into();
         self
     }
+    pub fn set_icon_scale(&mut self, r#icon_scale: impl Into<f32>) -> &mut Self {
+        self.r#icon_scale = r#icon_scale.into();
+        self
+    }
     pub fn with_model_image(mut self, r#model_image: impl Into<String>) -> Self {
+        self.r#model_image = r#model_image.into();
+        self
+    }
+    pub fn set_model_image(&mut self, r#model_image: impl Into<String>) -> &mut Self {
         self.r#model_image = r#model_image.into();
         self
     }
@@ -22224,7 +26246,15 @@ impl Ship {
         self.r#model_scale = r#model_scale.into();
         self
     }
+    pub fn set_model_scale(&mut self, r#model_scale: impl Into<f32>) -> &mut Self {
+        self.r#model_scale = r#model_scale.into();
+        self
+    }
     pub fn with_engine_color(mut self, r#engine_color: impl Into<String>) -> Self {
+        self.r#engine_color = r#engine_color.into();
+        self
+    }
+    pub fn set_engine_color(&mut self, r#engine_color: impl Into<String>) -> &mut Self {
         self.r#engine_color = r#engine_color.into();
         self
     }
@@ -22232,7 +26262,15 @@ impl Ship {
         self.r#engines = r#engines.into();
         self
     }
+    pub fn set_engines(&mut self, r#engines: impl Into<Vec<Engine>>) -> &mut Self {
+        self.r#engines = r#engines.into();
+        self
+    }
     pub fn with_layout(mut self, r#layout: impl Into<String>) -> Self {
+        self.r#layout = r#layout.into();
+        self
+    }
+    pub fn set_layout(&mut self, r#layout: impl Into<String>) -> &mut Self {
         self.r#layout = r#layout.into();
         self
     }
@@ -22240,7 +26278,15 @@ impl Ship {
         self.r#barrels = r#barrels.into();
         self
     }
+    pub fn set_barrels(&mut self, r#barrels: impl Into<Vec<Barrel>>) -> &mut Self {
+        self.r#barrels = r#barrels.into();
+        self
+    }
     pub fn with_features(mut self, r#features: impl Into<ShipFeatures>) -> Self {
+        self.r#features = r#features.into();
+        self
+    }
+    pub fn set_features(&mut self, r#features: impl Into<ShipFeatures>) -> &mut Self {
         self.r#features = r#features.into();
         self
     }
@@ -22248,7 +26294,18 @@ impl Ship {
         self.r#collider_tolerance = r#collider_tolerance.into();
         self
     }
+    pub fn set_collider_tolerance(&mut self, r#collider_tolerance: impl Into<f32>) -> &mut Self {
+        self.r#collider_tolerance = r#collider_tolerance.into();
+        self
+    }
     pub fn with_engine_position(mut self, r#engine_position: impl Into<glam::f32::Vec2>) -> Self {
+        self.r#engine_position = r#engine_position.into();
+        self
+    }
+    pub fn set_engine_position(
+        &mut self,
+        r#engine_position: impl Into<glam::f32::Vec2>,
+    ) -> &mut Self {
         self.r#engine_position = r#engine_position.into();
         self
     }
@@ -22256,7 +26313,15 @@ impl Ship {
         self.r#engine_size = r#engine_size.into();
         self
     }
+    pub fn set_engine_size(&mut self, r#engine_size: impl Into<f32>) -> &mut Self {
+        self.r#engine_size = r#engine_size.into();
+        self
+    }
     pub fn with_ship_category(mut self, r#ship_category: impl Into<i32>) -> Self {
+        self.r#ship_category = r#ship_category.into();
+        self
+    }
+    pub fn set_ship_category(&mut self, r#ship_category: impl Into<i32>) -> &mut Self {
         self.r#ship_category = r#ship_category.into();
         self
     }
@@ -22264,7 +26329,15 @@ impl Ship {
         self.r#energy_resistance = r#energy_resistance.into();
         self
     }
+    pub fn set_energy_resistance(&mut self, r#energy_resistance: impl Into<f32>) -> &mut Self {
+        self.r#energy_resistance = r#energy_resistance.into();
+        self
+    }
     pub fn with_kinetic_resistance(mut self, r#kinetic_resistance: impl Into<f32>) -> Self {
+        self.r#kinetic_resistance = r#kinetic_resistance.into();
+        self
+    }
+    pub fn set_kinetic_resistance(&mut self, r#kinetic_resistance: impl Into<f32>) -> &mut Self {
         self.r#kinetic_resistance = r#kinetic_resistance.into();
         self
     }
@@ -22272,7 +26345,15 @@ impl Ship {
         self.r#heat_resistance = r#heat_resistance.into();
         self
     }
+    pub fn set_heat_resistance(&mut self, r#heat_resistance: impl Into<f32>) -> &mut Self {
+        self.r#heat_resistance = r#heat_resistance.into();
+        self
+    }
     pub fn with_regeneration(mut self, r#regeneration: impl Into<bool>) -> Self {
+        self.r#regeneration = r#regeneration.into();
+        self
+    }
+    pub fn set_regeneration(&mut self, r#regeneration: impl Into<bool>) -> &mut Self {
         self.r#regeneration = r#regeneration.into();
         self
     }
@@ -22280,7 +26361,21 @@ impl Ship {
         self.r#builtin_devices = r#builtin_devices.into();
         self
     }
+    pub fn set_builtin_devices(
+        &mut self,
+        r#builtin_devices: impl Into<Vec<DeviceId>>,
+    ) -> &mut Self {
+        self.r#builtin_devices = r#builtin_devices.into();
+        self
+    }
     pub fn with_base_weight_modifier(mut self, r#base_weight_modifier: impl Into<f32>) -> Self {
+        self.r#base_weight_modifier = r#base_weight_modifier.into();
+        self
+    }
+    pub fn set_base_weight_modifier(
+        &mut self,
+        r#base_weight_modifier: impl Into<f32>,
+    ) -> &mut Self {
         self.r#base_weight_modifier = r#base_weight_modifier.into();
         self
     }
@@ -22449,7 +26544,15 @@ impl ShipBuild {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<ShipBuildId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_ship_id(mut self, r#ship_id: impl Into<ShipId>) -> Self {
+        self.r#ship_id = r#ship_id.into();
+        self
+    }
+    pub fn set_ship_id(&mut self, r#ship_id: impl Into<ShipId>) -> &mut Self {
         self.r#ship_id = r#ship_id.into();
         self
     }
@@ -22457,7 +26560,18 @@ impl ShipBuild {
         self.r#available_for_player = r#available_for_player.into();
         self
     }
+    pub fn set_available_for_player(
+        &mut self,
+        r#available_for_player: impl Into<bool>,
+    ) -> &mut Self {
+        self.r#available_for_player = r#available_for_player.into();
+        self
+    }
     pub fn with_available_for_enemy(mut self, r#available_for_enemy: impl Into<bool>) -> Self {
+        self.r#available_for_enemy = r#available_for_enemy.into();
+        self
+    }
+    pub fn set_available_for_enemy(&mut self, r#available_for_enemy: impl Into<bool>) -> &mut Self {
         self.r#available_for_enemy = r#available_for_enemy.into();
         self
     }
@@ -22465,7 +26579,21 @@ impl ShipBuild {
         self.r#difficulty_class = r#difficulty_class.into();
         self
     }
+    pub fn set_difficulty_class(
+        &mut self,
+        r#difficulty_class: impl Into<DifficultyClass>,
+    ) -> &mut Self {
+        self.r#difficulty_class = r#difficulty_class.into();
+        self
+    }
     pub fn with_build_faction(mut self, r#build_faction: impl Into<Option<FactionId>>) -> Self {
+        self.r#build_faction = r#build_faction.into();
+        self
+    }
+    pub fn set_build_faction(
+        &mut self,
+        r#build_faction: impl Into<Option<FactionId>>,
+    ) -> &mut Self {
         self.r#build_faction = r#build_faction.into();
         self
     }
@@ -22473,11 +26601,29 @@ impl ShipBuild {
         self.r#custom_ai = r#custom_ai.into();
         self
     }
+    pub fn set_custom_ai(&mut self, r#custom_ai: impl Into<Option<BehaviorTreeId>>) -> &mut Self {
+        self.r#custom_ai = r#custom_ai.into();
+        self
+    }
     pub fn with_components(mut self, r#components: impl Into<Vec<InstalledComponent>>) -> Self {
         self.r#components = r#components.into();
         self
     }
+    pub fn set_components(
+        &mut self,
+        r#components: impl Into<Vec<InstalledComponent>>,
+    ) -> &mut Self {
+        self.r#components = r#components.into();
+        self
+    }
     pub fn with_not_available_in_game(mut self, r#not_available_in_game: impl Into<bool>) -> Self {
+        self.r#not_available_in_game = r#not_available_in_game.into();
+        self
+    }
+    pub fn set_not_available_in_game(
+        &mut self,
+        r#not_available_in_game: impl Into<bool>,
+    ) -> &mut Self {
         self.r#not_available_in_game = r#not_available_in_game.into();
         self
     }
@@ -22536,7 +26682,15 @@ impl Skill {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<SkillId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_name(mut self, r#name: impl Into<String>) -> Self {
+        self.r#name = r#name.into();
+        self
+    }
+    pub fn set_name(&mut self, r#name: impl Into<String>) -> &mut Self {
         self.r#name = r#name.into();
         self
     }
@@ -22544,7 +26698,15 @@ impl Skill {
         self.r#icon = r#icon.into();
         self
     }
+    pub fn set_icon(&mut self, r#icon: impl Into<String>) -> &mut Self {
+        self.r#icon = r#icon.into();
+        self
+    }
     pub fn with_description(mut self, r#description: impl Into<String>) -> Self {
+        self.r#description = r#description.into();
+        self
+    }
+    pub fn set_description(&mut self, r#description: impl Into<String>) -> &mut Self {
         self.r#description = r#description.into();
         self
     }
@@ -22552,7 +26714,18 @@ impl Skill {
         self.r#base_requirement = r#base_requirement.into();
         self
     }
+    pub fn set_base_requirement(&mut self, r#base_requirement: impl Into<f32>) -> &mut Self {
+        self.r#base_requirement = r#base_requirement.into();
+        self
+    }
     pub fn with_requirement_per_level(mut self, r#requirement_per_level: impl Into<f32>) -> Self {
+        self.r#requirement_per_level = r#requirement_per_level.into();
+        self
+    }
+    pub fn set_requirement_per_level(
+        &mut self,
+        r#requirement_per_level: impl Into<f32>,
+    ) -> &mut Self {
         self.r#requirement_per_level = r#requirement_per_level.into();
         self
     }
@@ -22560,11 +26733,23 @@ impl Skill {
         self.r#base_price = r#base_price.into();
         self
     }
+    pub fn set_base_price(&mut self, r#base_price: impl Into<f32>) -> &mut Self {
+        self.r#base_price = r#base_price.into();
+        self
+    }
     pub fn with_price_per_level(mut self, r#price_per_level: impl Into<f32>) -> Self {
         self.r#price_per_level = r#price_per_level.into();
         self
     }
+    pub fn set_price_per_level(&mut self, r#price_per_level: impl Into<f32>) -> &mut Self {
+        self.r#price_per_level = r#price_per_level.into();
+        self
+    }
     pub fn with_max_level(mut self, r#max_level: impl Into<i32>) -> Self {
+        self.r#max_level = r#max_level.into();
+        self
+    }
+    pub fn set_max_level(&mut self, r#max_level: impl Into<i32>) -> &mut Self {
         self.r#max_level = r#max_level.into();
         self
     }
@@ -22708,7 +26893,15 @@ impl TechnologyComponent {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<TechnologyId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_item_id(mut self, r#item_id: impl Into<ComponentId>) -> Self {
+        self.r#item_id = r#item_id.into();
+        self
+    }
+    pub fn set_item_id(&mut self, r#item_id: impl Into<ComponentId>) -> &mut Self {
         self.r#item_id = r#item_id.into();
         self
     }
@@ -22716,7 +26909,15 @@ impl TechnologyComponent {
         self.r#faction = r#faction.into();
         self
     }
+    pub fn set_faction(&mut self, r#faction: impl Into<Option<FactionId>>) -> &mut Self {
+        self.r#faction = r#faction.into();
+        self
+    }
     pub fn with_price(mut self, r#price: impl Into<i32>) -> Self {
+        self.r#price = r#price.into();
+        self
+    }
+    pub fn set_price(&mut self, r#price: impl Into<i32>) -> &mut Self {
         self.r#price = r#price.into();
         self
     }
@@ -22724,11 +26925,23 @@ impl TechnologyComponent {
         self.r#hidden = r#hidden.into();
         self
     }
+    pub fn set_hidden(&mut self, r#hidden: impl Into<bool>) -> &mut Self {
+        self.r#hidden = r#hidden.into();
+        self
+    }
     pub fn with_special(mut self, r#special: impl Into<bool>) -> Self {
         self.r#special = r#special.into();
         self
     }
+    pub fn set_special(&mut self, r#special: impl Into<bool>) -> &mut Self {
+        self.r#special = r#special.into();
+        self
+    }
     pub fn with_dependencies(mut self, r#dependencies: impl Into<Vec<TechnologyId>>) -> Self {
+        self.r#dependencies = r#dependencies.into();
+        self
+    }
+    pub fn set_dependencies(&mut self, r#dependencies: impl Into<Vec<TechnologyId>>) -> &mut Self {
         self.r#dependencies = r#dependencies.into();
         self
     }
@@ -22798,7 +27011,15 @@ impl TechnologyShip {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<TechnologyId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_item_id(mut self, r#item_id: impl Into<ShipId>) -> Self {
+        self.r#item_id = r#item_id.into();
+        self
+    }
+    pub fn set_item_id(&mut self, r#item_id: impl Into<ShipId>) -> &mut Self {
         self.r#item_id = r#item_id.into();
         self
     }
@@ -22806,7 +27027,15 @@ impl TechnologyShip {
         self.r#price = r#price.into();
         self
     }
+    pub fn set_price(&mut self, r#price: impl Into<i32>) -> &mut Self {
+        self.r#price = r#price.into();
+        self
+    }
     pub fn with_hidden(mut self, r#hidden: impl Into<bool>) -> Self {
+        self.r#hidden = r#hidden.into();
+        self
+    }
+    pub fn set_hidden(&mut self, r#hidden: impl Into<bool>) -> &mut Self {
         self.r#hidden = r#hidden.into();
         self
     }
@@ -22814,7 +27043,15 @@ impl TechnologyShip {
         self.r#special = r#special.into();
         self
     }
+    pub fn set_special(&mut self, r#special: impl Into<bool>) -> &mut Self {
+        self.r#special = r#special.into();
+        self
+    }
     pub fn with_dependencies(mut self, r#dependencies: impl Into<Vec<TechnologyId>>) -> Self {
+        self.r#dependencies = r#dependencies.into();
+        self
+    }
+    pub fn set_dependencies(&mut self, r#dependencies: impl Into<Vec<TechnologyId>>) -> &mut Self {
         self.r#dependencies = r#dependencies.into();
         self
     }
@@ -22886,7 +27123,15 @@ impl TechnologySatellite {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<TechnologyId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_item_id(mut self, r#item_id: impl Into<SatelliteId>) -> Self {
+        self.r#item_id = r#item_id.into();
+        self
+    }
+    pub fn set_item_id(&mut self, r#item_id: impl Into<SatelliteId>) -> &mut Self {
         self.r#item_id = r#item_id.into();
         self
     }
@@ -22894,7 +27139,15 @@ impl TechnologySatellite {
         self.r#faction = r#faction.into();
         self
     }
+    pub fn set_faction(&mut self, r#faction: impl Into<Option<FactionId>>) -> &mut Self {
+        self.r#faction = r#faction.into();
+        self
+    }
     pub fn with_price(mut self, r#price: impl Into<i32>) -> Self {
+        self.r#price = r#price.into();
+        self
+    }
+    pub fn set_price(&mut self, r#price: impl Into<i32>) -> &mut Self {
         self.r#price = r#price.into();
         self
     }
@@ -22902,11 +27155,23 @@ impl TechnologySatellite {
         self.r#hidden = r#hidden.into();
         self
     }
+    pub fn set_hidden(&mut self, r#hidden: impl Into<bool>) -> &mut Self {
+        self.r#hidden = r#hidden.into();
+        self
+    }
     pub fn with_special(mut self, r#special: impl Into<bool>) -> Self {
         self.r#special = r#special.into();
         self
     }
+    pub fn set_special(&mut self, r#special: impl Into<bool>) -> &mut Self {
+        self.r#special = r#special.into();
+        self
+    }
     pub fn with_dependencies(mut self, r#dependencies: impl Into<Vec<TechnologyId>>) -> Self {
+        self.r#dependencies = r#dependencies.into();
+        self
+    }
+    pub fn set_dependencies(&mut self, r#dependencies: impl Into<Vec<TechnologyId>>) -> &mut Self {
         self.r#dependencies = r#dependencies.into();
         self
     }
@@ -23118,7 +27383,15 @@ impl Ammunition {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<AmmunitionId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_body(mut self, r#body: impl Into<BulletBody>) -> Self {
+        self.r#body = r#body.into();
+        self
+    }
+    pub fn set_body(&mut self, r#body: impl Into<BulletBody>) -> &mut Self {
         self.r#body = r#body.into();
         self
     }
@@ -23126,7 +27399,15 @@ impl Ammunition {
         self.r#controller = r#controller.into();
         self
     }
+    pub fn set_controller(&mut self, r#controller: impl Into<BulletController>) -> &mut Self {
+        self.r#controller = r#controller.into();
+        self
+    }
     pub fn with_triggers(mut self, r#triggers: impl Into<Vec<BulletTrigger>>) -> Self {
+        self.r#triggers = r#triggers.into();
+        self
+    }
+    pub fn set_triggers(&mut self, r#triggers: impl Into<Vec<BulletTrigger>>) -> &mut Self {
         self.r#triggers = r#triggers.into();
         self
     }
@@ -23134,7 +27415,15 @@ impl Ammunition {
         self.r#impact_type = r#impact_type.into();
         self
     }
+    pub fn set_impact_type(&mut self, r#impact_type: impl Into<BulletImpactType>) -> &mut Self {
+        self.r#impact_type = r#impact_type.into();
+        self
+    }
     pub fn with_effects(mut self, r#effects: impl Into<Vec<ImpactEffect>>) -> Self {
+        self.r#effects = r#effects.into();
+        self
+    }
+    pub fn set_effects(&mut self, r#effects: impl Into<Vec<ImpactEffect>>) -> &mut Self {
         self.r#effects = r#effects.into();
         self
     }
@@ -23187,7 +27476,15 @@ impl BulletPrefab {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<BulletPrefabId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_shape(mut self, r#shape: impl Into<BulletShape>) -> Self {
+        self.r#shape = r#shape.into();
+        self
+    }
+    pub fn set_shape(&mut self, r#shape: impl Into<BulletShape>) -> &mut Self {
         self.r#shape = r#shape.into();
         self
     }
@@ -23195,7 +27492,15 @@ impl BulletPrefab {
         self.r#image = r#image.into();
         self
     }
+    pub fn set_image(&mut self, r#image: impl Into<String>) -> &mut Self {
+        self.r#image = r#image.into();
+        self
+    }
     pub fn with_size(mut self, r#size: impl Into<f32>) -> Self {
+        self.r#size = r#size.into();
+        self
+    }
+    pub fn set_size(&mut self, r#size: impl Into<f32>) -> &mut Self {
         self.r#size = r#size.into();
         self
     }
@@ -23203,7 +27508,15 @@ impl BulletPrefab {
         self.r#margins = r#margins.into();
         self
     }
+    pub fn set_margins(&mut self, r#margins: impl Into<f32>) -> &mut Self {
+        self.r#margins = r#margins.into();
+        self
+    }
     pub fn with_deformation(mut self, r#deformation: impl Into<f32>) -> Self {
+        self.r#deformation = r#deformation.into();
+        self
+    }
+    pub fn set_deformation(&mut self, r#deformation: impl Into<f32>) -> &mut Self {
         self.r#deformation = r#deformation.into();
         self
     }
@@ -23211,7 +27524,15 @@ impl BulletPrefab {
         self.r#main_color = r#main_color.into();
         self
     }
+    pub fn set_main_color(&mut self, r#main_color: impl Into<String>) -> &mut Self {
+        self.r#main_color = r#main_color.into();
+        self
+    }
     pub fn with_main_color_mode(mut self, r#main_color_mode: impl Into<ColorMode>) -> Self {
+        self.r#main_color_mode = r#main_color_mode.into();
+        self
+    }
+    pub fn set_main_color_mode(&mut self, r#main_color_mode: impl Into<ColorMode>) -> &mut Self {
         self.r#main_color_mode = r#main_color_mode.into();
         self
     }
@@ -23219,7 +27540,18 @@ impl BulletPrefab {
         self.r#second_color = r#second_color.into();
         self
     }
+    pub fn set_second_color(&mut self, r#second_color: impl Into<String>) -> &mut Self {
+        self.r#second_color = r#second_color.into();
+        self
+    }
     pub fn with_second_color_mode(mut self, r#second_color_mode: impl Into<ColorMode>) -> Self {
+        self.r#second_color_mode = r#second_color_mode.into();
+        self
+    }
+    pub fn set_second_color_mode(
+        &mut self,
+        r#second_color_mode: impl Into<ColorMode>,
+    ) -> &mut Self {
         self.r#second_color_mode = r#second_color_mode.into();
         self
     }
@@ -23311,7 +27643,15 @@ impl VisualEffect {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<VisualEffectId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_elements(mut self, r#elements: impl Into<Vec<VisualEffectElement>>) -> Self {
+        self.r#elements = r#elements.into();
+        self
+    }
+    pub fn set_elements(&mut self, r#elements: impl Into<Vec<VisualEffectElement>>) -> &mut Self {
         self.r#elements = r#elements.into();
         self
     }
@@ -23368,7 +27708,15 @@ impl Weapon {
         self.r#id = r#id.into();
         self
     }
+    pub fn set_id(&mut self, r#id: impl Into<WeaponId>) -> &mut Self {
+        self.r#id = r#id.into();
+        self
+    }
     pub fn with_weapon_class(mut self, r#weapon_class: impl Into<WeaponClass>) -> Self {
+        self.r#weapon_class = r#weapon_class.into();
+        self
+    }
+    pub fn set_weapon_class(&mut self, r#weapon_class: impl Into<WeaponClass>) -> &mut Self {
         self.r#weapon_class = r#weapon_class.into();
         self
     }
@@ -23376,7 +27724,15 @@ impl Weapon {
         self.r#fire_rate = r#fire_rate.into();
         self
     }
+    pub fn set_fire_rate(&mut self, r#fire_rate: impl Into<f32>) -> &mut Self {
+        self.r#fire_rate = r#fire_rate.into();
+        self
+    }
     pub fn with_spread(mut self, r#spread: impl Into<f32>) -> Self {
+        self.r#spread = r#spread.into();
+        self
+    }
+    pub fn set_spread(&mut self, r#spread: impl Into<f32>) -> &mut Self {
         self.r#spread = r#spread.into();
         self
     }
@@ -23384,7 +27740,18 @@ impl Weapon {
         self.r#magazine = r#magazine.into();
         self
     }
+    pub fn set_magazine(&mut self, r#magazine: impl Into<i32>) -> &mut Self {
+        self.r#magazine = r#magazine.into();
+        self
+    }
     pub fn with_activation_type(mut self, r#activation_type: impl Into<ActivationType>) -> Self {
+        self.r#activation_type = r#activation_type.into();
+        self
+    }
+    pub fn set_activation_type(
+        &mut self,
+        r#activation_type: impl Into<ActivationType>,
+    ) -> &mut Self {
         self.r#activation_type = r#activation_type.into();
         self
     }
@@ -23392,11 +27759,23 @@ impl Weapon {
         self.r#shot_sound = r#shot_sound.into();
         self
     }
+    pub fn set_shot_sound(&mut self, r#shot_sound: impl Into<String>) -> &mut Self {
+        self.r#shot_sound = r#shot_sound.into();
+        self
+    }
     pub fn with_charge_sound(mut self, r#charge_sound: impl Into<String>) -> Self {
         self.r#charge_sound = r#charge_sound.into();
         self
     }
+    pub fn set_charge_sound(&mut self, r#charge_sound: impl Into<String>) -> &mut Self {
+        self.r#charge_sound = r#charge_sound.into();
+        self
+    }
     pub fn with_shot_effect_prefab(mut self, r#shot_effect_prefab: impl Into<String>) -> Self {
+        self.r#shot_effect_prefab = r#shot_effect_prefab.into();
+        self
+    }
+    pub fn set_shot_effect_prefab(&mut self, r#shot_effect_prefab: impl Into<String>) -> &mut Self {
         self.r#shot_effect_prefab = r#shot_effect_prefab.into();
         self
     }
@@ -23407,11 +27786,29 @@ impl Weapon {
         self.r#visual_effect = r#visual_effect.into();
         self
     }
+    pub fn set_visual_effect(
+        &mut self,
+        r#visual_effect: impl Into<Option<VisualEffectId>>,
+    ) -> &mut Self {
+        self.r#visual_effect = r#visual_effect.into();
+        self
+    }
     pub fn with_effect_size(mut self, r#effect_size: impl Into<f32>) -> Self {
         self.r#effect_size = r#effect_size.into();
         self
     }
+    pub fn set_effect_size(&mut self, r#effect_size: impl Into<f32>) -> &mut Self {
+        self.r#effect_size = r#effect_size.into();
+        self
+    }
     pub fn with_control_button_icon(mut self, r#control_button_icon: impl Into<String>) -> Self {
+        self.r#control_button_icon = r#control_button_icon.into();
+        self
+    }
+    pub fn set_control_button_icon(
+        &mut self,
+        r#control_button_icon: impl Into<String>,
+    ) -> &mut Self {
         self.r#control_button_icon = r#control_button_icon.into();
         self
     }
@@ -24446,4 +28843,38 @@ impl Item {
             Self::MusicPlaylist(_) => None,
         }
     }
+}
+#[macro_export]
+macro_rules! apply_items {
+    ($macro_name:ident) => {
+        $macro_name! { component(r#id : (DatabaseItemId < Component >),
+        r#component_stats_id : (DatabaseItemId < ComponentStats >),) -> Component,
+        device(r#id : (DatabaseItemId < Device >),) -> Device, weapon(r#id :
+        (DatabaseItemId < Weapon >),) -> Weapon, ammunition_obsolete(r#id :
+        (DatabaseItemId < AmmunitionObsolete >),) -> AmmunitionObsolete, drone_bay(r#id :
+        (DatabaseItemId < DroneBay >),) -> DroneBay, ship(r#id : (DatabaseItemId < Ship
+        >),) -> Ship, satellite(r#id : (DatabaseItemId < Satellite >),) -> Satellite,
+        ship_build(r#id : (DatabaseItemId < ShipBuild >), r#ship_id : (DatabaseItemId <
+        Ship >),) -> ShipBuild, satellite_build(r#id : (DatabaseItemId < SatelliteBuild
+        >), r#satellite_id : (DatabaseItemId < Satellite >),) -> SatelliteBuild,
+        component_stats(r#id : (DatabaseItemId < ComponentStats >),) -> ComponentStats,
+        component_mod(r#id : (DatabaseItemId < ComponentMod >),) -> ComponentMod,
+        skill(r#id : (DatabaseItemId < Skill >),) -> Skill, faction(r#id :
+        (DatabaseItemId < Faction >),) -> Faction, quest(r#id : (DatabaseItemId < Quest
+        >),) -> Quest, loot(r#id : (DatabaseItemId < Loot >),) -> Loot, fleet(r#id :
+        (DatabaseItemId < Fleet >),) -> Fleet, character(r#id : (DatabaseItemId <
+        Character >),) -> Character, quest_item(r#id : (DatabaseItemId < QuestItem >),)
+        -> QuestItem, ammunition(r#id : (DatabaseItemId < Ammunition >),) -> Ammunition,
+        visual_effect(r#id : (DatabaseItemId < VisualEffect >),) -> VisualEffect,
+        bullet_prefab(r#id : (DatabaseItemId < BulletPrefab >),) -> BulletPrefab,
+        behavior_tree(r#id : (DatabaseItemId < BehaviorTree >),) -> BehaviorTree,
+        combat_rules(r#id : (DatabaseItemId < CombatRules >),) -> CombatRules,
+        ship_settings() -> ShipSettings, galaxy_settings() -> GalaxySettings,
+        database_settings() -> DatabaseSettings, exploration_settings() ->
+        ExplorationSettings, frontier_settings() -> FrontierSettings, ship_mod_settings()
+        -> ShipModSettings, special_event_settings() -> SpecialEventSettings,
+        skill_settings() -> SkillSettings, debug_settings() -> DebugSettings,
+        combat_settings() -> CombatSettings, ui_settings() -> UiSettings,
+        factions_settings() -> FactionsSettings, music_playlist() -> MusicPlaylist, }
+    };
 }
