@@ -1,6 +1,8 @@
-use crate::codegen::structs::StructData;
+use crate::codegen::structs::{Field, StructData};
 use crate::codegen::switch::Variant;
 use crate::schema::{SchemaDataType, SchemaItem};
+use convert_case::{Case, Casing};
+use itertools::Itertools;
 use miette::{miette, Diagnostic, IntoDiagnostic, LabeledSpan, Report, SourceCode};
 use miette::{Context, Result};
 use proc_macro2::TokenStream;
@@ -114,6 +116,34 @@ impl CodegenState {
             }
         });
 
+        let macro_invocations = variants.iter().filter_map(|Variant { ident, data }| {
+            if !data.has_default && data.ctor_params.is_none() {
+                return None;
+            }
+
+            let ident_lower = format_ident!(
+                "{}",
+                ident
+                    .to_string()
+                    .from_case(Case::Pascal)
+                    .to_case(Case::Snake)
+            );
+
+            let args = data.ctor_params.as_ref().map(|params| {
+                let args = params.iter().map(|Field { ident, ty, .. }| {
+                    let ty_str = ty.to_string();
+                    if ty_str.ends_with("Id") {
+                        let ty = format_ident!("{}", &ty_str[..(ty_str.len() - 2)]);
+                        quote!(#ident: (DatabaseItemId<#ty>),)
+                    } else {
+                        quote!(#ident: (#ty),)
+                    }
+                });
+                quote!(#(#args)*)
+            });
+            Some(quote!(#ident_lower(#args) -> #ident,))
+        });
+
         let ident = format_ident!("Item");
         let code = self.codegen_custom_switch(
             ident.clone(),
@@ -133,6 +163,15 @@ impl CodegenState {
                 pub fn id(&self) -> Option<i32> {
                     match self {
                         #(#id_fetchers)*
+                    }
+                }
+            }
+
+            #[macro_export]
+            macro_rules! apply_items {
+                ($macro_name:ident) => {
+                    $macro_name! {
+                        #(#macro_invocations)*
                     }
                 }
             }

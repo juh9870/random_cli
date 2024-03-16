@@ -12,7 +12,6 @@ use crate::schema::{SchemaStructMember, SchemaStructMemberType};
 #[derive(Debug, Clone)]
 pub struct Field {
     pub ident: Ident,
-    pub builder_fn_ident: Ident,
     pub ty: TokenStream,
     pub default_value: Option<TokenStream>,
     pub field: SchemaStructMember,
@@ -23,14 +22,12 @@ impl Field {
         let name_snake = field.name.from_case(Case::Pascal).to_case(Case::Snake);
         let (ty, no_default) = rust_type(&field, struct_name)?;
         let ident = format_ident!("r#{}", name_snake);
-        let builder_fn_ident = format_ident!("with_{}", name_snake);
         let default_value = (!no_default).then(|| default_value(&field)).transpose()?;
 
         Ok(Field {
             ident,
             ty,
             field,
-            builder_fn_ident,
             default_value,
         })
     }
@@ -48,15 +45,18 @@ impl Field {
     }
 
     pub fn builder_fn(&self) -> TokenStream {
-        let Self {
-            ident,
-            builder_fn_ident,
-            ty,
-            ..
-        } = self;
+        let Self { ident, ty, .. } = self;
+
+        let i = ident.to_string().replace("r#", "");
+        let builder_fn_ident = format_ident!("with_{}", i);
+        let setter_fn_ident = format_ident!("set_{}", i);
 
         quote! {
             pub fn #builder_fn_ident(mut self, #ident: impl Into<#ty>) -> Self {
+                self.#ident = #ident.into();
+                self
+            }
+            pub fn #setter_fn_ident(&mut self, #ident: impl Into<#ty>) -> &mut Self {
                 self.#ident = #ident.into();
                 self
             }

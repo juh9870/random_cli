@@ -6,6 +6,7 @@ use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::EnvFilter;
 
 pub mod database;
+pub mod layout;
 
 pub mod test_mod;
 

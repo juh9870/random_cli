@@ -9,6 +9,8 @@ use std::sync::{Arc, Mutex};
 
 use tracing::error_span;
 
+mod macro_impls;
+
 pub fn database(output_path: impl AsRef<Path>) -> Database {
     DatabaseHolder::new(output_path)
 }
@@ -360,6 +362,20 @@ pub struct DbItem<T: Into<Item>> {
     db: Arc<DatabaseHolder>,
 }
 
+impl<T: Into<Item>> DbItem<T> {
+    /// Prevents item from getting written into the database
+    pub fn forget(mut self) {
+        self.item = None
+    }
+
+    /// Runs a range of actions in a convenient closure
+    ///
+    /// Value returned from closure is ignored, to simplify one-liners (no ; needed)
+    pub fn edit<'a, U: 'a>(&'a mut self, actions: impl FnOnce(&'a mut T) -> U) {
+        actions(self.deref_mut());
+    }
+}
+
 impl<T: Into<Item>> Deref for DbItem<T> {
     type Target = T;
 
@@ -376,7 +392,6 @@ impl<T: Into<Item>> DerefMut for DbItem<T> {
 
 impl<T: Into<Item>> Drop for DbItem<T> {
     fn drop(&mut self) {
-        self.db
-            .consume_item(std::mem::take(&mut self.item).unwrap())
+        std::mem::take(&mut self.item).map(|i| self.db.consume_item(i));
     }
 }
