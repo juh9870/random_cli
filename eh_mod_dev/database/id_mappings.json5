@@ -1,0 +1,18 @@
+{
+  "Weapon": {
+    "juh9870:parametric": 9870000
+  },
+  "ComponentStats": {
+    "eh:weapon": 1
+  },
+  "Ammunition": {
+    "juh9870:parametric": 9870001,
+    "juh9870:test": 9870000
+  },
+  "BulletPrefab": {
+    "eh:mine": 9
+  },
+  "Component": {
+    "juh9870:parametric": 9870000
+  }
+}
