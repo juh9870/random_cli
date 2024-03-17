@@ -1,0 +1,22 @@
+[package]
+name = "spm"
+version = "0.1.0"
+edition = "2021"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { workspace = true, features = ["derive"] }
+clap-verbosity-flag = "2.2.0"
+crossterm = "0.27.0"
+fs-err = { workspace = true }
+globwalk = "0.9.1"
+home = "0.5.9"
+inquire = "0.7.2"
+itertools = { workspace = true }
+miette = { workspace = true, features = ["fancy"] }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tracing-log = "0.2.0"
+tracing-subscriber = { workspace = true, features = ["env-filter"] }
