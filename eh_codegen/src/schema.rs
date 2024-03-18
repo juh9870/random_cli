@@ -25,6 +25,8 @@ pub struct SchemaData {
     pub name: String,
     #[serde(rename = "@switch")]
     pub switch: Option<String>,
+    #[serde(rename = "@typeid")]
+    pub typeid: Option<String>,
     pub member: Option<Vec<SchemaStructMember>>,
     pub param: Option<Vec<SchemaExpressionParam>>,
     pub item: Option<Vec<SchemaEnumItem>>,

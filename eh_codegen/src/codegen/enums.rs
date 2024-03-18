@@ -16,7 +16,7 @@ impl CodegenState {
         );
         let variants: Vec<_> = items
             .iter()
-            .map(|SchemaEnumItem { name, value:raw_value, .. }| {
+            .map(|SchemaEnumItem { name, value:raw_value, description, .. }| {
                 m_try(|| {
                     let ident = format_ident!("{}", name);
                     let value = match raw_value {
@@ -43,15 +43,13 @@ impl CodegenState {
                             }
                         },
                     };
-                    let doc_comment = if let Some(value) = raw_value {
-                        quote!(#[doc = #value])
-                    } else {
-                        quote!()
-                    };
+                    let char_comment = raw_value.as_ref().filter(|s|s.starts_with('\'')).map(|value|quote!(#[doc = #value]));
+                    let desc_comment = description.as_ref().map(|value|quote!(#[doc = #value]));
                     Ok(quote! {
-                    #doc_comment
-                    #ident #value,
-                })
+                        #desc_comment
+                        #char_comment
+                        #ident #value,
+                    })
                 })
             })
             .try_collect()?;
@@ -93,12 +91,22 @@ impl CodegenState {
 
         let repr = if is_char { quote!(u32) } else { quote!(i32) };
 
+        let name_str = name.to_string();
+
         Ok(quote! {
             #[repr(#repr)]
             #[derive(Debug, Copy, Clone, Default, Eq, PartialEq)]
             pub enum #name {
                 #[default]
                 #(#variants)*
+            }
+
+            impl DatabaseItem for #name {
+                fn validate(&mut self) {}
+
+                fn type_name() -> &'static str {
+                    #name_str
+                }
             }
 
             #impls

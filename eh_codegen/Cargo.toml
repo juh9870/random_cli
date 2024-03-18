@@ -6,7 +6,7 @@ edition = "2021"
 
 [dependencies]
 clap = { workspace = true, features = ["derive"] }
-convert_case = "0.6.0"
+convert_case = { workspace = true }
 fs-err = { workspace = true }
 itertools = { workspace = true }
 miette = { workspace = true, features = ["fancy"] }

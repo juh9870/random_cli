@@ -83,12 +83,22 @@ fn main() -> miette::Result<()> {
             "#![allow(clippy::unnecessary_cast)]\n#![allow(dead_code)]\n\n".to_string();
 
         for (path, item) in files {
-            let code = state.codegen(item).with_context(|| {
-                format!("Failed to generate code for file at `{}`", path.display())
-            })?;
+            let code = state
+                .codegen(item)
+                .and_then(CodegenState::format_tokens)
+                .with_context(|| {
+                    format!("Failed to generate code for file at `{}`", path.display())
+                })?;
             code_builder += &format!("\n// {}\n", path.display());
             code_builder += &code.unwrap_or_default();
         }
+
+        let db_item_code = state
+            .codegen_core_db_item()
+            .and_then(|c| CodegenState::format_tokens(Some(c)))
+            .with_context(|| "Failed to generate core DB item type".to_string())?;
+        code_builder += "\n// Core Database Item\n";
+        code_builder += &db_item_code.unwrap_or_default();
 
         fs_err::write(output, code_builder)
             .into_diagnostic()

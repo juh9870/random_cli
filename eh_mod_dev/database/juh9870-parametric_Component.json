@@ -1,0 +1,29 @@
+{
+  "ItemType": 1,
+  "Id": 9870000,
+  "Name": "",
+  "Description": "",
+  "DisplayCategory": 0,
+  "Availability": 0,
+  "ComponentStatsId": 1,
+  "Faction": null,
+  "Level": 0,
+  "Icon": "",
+  "Color": "",
+  "Layout": "1",
+  "CellType": "",
+  "DeviceId": null,
+  "WeaponId": 9870000,
+  "AmmunitionId": 9870001,
+  "WeaponSlotType": "",
+  "DroneBayId": null,
+  "DroneId": null,
+  "Restrictions": {
+    "ShipSizes": [],
+    "NotForOrganicShips": false,
+    "NotForMechanicShips": false,
+    "UniqueComponentTag": "",
+    "MaxComponentAmount": 0
+  },
+  "PossibleModifications": []
+}

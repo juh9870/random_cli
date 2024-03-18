@@ -1,0 +1,40 @@
+{
+  "ItemType": 25,
+  "Id": 9870001,
+  "Body": {
+    "Size": 0.0,
+    "Length": 0.0,
+    "Velocity": 0.0,
+    "ParentVelocityEffect": 1.0,
+    "AttachedToParent": false,
+    "Range": 0.0,
+    "Lifetime": 5.0,
+    "Weight": 0.0,
+    "HitPoints": 0,
+    "Color": "",
+    "BulletPrefab": 9,
+    "EnergyCost": 0.0,
+    "CanBeDisarmed": false,
+    "FriendlyFire": false,
+    "AiBulletBehavior": 0,
+    "Type": 0
+  },
+  "Controller": {
+    "Type": 3,
+    "X": "t * 10",
+    "Y": "SIN(t)",
+    "Rotation": "0",
+    "Size": "1",
+    "Length": "1"
+  },
+  "Triggers": [],
+  "ImpactType": 0,
+  "Effects": [
+    {
+      "Type": 0,
+      "DamageType": 1,
+      "Power": 10.0,
+      "Factor": 0.0
+    }
+  ]
+}

@@ -9,10 +9,9 @@ use quote::{format_ident, quote};
 use crate::codegen::{CodegenState, TokensResult};
 use crate::schema::{SchemaStructMember, SchemaStructMemberType};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Field {
     pub ident: Ident,
-    pub builder_fn_ident: Ident,
     pub ty: TokenStream,
     pub default_value: Option<TokenStream>,
     pub field: SchemaStructMember,
@@ -23,37 +22,42 @@ impl Field {
         let name_snake = field.name.from_case(Case::Pascal).to_case(Case::Snake);
         let (ty, no_default) = rust_type(&field, struct_name)?;
         let ident = format_ident!("r#{}", name_snake);
-        let builder_fn_ident = format_ident!("with_{}", name_snake);
         let default_value = (!no_default).then(|| default_value(&field)).transpose()?;
 
         Ok(Field {
             ident,
             ty,
             field,
-            builder_fn_ident,
             default_value,
         })
     }
 
     pub fn struct_field(&self) -> TokenStream {
-        let Self { ident, ty, .. } = self;
+        let Self {
+            ident, ty, field, ..
+        } = self;
 
+        let desc = field.description.as_ref().map(|s| quote!(#[doc = #s]));
         quote! {
+            #desc
             pub #ident: #ty,
         }
     }
 
     pub fn builder_fn(&self) -> TokenStream {
-        let Self {
-            ident,
-            builder_fn_ident,
-            ty,
-            ..
-        } = self;
+        let Self { ident, ty, .. } = self;
+
+        let i = ident.to_string().replace("r#", "");
+        let builder_fn_ident = format_ident!("with_{}", i);
+        let setter_fn_ident = format_ident!("set_{}", i);
 
         quote! {
-            pub fn #builder_fn_ident(mut self, #ident: #ty) -> Self {
-                self.#ident = #ident;
+            pub fn #builder_fn_ident(mut self, #ident: impl Into<#ty>) -> Self {
+                self.#ident = #ident.into();
+                self
+            }
+            pub fn #setter_fn_ident(&mut self, #ident: impl Into<#ty>) -> &mut Self {
+                self.#ident = #ident.into();
                 self
             }
         }
@@ -134,18 +138,36 @@ impl Field {
     }
 }
 
+#[derive(Debug)]
+pub struct StructData {
+    pub ident: Ident,
+    pub fields: Vec<Field>,
+    pub id_access: Option<TokenStream>,
+    pub code: TokenStream,
+    pub ctor_params: Option<Vec<Field>>,
+    pub has_default: bool,
+}
+
 impl CodegenState {
     pub fn codegen_struct(
         &mut self,
         name: Ident,
         mut fields: Vec<SchemaStructMember>,
         switch: Option<String>,
-    ) -> TokensResult {
+    ) -> Result<StructData> {
         if let Some(switch) = switch {
             return self.codegen_switch_struct(name, fields, switch);
         }
-
         fields.dedup_by(|a, b| a.name == b.name);
+
+        if fields.iter().enumerate().any(|(i1, f1)| {
+            fields
+                .iter()
+                .enumerate()
+                .any(|(i2, f2)| &f1.name == &f2.name && i1 != i2)
+        }) {
+            bail!("Struct {name} contains duplicate fields");
+        }
 
         let fields: Vec<Field> = fields
             .into_iter()
@@ -176,14 +198,17 @@ impl CodegenState {
             }
         });
 
-        Ok(quote! {
+        let name_str = name.to_string();
+
+        let code = quote! {
             #[derive(Debug, Clone, serde::Serialize)]
+            #[serde(rename_all = "PascalCase")]
             pub struct #name {
                 #(#struct_fields)*
             }
 
             impl #name {
-                fn new(#(#constructor_arguments)*) -> Self {
+                pub fn new(#(#constructor_arguments)*) -> Self {
                     Self {
                         #(#field_construction)*
                     }
@@ -196,9 +221,22 @@ impl CodegenState {
                 fn validate(&mut self) {
                     #(#validations)*
                 }
+
+                fn type_name() -> &'static str {
+                    #name_str
+                }
             }
 
             #default_impl
+        };
+        Ok(StructData {
+            ident: name,
+            ctor_params: (!contructed.is_empty())
+                .then(|| contructed.into_iter().cloned().collect()),
+            fields,
+            id_access: None,
+            code,
+            has_default: default_impl.is_some(),
         })
     }
 }
