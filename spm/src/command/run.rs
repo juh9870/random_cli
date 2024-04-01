@@ -1,11 +1,13 @@
 use crate::config::Config;
 use crate::errors::TooManyErr;
-use crate::project::Project;
-use crate::CommandError;
+use crate::types::glob::first_matching;
+use crate::types::project::Project;
+use crate::{m_try, CommandError};
 use clap::Args;
 use crossterm::style::Stylize;
 use itertools::Itertools;
-use miette::miette;
+use miette::{miette, Context, IntoDiagnostic};
+use tracing::info;
 
 #[derive(Debug, Args)]
 pub struct RunArgs {
@@ -54,7 +56,7 @@ impl RunArgs {
             .map(|p| format!("{: <longest_name$}    {}", p.name, p.path.display()))
             .collect_vec();
 
-        let _project = if let Some(project) = project {
+        let project = if let Some(project) = project {
             project
         } else {
             let select = inquire::Select::new("Select a project", names).raw_prompt()?;
@@ -68,6 +70,68 @@ impl RunArgs {
             let profile = config.get_profile();
             &profile.projects[0]
         };
+
+        let env = if let Some(env) = &project.environment {
+            env
+        } else {
+            let Some(env) = first_matching(&config.environments, &project.path)
+                .context("Failed to find matching environment")?
+            else {
+                return Err(miette!("{}", "No valid environment found").into());
+            };
+            env
+        };
+
+        info!(
+            "Environment detected: {}",
+            env.name.as_deref().unwrap_or("Unknown")
+        );
+
+        let run_ide = inquire::Confirm::new("Run IDE?").prompt()?;
+
+        let ide = if run_ide {
+            let ide = if let Some(ide) = &project.runner {
+                ide
+            } else if let Some(ide) = &env.runner {
+                ide
+            } else {
+                let Some(ide) = first_matching(&config.runners, &project.path)
+                    .context("Failed to find matching IDE runner")?
+                else {
+                    return Err(miette!("{}", "No applicable IDE found").into());
+                };
+                ide
+            };
+
+            info!("IDE detected: {}", env.name.as_deref().unwrap_or("Unknown"));
+            Some(ide)
+        } else {
+            None
+        };
+
+        let run_command = env.run_command(ide, &project.path)?;
+
+        for preprocessor in &config.preprocessors {
+            preprocessor.run(&project.path)?;
+        }
+
+        info!(name = project.name, run_command, "Running project");
+
+        m_try(|| {
+            let mut words = shell_words::split(&run_command)
+                .into_diagnostic()
+                .context("Failed to parse command")?;
+            std::process::Command::new(words.remove(0))
+                .args(&words)
+                .current_dir(&project.path)
+                .spawn()
+                .into_diagnostic()
+                .context("Failed to run command")?
+                .wait()
+                .into_diagnostic()
+                .context("IDE crashed")
+        })
+        .with_context(|| format!("Failed to run command `{run_command}`"))?;
 
         Ok(())
     }

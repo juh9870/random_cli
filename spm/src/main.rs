@@ -11,17 +11,15 @@ use crossterm::style::Stylize;
 use std::path::PathBuf;
 use thiserror::Error;
 
+use crate::command::run::RunArgs;
+use crate::command::schema::SchemaArgs;
 use crate::errors::TooManyErr;
 use tracing_log::AsTrace;
 
 mod command;
 mod config;
 mod errors;
-mod ide_runner;
-mod profile;
-mod project;
-mod project_env;
-mod template;
+mod types;
 
 #[derive(Debug, Parser)]
 #[command(version, about, long_about = None)]
@@ -31,6 +29,7 @@ struct SpmArgs {
     #[arg(short, long)]
     config: Option<PathBuf>,
     /// Profile to use
+    #[arg(short, long)]
     profile: Option<String>,
     #[command(subcommand)]
     command: SpmSubcommands,
@@ -40,10 +39,14 @@ struct SpmArgs {
 
 #[derive(Debug, Subcommand)]
 enum SpmSubcommands {
+    /// Run the project
+    Run(RunArgs),
     /// Adds a new project
     Add(AddArgs),
     /// Manage profiles
     Profile(ProfileArgs),
+    /// Generates config schema definitions
+    Schema(SchemaArgs),
 }
 #[derive(Debug, Args)]
 struct ProfileArgs {}
@@ -60,7 +63,9 @@ fn main() -> Result<()> {
 
     let result = match args.command {
         SpmSubcommands::Add(add) => add.run(&mut config),
+        SpmSubcommands::Run(run) => run.run(&mut config),
         SpmSubcommands::Profile(_) => Ok(()),
+        SpmSubcommands::Schema(schema) => schema.run(&mut config),
     };
 
     if let Err(err) = result {

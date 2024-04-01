@@ -1,11 +1,12 @@
 [workspace]
 resolver = "2"
 
-members = ["btreeprint", "eh_codegen", "eh_schema", "json_verify", "nocommit", "spm", "xtask"]
+members = ["btreeprint", "eh_codegen", "eh_mod_dev", "eh_schema", "json_verify", "nocommit", "spm", "xtask"]
 
 [workspace.dependencies]
 ahash = "0.8.7"
 clap = "4.4.18"
+color-backtrace = "0.6"
 color-eyre = "0.6.2"
 colored = "2.1.0"
 convert_case = "0.6.0"
@@ -22,12 +23,14 @@ quick-xml = "0.31.0"
 quote = "1.0.35"
 serde = "1.0.195"
 serde_json = "1.0.111"
+serde_json5 = "0.1"
 strum = "0.26.1"
 syn = "2.0.52"
 termtree = "0.4.1"
 thiserror = "1.0.56"
 tracing = "0.1.40"
 tracing-error = "0.2.0"
+tracing-panic = "0.1"
 tracing-subscriber = "0.3.18"
 walkdir = "2.4.0"
 

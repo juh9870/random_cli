@@ -1,20 +1,30 @@
 use crate::errors::TooManyErr;
 use crate::m_try;
-use crate::profile::Profile;
 use crossterm::style::Stylize;
 use itertools::Itertools;
 use miette::{bail, miette, Context, IntoDiagnostic, Result};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+use schemars::JsonSchema;
 use std::path::PathBuf;
 
+use crate::types::glob::GlobEntry;
+use crate::types::ide_runner::IdeRunner;
+use crate::types::preprocessors::Preprocessor;
+use crate::types::profile::Profile;
+use crate::types::project_env::ProjectEnv;
 use tracing::{debug, debug_span};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct Config {
-    default_profile: String,
-    profiles: HashMap<String, Profile>,
+    #[serde(rename = "$schema")]
+    pub schema: Option<String>,
+    pub default_profile: String,
+    pub profiles: HashMap<String, Profile>,
+    pub environments: Vec<GlobEntry<ProjectEnv>>,
+    pub runners: Vec<GlobEntry<IdeRunner>>,
+    pub preprocessors: Vec<Preprocessor>,
     #[serde(skip)]
     current_profile: Option<String>,
     #[serde(skip)]
@@ -40,7 +50,7 @@ impl Config {
                     .into_diagnostic()
                     .context("Failed to deserialize configuration file content")?;
 
-                config.dirty = true;
+                config.dirty = false;
                 Ok(config)
             })
             .with_context(|| {
@@ -152,6 +162,10 @@ impl Default for Config {
                 );
                 profiles
             },
+            environments: vec![],
+            runners: vec![],
+            preprocessors: vec![],
+            schema: None,
             current_profile: None,
             path: None,
             dirty: true,

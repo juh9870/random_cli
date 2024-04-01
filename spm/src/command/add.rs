@@ -1,5 +1,5 @@
 use crate::config::Config;
-use crate::project::Project;
+use crate::types::project::Project;
 use crate::CommandError;
 use clap::Args;
 use crossterm::style::Stylize;
@@ -87,6 +87,7 @@ impl AddArgs {
             path,
             name,
             runner: None,
+            environment: None,
         };
 
         let profile = config.get_profile_mut();
