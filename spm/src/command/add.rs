@@ -25,7 +25,7 @@ impl AddArgs {
             path
         } else {
             CustomType::<PathBuf> {
-                message: "Project path",
+                message: "Project path:",
                 starting_input: None,
                 default: Some(cur_dir),
                 placeholder: Some("Path to the project directory"),
@@ -55,7 +55,7 @@ impl AddArgs {
             name
         } else {
             let default_name = path.file_name().map(|s| s.to_string_lossy());
-            let mut text = inquire::Text::new("Project name").with_validator(move |s: &str| {
+            let mut text = inquire::Text::new("Project name:").with_validator(move |s: &str| {
                 let trimmed = s.trim();
                 if trimmed.is_empty() {
                     return Ok(Validation::Invalid("Name can not be empty".into()));

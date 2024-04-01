@@ -1,0 +1,73 @@
+{
+  "$schema": null,
+  "default_profile": "default",
+  "profiles": {
+    "default": {
+      "projects": []
+    }
+  },
+  "environments": [
+    {
+      "glob": "/shell.nix",
+      "name": "nix shell",
+      "command": "nix-shell {path}/shell.nix",
+      "ide_command": "nix-shell {path}/shell.nix --run {ide}"
+    },
+    {
+      "glob": "/flake.nix",
+      "name": "nix flake",
+      "command": "nix develop",
+      "ide_command": "nix develop --command {ide}"
+    },
+    {
+      "glob": "*",
+      "name": "plain shell",
+      "command": "bash",
+      "ide_command": "bash -c {ide}"
+    }
+  ],
+  "runners": [
+    {
+      "glob": "/Cargo.toml",
+      "name": "clion",
+      "binary": "clion",
+      "nix_package": "jetbrains.clion",
+      "command": "clion {path}"
+    },
+    {
+      "glob": "/package.json",
+      "name": "webstorm",
+      "binary": "webstorm",
+      "nix_package": "jetbrains.webstorm",
+      "command": "webstorm {path}"
+    },
+    {
+      "glob": "/go.mod",
+      "name": "goland",
+      "binary": "goland",
+      "nix_package": "jetbrains.goland",
+      "command": "goland {path}"
+    },
+    {
+      "glob": "/*.csproj",
+      "name": "rider",
+      "binary": "rider",
+      "nix_package": "jetbrains.rider",
+      "command": "rider {path}"
+    },
+    {
+      "glob": "*",
+      "name": "codium",
+      "binary": "codium",
+      "nix_package": "vscodium",
+      "command": "vscodium {path}"
+    }
+  ],
+  "preprocessors": [
+    {
+      "name": "cargo2nix",
+      "glob": "./Cargo.nix",
+      "command": "nix run github:cargo2nix/cargo2nix -- -o"
+    }
+  ]
+}

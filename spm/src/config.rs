@@ -3,9 +3,12 @@ use crate::m_try;
 use crossterm::style::Stylize;
 use itertools::Itertools;
 use miette::{bail, miette, Context, IntoDiagnostic, Result};
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, Serializer};
+use std::borrow::Cow;
 use std::collections::HashMap;
 
+use schemars::gen::SchemaGenerator;
+use schemars::schema::{ObjectValidation, Schema};
 use schemars::JsonSchema;
 use std::path::PathBuf;
 
@@ -15,22 +18,70 @@ use crate::types::preprocessors::Preprocessor;
 use crate::types::profile::Profile;
 use crate::types::project_env::ProjectEnv;
 use tracing::{debug, debug_span};
+use uncased::Uncased;
 
-#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     #[serde(rename = "$schema")]
     pub schema: Option<String>,
-    pub default_profile: String,
-    pub profiles: HashMap<String, Profile>,
+    pub default_profile: Uncased<'static>,
+    pub profiles: HashMap<Uncased<'static>, Profile>,
     pub environments: Vec<GlobEntry<ProjectEnv>>,
     pub runners: Vec<GlobEntry<IdeRunner>>,
     pub preprocessors: Vec<Preprocessor>,
     #[serde(skip)]
-    current_profile: Option<String>,
+    current_profile: Option<Uncased<'static>>,
     #[serde(skip)]
     path: Option<PathBuf>,
     #[serde(skip)]
     dirty: bool,
+}
+
+#[derive(JsonSchema)]
+#[serde(remote = "Uncased")]
+#[doc(hidden)]
+struct UncasedDef<'s> {
+    pub string: Cow<'s, str>,
+}
+
+impl JsonSchema for Config {
+    fn schema_name() -> String {
+        "Config".to_string()
+    }
+
+    fn schema_id() -> Cow<'static, str> {
+        Cow::Borrowed(concat!(module_path!(), "::Config"))
+    }
+
+    fn json_schema(gen: &mut SchemaGenerator) -> Schema {
+        {
+            let mut schema_object = schemars::schema::SchemaObject {
+                instance_type: Some(schemars::schema::InstanceType::Object.into()),
+                ..Default::default()
+            };
+            let object_validation = schema_object.object();
+
+            fn field<T: ?Sized + JsonSchema>(
+                gen: &mut SchemaGenerator,
+                object_validation: &mut ObjectValidation,
+                name: &str,
+            ) {
+                object_validation
+                    .properties
+                    .insert(name.to_owned(), gen.subschema_for::<T>());
+                object_validation.required.insert(name.to_owned());
+            }
+            {
+                field::<Option<String>>(gen, object_validation, "$schema");
+                field::<UncasedDef<'static>>(gen, object_validation, "default_profile");
+                field::<HashMap<UncasedDef<'static>, Profile>>(gen, object_validation, "profiles");
+                field::<Vec<GlobEntry<ProjectEnv>>>(gen, object_validation, "environments");
+                field::<Vec<GlobEntry<IdeRunner>>>(gen, object_validation, "runners");
+                field::<Vec<Preprocessor>>(gen, object_validation, "preprocessors");
+            }
+            Schema::Object(schema_object)
+        }
+    }
 }
 
 impl Config {
@@ -65,8 +116,8 @@ impl Config {
         Ok(config)
     }
 
-    pub fn select_profile(&mut self, query: Option<String>) -> Result<()> {
-        let profile_name = if let Some(profile) = query {
+    pub fn find_profile(&self, profile: &str) -> Result<Uncased<'static>> {
+        let profile_name = {
             let options = self
                 .profiles
                 .keys()
@@ -80,15 +131,24 @@ impl Config {
                 1 => options.into_iter().next().unwrap(),
                 _ => {
                     return Err(TooManyErr {
-                        query: profile,
-                        options,
+                        query: profile.to_string(),
+                        options: options.iter().map(|i| i.to_string()).collect_vec(),
                     }
                     .into());
                 }
             }
+        };
+
+        Ok(profile_name)
+    }
+
+    pub fn select_profile(&mut self, query: Option<&str>) -> Result<()> {
+        let profile_name = if let Some(query) = query {
+            Uncased::new(self.find_profile(query)?.to_string())
         } else {
             self.default_profile.clone()
         };
+
         self.current_profile = Some(profile_name);
 
         Ok(())
@@ -98,7 +158,7 @@ impl Config {
         self.profiles
             .get(
                 self.current_profile
-                    .as_ref()
+                    .as_deref()
                     .expect("Current profile should be set before using config"),
             )
             .expect("`current_profile` should point at a correct profile")
@@ -109,10 +169,20 @@ impl Config {
         self.profiles
             .get_mut(
                 self.current_profile
-                    .as_ref()
+                    .as_deref()
                     .expect("Current profile should be set before using config"),
             )
             .expect("`current_profile` should point at a correct profile")
+    }
+
+    pub fn current_profile_name(&self) -> &Uncased<'static> {
+        self.current_profile
+            .as_ref()
+            .expect("Current profile should be set before using config")
+    }
+
+    pub fn set_dirty(&mut self) {
+        self.dirty = true;
     }
 
     /// Saves the configuration, if dirty
@@ -149,26 +219,7 @@ impl Config {
 
 impl Default for Config {
     fn default() -> Self {
-        Self {
-            default_profile: "default".to_string(),
-            profiles: {
-                let mut profiles = HashMap::new();
-                profiles.insert(
-                    "default".to_string(),
-                    Profile {
-                        name: "default".to_string(),
-                        projects: vec![],
-                    },
-                );
-                profiles
-            },
-            environments: vec![],
-            runners: vec![],
-            preprocessors: vec![],
-            schema: None,
-            current_profile: None,
-            path: None,
-            dirty: true,
-        }
+        serde_json::from_str(include_str!("./default_config.json"))
+            .expect("Failed to deserialize default configuration")
     }
 }

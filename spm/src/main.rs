@@ -10,7 +10,9 @@ use clap_verbosity_flag::{InfoLevel, Verbosity};
 use crossterm::style::Stylize;
 use std::path::PathBuf;
 use thiserror::Error;
+use tracing::info;
 
+use crate::command::profile::ProfileArgs;
 use crate::command::run::RunArgs;
 use crate::command::schema::SchemaArgs;
 use crate::errors::TooManyErr;
@@ -48,8 +50,6 @@ enum SpmSubcommands {
     /// Generates config schema definitions
     Schema(SchemaArgs),
 }
-#[derive(Debug, Args)]
-struct ProfileArgs {}
 
 fn main() -> Result<()> {
     let args = SpmArgs::parse();
@@ -59,12 +59,14 @@ fn main() -> Result<()> {
 
     let mut config = Config::from_path(args.config)?;
 
-    config.select_profile(args.profile)?;
+    config.select_profile(args.profile.as_deref())?;
+
+    info!("Using profile `{}`", config.current_profile_name());
 
     let result = match args.command {
         SpmSubcommands::Add(add) => add.run(&mut config),
         SpmSubcommands::Run(run) => run.run(&mut config),
-        SpmSubcommands::Profile(_) => Ok(()),
+        SpmSubcommands::Profile(profile) => profile.run(&mut config),
         SpmSubcommands::Schema(schema) => schema.run(&mut config),
     };
 
@@ -97,14 +99,14 @@ enum CommandError {
 impl From<InquireError> for CommandError {
     fn from(value: InquireError) -> Self {
         match value {
-            InquireError::NotTTY => (miette!("The input device is not a TTY")).into(),
+            InquireError::NotTTY => miette!("The input device is not a TTY").into(),
             InquireError::InvalidConfiguration(err) => {
                 miette!("Bad inquire configuration: {err}").into()
             }
-            InquireError::IO(err) => (miette!("IO error: {err}")).into(),
+            InquireError::IO(err) => miette!("IO error: {err}").into(),
             InquireError::OperationCanceled => Self::Canceled,
             InquireError::OperationInterrupted => Self::Canceled,
-            InquireError::Custom(err) => (miette!("{err}")).into(),
+            InquireError::Custom(err) => miette!("{err}").into(),
         }
     }
 }

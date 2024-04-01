@@ -7,6 +7,7 @@ edition = "2021"
 [dependencies]
 clap = { workspace = true, features = ["derive"] }
 clap-verbosity-flag = "2.2.0"
+cli-table = "0.4.7"
 crossterm = "0.27.0"
 fs-err = { workspace = true }
 globwalk = "0.9.1"
@@ -18,10 +19,12 @@ miette = { workspace = true, features = ["fancy"] }
 schemars = "0.8.16"
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
+serde_with = "3.7.0"
 shell-escape = "0.1.5"
 shell-words = "1.1.0"
 thiserror = { workspace = true }
 tracing = { workspace = true }
 tracing-log = "0.2.0"
 tracing-subscriber = { workspace = true, features = ["env-filter"] }
+uncased = { version = "0.9.10", features = ["with-serde-alloc", "with-serde"] }
 which = "6.0.1"

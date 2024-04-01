@@ -1,4 +1,5 @@
 use globwalk::GlobWalkerBuilder;
+use itertools::Itertools;
 use miette::{Context, IntoDiagnostic};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -11,12 +12,12 @@ pub struct GlobConfig(pub String);
 impl GlobConfig {
     /// Checks whenever the project directory matches the glob
     pub fn check(&self, project_dir: impl AsRef<Path>) -> miette::Result<bool> {
-        Ok(GlobWalkerBuilder::new(project_dir, &self.0)
+        let path = GlobWalkerBuilder::new(dbg!(project_dir.as_ref()), &self.0)
             .build()
             .into_diagnostic()
             .context("Invalid glob pattern")?
-            .next()
-            .is_some())
+            .next();
+        Ok(dbg!(path).is_some())
     }
 }
 

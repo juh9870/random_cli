@@ -103,7 +103,7 @@ impl RunArgs {
                 ide
             };
 
-            info!("IDE detected: {}", env.name.as_deref().unwrap_or("Unknown"));
+            info!("IDE detected: {}", ide.name.as_deref().unwrap_or("Unknown"));
             Some(ide)
         } else {
             None
