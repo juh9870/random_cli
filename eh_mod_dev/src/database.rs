@@ -7,7 +7,7 @@ use std::ops::{Deref, DerefMut, Range};
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 
-use tracing::error_span;
+use tracing::{error_span, info};
 
 mod macro_impls;
 
@@ -288,6 +288,7 @@ impl DatabaseHolder {
         }
 
         fs_err::remove_file(mappings_bk_path).expect("Should remove mappings backup file");
+        info!("Database saved successfully!")
     }
 
     fn next_id_raw<T: 'static + DatabaseItem>(db: &mut DatabaseInner) -> i32 {
@@ -382,6 +383,18 @@ impl<T: Into<Item>> DbItem<T> {
         let item = std::mem::take(&mut self.item);
         self.item = item.map(actions);
         self
+    }
+}
+
+impl<T: Into<Item> + Clone> DbItem<T> {
+    /// Creates a new database item that is a clone of the current one
+    ///
+    /// Don't forget to change ID, otherwise the app will panic
+    pub fn new_clone(&self) -> Self {
+        Self {
+            item: self.item.clone(),
+            db: self.db.clone(),
+        }
     }
 }
 
