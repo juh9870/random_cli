@@ -6,7 +6,7 @@ use inquire::InquireError;
 
 use miette::{miette, Report, Result};
 
-use clap_verbosity_flag::Verbosity;
+use clap_verbosity_flag::{InfoLevel, Verbosity};
 use crossterm::style::Stylize;
 use std::path::PathBuf;
 use thiserror::Error;
@@ -34,7 +34,7 @@ struct SpmArgs {
     #[command(subcommand)]
     command: SpmSubcommands,
     #[command(flatten)]
-    verbose: Verbosity,
+    verbose: Verbosity<InfoLevel>,
 }
 
 #[derive(Debug, Subcommand)]
