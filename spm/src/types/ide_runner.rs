@@ -24,7 +24,7 @@ impl IdeRunner {
             Ok(raw_command)
         } else {
             Ok(format!(
-                "nix-shell -p {} --run '{}'",
+                "nix-shell -p {} --run {}",
                 self.nix_package
                     .as_ref()
                     .ok_or_else(|| miette!("Binary is missing and nix package is not set"))?,

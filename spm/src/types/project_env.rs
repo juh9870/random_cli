@@ -44,12 +44,13 @@ impl ProjectEnv {
                 &self.ide_command,
                 &[
                     (
-                        "ide",
+                        "'ide'",
                         Formattable::display(&format!(
                             "{}",
-                            shell_escape::escape(Cow::Owned(ide_command))
+                            shell_escape::escape(Cow::Borrowed(&ide_command))
                         )),
                     ),
+                    ("ide", Formattable::display(&format!("{}", ide_command))),
                     ("path", Formattable::display(&path_str)),
                 ]
                 .into_iter()
