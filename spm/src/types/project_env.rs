@@ -50,7 +50,7 @@ impl ProjectEnv {
                             shell_escape::escape(Cow::Borrowed(&ide_command))
                         )),
                     ),
-                    ("ide", Formattable::display(&format!("{}", ide_command))),
+                    ("ide", Formattable::display(&ide_command)),
                     ("path", Formattable::display(&path_str)),
                 ]
                 .into_iter()

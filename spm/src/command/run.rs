@@ -10,6 +10,7 @@ use miette::{miette, Context, IntoDiagnostic};
 use tracing::{info, warn};
 
 #[derive(Debug, Args)]
+#[derive(Default)]
 pub struct RunArgs {
     /// Name of the project to run
     name: Option<String>,
@@ -18,14 +19,7 @@ pub struct RunArgs {
     attach: bool,
 }
 
-impl Default for RunArgs {
-    fn default() -> Self {
-        Self {
-            name: None,
-            attach: false,
-        }
-    }
-}
+
 
 impl RunArgs {
     pub fn run(self, config: &mut Config) -> Result<(), CommandError> {
