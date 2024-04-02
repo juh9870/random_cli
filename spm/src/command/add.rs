@@ -91,7 +91,7 @@ impl AddArgs {
         };
 
         let profile = config.get_profile_mut();
-        profile.projects.push(project);
+        profile.projects.insert(0, project);
 
         Ok(())
     }
