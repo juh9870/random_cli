@@ -1,6 +1,6 @@
 [package]
 name = "spm"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 repository = "https://github.com/juh9870/random_cli"
 publish = false
