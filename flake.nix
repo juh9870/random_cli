@@ -73,6 +73,9 @@
           # nix build .#nocommit
           # nix build .#packages.x86_64-linux.nocommit
           nocommit = (rustPkgs.workspace.nocommit { }).bin;
+          # nix build .#spm
+          # nix build .#packages.x86_64-linux.spm
+          spm = (rustPkgs.workspace.nocommit { }).bin;
           # nix build
           default = packages.json_verify;
         };
