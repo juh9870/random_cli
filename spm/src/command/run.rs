@@ -13,6 +13,18 @@ use tracing::{info, warn};
 pub struct RunArgs {
     /// Name of the project to run
     name: Option<String>,
+    /// Attach to the IDE
+    #[arg(long, short)]
+    attach: bool,
+}
+
+impl Default for RunArgs {
+    fn default() -> Self {
+        Self {
+            name: None,
+            attach: false,
+        }
+    }
 }
 
 impl RunArgs {
@@ -119,18 +131,20 @@ impl RunArgs {
 
         let unit_name = format!("spm-{}-{}", config.current_profile_name(), project.name);
 
-        if which::which("screen").is_ok() {
-            info!("Running with screen");
-            run_command = format!("screen -dmS {} {}", unit_name, run_command);
-        } else if which::which("systemd-run").is_ok() {
-            info!("Running with systemd-run");
-            run_command = format!("systemd-run --user --unit={} {}", unit_name, run_command);
-        } else if which::which("nohup").is_ok() {
-            info!("Running with nohup");
-            run_command = format!("nohup {} &", run_command);
-        } else {
-            warn!("No background runner is found, running in foreground.");
-            info!("Supported background runners: systemd-run, nohup")
+        if run_ide && !self.attach {
+            if which::which("screen").is_ok() {
+                info!("Running with screen");
+                run_command = format!("screen -dmS {} {}", unit_name, run_command);
+            } else if which::which("systemd-run").is_ok() {
+                info!("Running with systemd-run");
+                run_command = format!("systemd-run --user --unit={} {}", unit_name, run_command);
+            } else if which::which("nohup").is_ok() {
+                info!("Running with nohup");
+                run_command = format!("nohup {} &", run_command);
+            } else {
+                warn!("No background runner is found, running in foreground.");
+                info!("Supported background runners: screen, systemd-run, nohup")
+            }
         }
 
         info!(name = project.name, run_command, "Running project");

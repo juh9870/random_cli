@@ -34,7 +34,7 @@ struct SpmArgs {
     #[arg(short, long)]
     profile: Option<String>,
     #[command(subcommand)]
-    command: SpmSubcommands,
+    command: Option<SpmSubcommands>,
     #[command(flatten)]
     verbose: Verbosity<InfoLevel>,
 }
@@ -70,7 +70,7 @@ fn main() -> Result<()> {
     );
     let mut config: Option<Config> = None;
 
-    let result = if let SpmSubcommands::Schema(schema) = args.command {
+    let result = if let Some(SpmSubcommands::Schema(schema)) = args.command {
         schema.run()
     } else {
         let mut cfg = Config::from_path(args.config)?;
@@ -79,7 +79,10 @@ fn main() -> Result<()> {
 
         info!("Using profile `{}`", cfg.current_profile_name());
 
-        let result = match args.command {
+        let result = match args
+            .command
+            .unwrap_or_else(|| SpmSubcommands::Run(Default::default()))
+        {
             SpmSubcommands::Add(add) => add.run(&mut cfg),
             SpmSubcommands::Run(run) => run.run(&mut cfg),
             SpmSubcommands::Profile(profile) => profile.run(&mut cfg),
