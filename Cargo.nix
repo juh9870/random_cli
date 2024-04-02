@@ -31,7 +31,7 @@ args@{
   ignoreLockHash,
 }:
 let
-  nixifiedLockHash = "f78360d25d3e69f4db8bc27a299063427adf187decbcaf70062b89e643a641ca";
+  nixifiedLockHash = "936832d8e059cd779d705a2b7b1c559ca7f494bcd9f47caf952bb9972ccd824d";
   workspaceSrc = if args.workspaceSrc == null then ./. else args.workspaceSrc;
   currentLockHash = builtins.hashFile "sha256" (workspaceSrc + /Cargo.lock);
   lockHashIgnored = if ignoreLockHash
@@ -62,7 +62,7 @@ in
     eh_schema = rustPackages.unknown.eh_schema."0.1.0";
     json_verify = rustPackages.unknown.json_verify."0.1.0";
     nocommit = rustPackages.unknown.nocommit."0.1.0";
-    spm = rustPackages.unknown.spm."0.2.3";
+    spm = rustPackages.unknown.spm."0.2.4";
     xtask = rustPackages.unknown.xtask."0.1.0";
   };
   "registry+https://github.com/rust-lang/crates.io-index".addr2line."0.21.0" = overridableMkRustCrate (profileName: rec {
@@ -2061,9 +2061,9 @@ in
     src = fetchCratesIo { inherit name version; sha256 = "b7c388c1b5e93756d0c740965c41e8822f866621d41acbdf6336a6a168f8840c"; };
   });
   
-  "unknown".spm."0.2.3" = overridableMkRustCrate (profileName: rec {
+  "unknown".spm."0.2.4" = overridableMkRustCrate (profileName: rec {
     name = "spm";
-    version = "0.2.3";
+    version = "0.2.4";
     registry = "unknown";
     src = fetchCrateLocal workspaceSrc;
     dependencies = {
