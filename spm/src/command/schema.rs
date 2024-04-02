@@ -12,7 +12,7 @@ pub struct SchemaArgs {
 }
 
 impl SchemaArgs {
-    pub fn run(self, _config: &mut Config) -> Result<(), CommandError> {
+    pub fn run(self) -> Result<(), CommandError> {
         let schema = serde_json::to_string_pretty(&schema_for!(Config)).unwrap();
         fs_err::write(self.path, schema)
             .into_diagnostic()

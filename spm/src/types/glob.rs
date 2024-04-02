@@ -1,5 +1,5 @@
 use globwalk::GlobWalkerBuilder;
-use itertools::Itertools;
+
 use miette::{Context, IntoDiagnostic};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};

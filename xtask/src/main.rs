@@ -28,6 +28,7 @@ fn main() -> anyhow::Result<()> {
             )
             .run()?;
             cmd!(sh, "cargo sort -w").run()?;
+            cmd!(sh, "cargo run -p spm schema ./spm/schema.json -q").run()?;
             cmd!(sh, "cargo-machete --fix --skip-target-dir").run()?;
         }
         XtaskCmd::Nix(_) => {

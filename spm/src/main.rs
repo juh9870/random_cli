@@ -1,6 +1,6 @@
 use crate::command::add::AddArgs;
 use crate::config::Config;
-use clap::{Args, Parser, Subcommand};
+use clap::{Parser, Subcommand};
 
 use inquire::InquireError;
 
@@ -68,18 +68,27 @@ fn main() -> Result<()> {
 │ 5 │ ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝         ╚═╝     ╚═╝     ╚═╝ │
 ╰───┴─────────────────────────────────────────────────────────────────╯"
     );
+    let mut config: Option<Config> = None;
 
-    let mut config = Config::from_path(args.config)?;
+    let result = if let SpmSubcommands::Schema(schema) = args.command {
+        schema.run()
+    } else {
+        let mut cfg = Config::from_path(args.config)?;
 
-    config.select_profile(args.profile.as_deref())?;
+        cfg.select_profile(args.profile.as_deref())?;
 
-    info!("Using profile `{}`", config.current_profile_name());
+        info!("Using profile `{}`", cfg.current_profile_name());
 
-    let result = match args.command {
-        SpmSubcommands::Add(add) => add.run(&mut config),
-        SpmSubcommands::Run(run) => run.run(&mut config),
-        SpmSubcommands::Profile(profile) => profile.run(&mut config),
-        SpmSubcommands::Schema(schema) => schema.run(&mut config),
+        let result = match args.command {
+            SpmSubcommands::Add(add) => add.run(&mut cfg),
+            SpmSubcommands::Run(run) => run.run(&mut cfg),
+            SpmSubcommands::Profile(profile) => profile.run(&mut cfg),
+            SpmSubcommands::Schema(_schema) => unreachable!("Schema command is handled above"),
+        };
+
+        config = Some(cfg);
+
+        result
     };
 
     if let Err(err) = result {
@@ -95,7 +104,9 @@ fn main() -> Result<()> {
         }
     }
 
-    config.save()?;
+    if let Some(mut config) = config {
+        config.save()?;
+    }
 
     Ok(())
 }

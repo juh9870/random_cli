@@ -1,0 +1,304 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Config",
+  "type": "object",
+  "required": [
+    "default_profile",
+    "environments",
+    "preprocessors",
+    "profiles",
+    "runners"
+  ],
+  "properties": {
+    "$schema": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "default_profile": {
+      "$ref": "#/definitions/Uncased"
+    },
+    "environments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/GlobEntry_for_ProjectEnv"
+      }
+    },
+    "preprocessors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Preprocessor"
+      }
+    },
+    "profiles": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/Profile"
+      }
+    },
+    "runners": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/GlobEntry_for_IdeRunner"
+      }
+    }
+  },
+  "definitions": {
+    "GlobEntry_for_IdeRunner": {
+      "type": "object",
+      "required": [
+        "binary",
+        "command",
+        "glob"
+      ],
+      "properties": {
+        "binary": {
+          "description": "Binary that is used to run the project",
+          "type": "string"
+        },
+        "command": {
+          "description": "Format string to generate run command",
+          "type": "string"
+        },
+        "glob": {
+          "type": "string"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "nix_package": {
+          "description": "Nix package to install if the runner is missing in path",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "GlobEntry_for_ProjectEnv": {
+      "description": "Environment the project is running in",
+      "type": "object",
+      "required": [
+        "command",
+        "glob",
+        "ide_command"
+      ],
+      "properties": {
+        "command": {
+          "description": "Format string to generate run command",
+          "type": "string"
+        },
+        "glob": {
+          "type": "string"
+        },
+        "ide_command": {
+          "description": "Format string to generate run command",
+          "type": "string"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "nix_template": {
+          "description": "Template file for this environment",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/NixTemplate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "runner": {
+          "description": "Runner that is used to run the IDE",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/IdeRunner"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "IdeRunner": {
+      "type": "object",
+      "required": [
+        "binary",
+        "command"
+      ],
+      "properties": {
+        "binary": {
+          "description": "Binary that is used to run the project",
+          "type": "string"
+        },
+        "command": {
+          "description": "Format string to generate run command",
+          "type": "string"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "nix_package": {
+          "description": "Nix package to install if the runner is missing in path",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "NixTemplate": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "Path"
+          ],
+          "properties": {
+            "Path": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Preprocessor": {
+      "type": "object",
+      "required": [
+        "command",
+        "glob",
+        "name"
+      ],
+      "properties": {
+        "command": {
+          "type": "string"
+        },
+        "glob": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "Profile": {
+      "type": "object",
+      "required": [
+        "projects"
+      ],
+      "properties": {
+        "projects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Project"
+          }
+        }
+      }
+    },
+    "Project": {
+      "type": "object",
+      "required": [
+        "name",
+        "path"
+      ],
+      "properties": {
+        "environment": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ProjectEnv"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "runner": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/IdeRunner"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "ProjectEnv": {
+      "description": "Environment the project is running in",
+      "type": "object",
+      "required": [
+        "command",
+        "ide_command"
+      ],
+      "properties": {
+        "command": {
+          "description": "Format string to generate run command",
+          "type": "string"
+        },
+        "ide_command": {
+          "description": "Format string to generate run command",
+          "type": "string"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "nix_template": {
+          "description": "Template file for this environment",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/NixTemplate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "runner": {
+          "description": "Runner that is used to run the IDE",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/IdeRunner"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "Uncased": {
+      "type": "object",
+      "required": [
+        "string"
+      ],
+      "properties": {
+        "string": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

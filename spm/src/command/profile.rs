@@ -117,7 +117,7 @@ fn delete_profile(config: &mut Config, name: Option<String>) -> Result<(), Comma
         return Err(miette!("Cannot delete the last profile").into());
     }
 
-    if !inquire::prompt_confirmation(&format!(
+    if !inquire::prompt_confirmation(format!(
         "Are you sure you want to delete profile `{}`?",
         profile_name
     ))? {

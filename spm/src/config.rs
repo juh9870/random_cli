@@ -3,7 +3,7 @@ use crate::m_try;
 use crossterm::style::Stylize;
 use itertools::Itertools;
 use miette::{bail, miette, Context, IntoDiagnostic, Result};
-use serde::{Deserialize, Serialize, Serializer};
+use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::collections::HashMap;
 
@@ -124,7 +124,7 @@ impl Config {
             let options = self
                 .profiles
                 .keys()
-                .filter(|&p| p.starts_with(&profile))
+                .filter(|&p| p.starts_with(profile))
                 .cloned()
                 .collect_vec();
             match options.len() {
