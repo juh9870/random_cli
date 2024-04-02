@@ -7,7 +7,7 @@ use clap::Args;
 use crossterm::style::Stylize;
 use itertools::Itertools;
 use miette::{miette, Context, IntoDiagnostic};
-use tracing::info;
+use tracing::{info, warn};
 
 #[derive(Debug, Args)]
 pub struct RunArgs {
@@ -87,7 +87,9 @@ impl RunArgs {
             env.name.as_deref().unwrap_or("Unknown")
         );
 
-        let run_ide = inquire::Confirm::new("Run IDE?").prompt()?;
+        let run_ide = inquire::Confirm::new("Run IDE?")
+            .with_default(true)
+            .prompt()?;
 
         let ide = if run_ide {
             let ide = if let Some(ide) = &project.runner {
@@ -109,10 +111,23 @@ impl RunArgs {
             None
         };
 
-        let run_command = env.run_command(ide, &project.path)?;
+        let mut run_command = env.run_command(ide, &project.path)?;
 
         for preprocessor in &config.preprocessors {
             preprocessor.run(&project.path)?;
+        }
+
+        let unit_name = format!("spm-{}-{}", config.current_profile_name(), project.name);
+
+        if which::which("systemd-run").is_ok() {
+            info!("Running with systemd-run");
+            run_command = format!("systemd-run --user --unit={} {}", unit_name, run_command);
+        } else if which::which("nohup").is_ok() {
+            info!("Running with nohup");
+            run_command = format!("nohup {} &", run_command);
+        } else {
+            warn!("No background runner is found, running in foreground.");
+            info!("Supported background runners: systemd-run, nohup")
         }
 
         info!(name = project.name, run_command, "Running project");
