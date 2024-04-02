@@ -20,5 +20,5 @@ tracing = { workspace = true }
 tracing-error = { workspace = true }
 tracing-subscriber = { workspace = true, features = ["env-filter"] }
 
-[target.'cfg(target_arch = "aarch64")'.dependencies]
-openssl-sys = { workspace = true, features = ["vendored"] }
+#[target.'cfg(target_arch = "aarch64")'.dependencies]
+#openssl-sys = { workspace = true, features = ["vendored"] }
