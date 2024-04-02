@@ -6,24 +6,24 @@ edition = "2021"
 
 [dependencies]
 clap = { workspace = true, features = ["derive"] }
-clap-verbosity-flag = "2.2.0"
-cli-table = "0.4.7"
-crossterm = "0.27.0"
+clap-verbosity-flag = { workspace = true }
+cli-table = { workspace = true }
+crossterm = { workspace = true }
 fs-err = { workspace = true }
-globwalk = "0.9.1"
-home = "0.5.9"
-inquire = "0.7.2"
-interpolator = "0.5.0"
+globwalk = { workspace = true }
+home = { workspace = true }
+inquire = { workspace = true }
+interpolator = { workspace = true }
 itertools = { workspace = true }
 miette = { workspace = true, features = ["fancy"] }
-schemars = "0.8.16"
+schemars = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
-shell-escape = "0.1.5"
-shell-words = "1.1.0"
+shell-escape = { workspace = true }
+shell-words = { workspace = true }
 thiserror = { workspace = true }
 tracing = { workspace = true }
-tracing-log = "0.2.0"
+tracing-log = { workspace = true }
 tracing-subscriber = { workspace = true, features = ["env-filter"] }
-uncased = { version = "0.9.10", features = ["with-serde-alloc", "with-serde"] }
-which = "6.0.1"
+uncased = { workspace = true, features = ["with-serde-alloc", "with-serde"] }
+which = { workspace = true }
