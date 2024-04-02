@@ -23,6 +23,7 @@ use uncased::Uncased;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     #[serde(rename = "$schema")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub schema: Option<String>,
     pub default_profile: Uncased<'static>,
     pub profiles: HashMap<Uncased<'static>, Profile>,
@@ -72,7 +73,9 @@ impl JsonSchema for Config {
                 object_validation.required.insert(name.to_owned());
             }
             {
-                field::<Option<String>>(gen, object_validation, "$schema");
+                object_validation
+                    .properties
+                    .insert("$schema".to_owned(), gen.subschema_for::<Option<String>>());
                 field::<UncasedDef<'static>>(gen, object_validation, "default_profile");
                 field::<HashMap<UncasedDef<'static>, Profile>>(gen, object_validation, "profiles");
                 field::<Vec<GlobEntry<ProjectEnv>>>(gen, object_validation, "environments");
