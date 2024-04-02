@@ -119,7 +119,10 @@ impl RunArgs {
 
         let unit_name = format!("spm-{}-{}", config.current_profile_name(), project.name);
 
-        if which::which("systemd-run").is_ok() {
+        if which::which("screen").is_ok() {
+            info!("Running with screen");
+            run_command = format!("screen -dmS {} {}", unit_name, run_command);
+        } else if which::which("systemd-run").is_ok() {
             info!("Running with systemd-run");
             run_command = format!("systemd-run --user --unit={} {}", unit_name, run_command);
         } else if which::which("nohup").is_ok() {
