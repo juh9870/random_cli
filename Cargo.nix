@@ -31,7 +31,7 @@ args@{
   ignoreLockHash,
 }:
 let
-  nixifiedLockHash = "5060d85241731d0ed828bb71494c9d41900a19571213f64a1747977ebfbe5ae4";
+  nixifiedLockHash = "f78360d25d3e69f4db8bc27a299063427adf187decbcaf70062b89e643a641ca";
   workspaceSrc = if args.workspaceSrc == null then ./. else args.workspaceSrc;
   currentLockHash = builtins.hashFile "sha256" (workspaceSrc + /Cargo.lock);
   lockHashIgnored = if ignoreLockHash
@@ -62,7 +62,7 @@ in
     eh_schema = rustPackages.unknown.eh_schema."0.1.0";
     json_verify = rustPackages.unknown.json_verify."0.1.0";
     nocommit = rustPackages.unknown.nocommit."0.1.0";
-    spm = rustPackages.unknown.spm."0.2.1";
+    spm = rustPackages.unknown.spm."0.2.3";
     xtask = rustPackages.unknown.xtask."0.1.0";
   };
   "registry+https://github.com/rust-lang/crates.io-index".addr2line."0.21.0" = overridableMkRustCrate (profileName: rec {
@@ -1385,6 +1385,7 @@ in
       git2 = (rustPackages."registry+https://github.com/rust-lang/crates.io-index".git2."0.18.3" { inherit profileName; }).out;
       ignore = (rustPackages."registry+https://github.com/rust-lang/crates.io-index".ignore."0.4.22" { inherit profileName; }).out;
       itertools = (rustPackages."registry+https://github.com/rust-lang/crates.io-index".itertools."0.12.1" { inherit profileName; }).out;
+      ${ if hostPlatform.parsed.cpu.name == "aarch64" then "openssl_sys" else null } = (rustPackages."registry+https://github.com/rust-lang/crates.io-index".openssl-sys."0.9.102" { inherit profileName; }).out;
       strum = (rustPackages."registry+https://github.com/rust-lang/crates.io-index".strum."0.26.2" { inherit profileName; }).out;
       tracing = (rustPackages."registry+https://github.com/rust-lang/crates.io-index".tracing."0.1.40" { inherit profileName; }).out;
       tracing_error = (rustPackages."registry+https://github.com/rust-lang/crates.io-index".tracing-error."0.2.0" { inherit profileName; }).out;
@@ -1454,16 +1455,35 @@ in
     src = fetchCratesIo { inherit name version; sha256 = "ff011a302c396a5197692431fc1948019154afc178baf7d8e37367442a4601cf"; };
   });
   
+  "registry+https://github.com/rust-lang/crates.io-index".openssl-src."300.2.3+3.2.1" = overridableMkRustCrate (profileName: rec {
+    name = "openssl-src";
+    version = "300.2.3+3.2.1";
+    registry = "registry+https://github.com/rust-lang/crates.io-index";
+    src = fetchCratesIo { inherit name version; sha256 = "5cff92b6f71555b61bb9315f7c64da3ca43d87531622120fea0195fc761b4843"; };
+    features = builtins.concatLists [
+      [ "default" ]
+      [ "legacy" ]
+    ];
+    dependencies = {
+      cc = (rustPackages."registry+https://github.com/rust-lang/crates.io-index".cc."1.0.90" { inherit profileName; }).out;
+    };
+  });
+  
   "registry+https://github.com/rust-lang/crates.io-index".openssl-sys."0.9.102" = overridableMkRustCrate (profileName: rec {
     name = "openssl-sys";
     version = "0.9.102";
     registry = "registry+https://github.com/rust-lang/crates.io-index";
     src = fetchCratesIo { inherit name version; sha256 = "c597637d56fbc83893a35eb0dd04b2b8e7a50c91e64e9493e398b5df4fb45fa2"; };
+    features = builtins.concatLists [
+      [ "openssl-src" ]
+      [ "vendored" ]
+    ];
     dependencies = {
       libc = (rustPackages."registry+https://github.com/rust-lang/crates.io-index".libc."0.2.153" { inherit profileName; }).out;
     };
     buildDependencies = {
       cc = (buildRustPackages."registry+https://github.com/rust-lang/crates.io-index".cc."1.0.90" { profileName = "__noProfile"; }).out;
+      openssl_src = (buildRustPackages."registry+https://github.com/rust-lang/crates.io-index".openssl-src."300.2.3+3.2.1" { profileName = "__noProfile"; }).out;
       pkg_config = (buildRustPackages."registry+https://github.com/rust-lang/crates.io-index".pkg-config."0.3.30" { profileName = "__noProfile"; }).out;
       vcpkg = (buildRustPackages."registry+https://github.com/rust-lang/crates.io-index".vcpkg."0.2.15" { profileName = "__noProfile"; }).out;
     };
@@ -2041,9 +2061,9 @@ in
     src = fetchCratesIo { inherit name version; sha256 = "b7c388c1b5e93756d0c740965c41e8822f866621d41acbdf6336a6a168f8840c"; };
   });
   
-  "unknown".spm."0.2.1" = overridableMkRustCrate (profileName: rec {
+  "unknown".spm."0.2.3" = overridableMkRustCrate (profileName: rec {
     name = "spm";
-    version = "0.2.1";
+    version = "0.2.3";
     registry = "unknown";
     src = fetchCrateLocal workspaceSrc;
     dependencies = {
