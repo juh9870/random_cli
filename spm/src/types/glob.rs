@@ -12,12 +12,12 @@ pub struct GlobConfig(pub String);
 impl GlobConfig {
     /// Checks whenever the project directory matches the glob
     pub fn check(&self, project_dir: impl AsRef<Path>) -> miette::Result<bool> {
-        let path = GlobWalkerBuilder::new(dbg!(project_dir.as_ref()), &self.0)
+        let path = GlobWalkerBuilder::new(project_dir.as_ref(), &self.0)
             .build()
             .into_diagnostic()
             .context("Invalid glob pattern")?
             .next();
-        Ok(dbg!(path).is_some())
+        Ok(path.is_some())
     }
 }
 
