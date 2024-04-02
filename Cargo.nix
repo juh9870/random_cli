@@ -43,6 +43,7 @@ else let
   inherit (rustLib) fetchCratesIo fetchCrateLocal fetchCrateGit fetchCrateAlternativeRegistry expandFeatures decideProfile genDrvsByProfile;
   profilesByName = {
     dev = builtins.fromTOML "lto = \"off\"\nopt-level = 1\n\n[package.\"*\"]\nopt-level = 2\n";
+    dist = builtins.fromTOML "inherits = \"release\"\nlto = \"thin\"\n";
     release = builtins.fromTOML "codegen-units = 1\nlto = true\nopt-level = 3\nstrip = true\n";
   };
   rootFeatures' = expandFeatures rootFeatures;

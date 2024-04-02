@@ -1,6 +1,7 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=release-23.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
@@ -32,6 +33,7 @@
           inherit system;
           overlays = [ cargo2nix.overlays.default ];
         };
+        unstable = import nixpkgs-unstable { inherit system; };
 
         # create the workspace & dependencies package set
         rustPkgs = pkgs.rustBuilder.makePackageSet {
@@ -47,14 +49,15 @@
           # This adds cargo2nix to the project shell via the cargo2nix flake
           packages = [
             cargo2nix.packages."${system}".cargo2nix
-            pkgs.cargo-bloat
-            pkgs.cargo-unused-features
             pkgs.rust-analyzer-unwrapped
-            pkgs.cargo-watch
-            pkgs.cargo-sort
-            pkgs.cargo-machete
-            pkgs.cargo-depgraph
-            pkgs.cargo-limit
+            unstable.cargo-bloat
+            unstable.cargo-unused-features
+            unstable.cargo-watch
+            unstable.cargo-sort
+            unstable.cargo-machete
+            unstable.cargo-depgraph
+            unstable.cargo-limit
+            unstable.cargo-dist
           ];
         };
 

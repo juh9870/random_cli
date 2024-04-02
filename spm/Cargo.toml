@@ -2,6 +2,8 @@
 name = "spm"
 version = "0.2.1"
 edition = "2021"
+repository = "https://github.com/juh9870/random_cli"
+publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -27,3 +29,6 @@ tracing-log = { workspace = true }
 tracing-subscriber = { workspace = true, features = ["env-filter"] }
 uncased = { workspace = true, features = ["with-serde-alloc", "with-serde"] }
 which = { workspace = true }
+
+[package.metadata.dist]
+dist = true

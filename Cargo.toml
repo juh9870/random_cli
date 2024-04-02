@@ -1,4 +1,5 @@
 [workspace]
+repository = "https://github.com/juh9870/random_cli"
 resolver = "2"
 
 members = ["btreeprint", "eh_codegen", "eh_mod_dev", "eh_schema", "json_verify", "nocommit", "spm", "xtask"]
@@ -47,6 +48,27 @@ uncased = "0.9.10"
 walkdir = "2.4.0"
 which = "6.0.1"
 
+# Config for 'cargo dist'
+[workspace.metadata.dist]
+# The preferred cargo-dist version to use in CI (Cargo.toml SemVer syntax)
+cargo-dist-version = "0.11.1"
+# CI backends to support
+ci = ["github"]
+# The installers to generate for each app
+installers = ["shell", "npm"]
+# Target platforms to build apps for (Rust target-triple syntax)
+targets = ["aarch64-apple-darwin", "x86_64-apple-darwin", "x86_64-unknown-linux-gnu", "x86_64-pc-windows-msvc"]
+# The archive format to use for windows builds (defaults .zip)
+windows-archive = ".tar.gz"
+# The archive format to use for non-windows builds (defaults .tar.xz)
+unix-archive = ".tar.gz"
+# A namespace to use when publishing this package to the npm registry
+npm-scope = "@juh9870"
+# Publish jobs to run in CI
+pr-run-mode = "plan"
+# Where to host releases
+hosting = ["github"]
+
 [profile.release]
 opt-level = 3
 codegen-units = 1
@@ -61,3 +83,8 @@ opt-level = 1
 # Enable high optimizations for dependencies
 [profile.dev.package."*"]
 opt-level = 2
+
+# The profile that 'cargo dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
