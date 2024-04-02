@@ -38,13 +38,6 @@ pub struct Config {
     dirty: bool,
 }
 
-#[derive(JsonSchema)]
-#[serde(remote = "Uncased")]
-#[doc(hidden)]
-struct UncasedDef<'s> {
-    pub string: Cow<'s, str>,
-}
-
 impl JsonSchema for Config {
     fn schema_name() -> String {
         "Config".to_string()
@@ -76,8 +69,8 @@ impl JsonSchema for Config {
                 object_validation
                     .properties
                     .insert("$schema".to_owned(), gen.subschema_for::<Option<String>>());
-                field::<UncasedDef<'static>>(gen, object_validation, "default_profile");
-                field::<HashMap<UncasedDef<'static>, Profile>>(gen, object_validation, "profiles");
+                field::<String>(gen, object_validation, "default_profile");
+                field::<HashMap<String, Profile>>(gen, object_validation, "profiles");
                 field::<Vec<GlobEntry<ProjectEnv>>>(gen, object_validation, "environments");
                 field::<Vec<GlobEntry<IdeRunner>>>(gen, object_validation, "runners");
                 field::<Vec<Preprocessor>>(gen, object_validation, "preprocessors");

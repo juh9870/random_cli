@@ -17,7 +17,7 @@
       ]
     },
     "default_profile": {
-      "$ref": "#/definitions/Uncased"
+      "type": "string"
     },
     "environments": {
       "type": "array",
@@ -286,17 +286,6 @@
               "type": "null"
             }
           ]
-        }
-      }
-    },
-    "Uncased": {
-      "type": "object",
-      "required": [
-        "string"
-      ],
-      "properties": {
-        "string": {
-          "type": "string"
         }
       }
     }
