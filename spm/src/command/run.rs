@@ -9,8 +9,7 @@ use itertools::Itertools;
 use miette::{miette, Context, IntoDiagnostic};
 use tracing::{info, warn};
 
-#[derive(Debug, Args)]
-#[derive(Default)]
+#[derive(Debug, Args, Default)]
 pub struct RunArgs {
     /// Name of the project to run
     name: Option<String>,
@@ -18,8 +17,6 @@ pub struct RunArgs {
     #[arg(long, short)]
     attach: bool,
 }
-
-
 
 impl RunArgs {
     pub fn run(self, config: &mut Config) -> Result<(), CommandError> {
