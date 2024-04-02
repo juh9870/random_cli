@@ -69,6 +69,9 @@ pr-run-mode = "plan"
 # Where to host releases
 hosting = ["github"]
 
+[workspace.metadata.release]
+tag-prefix = "{{crate_name}}/"
+
 [profile.release]
 opt-level = 3
 codegen-units = 1

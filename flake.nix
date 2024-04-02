@@ -58,6 +58,7 @@
             unstable.cargo-depgraph
             unstable.cargo-limit
             unstable.cargo-dist
+            unstable.cargo-release
           ];
         };
 
